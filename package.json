@@ -1,0 +1,28 @@
+{
+  "name": "deco-three",
+  "version": "1.0.0",
+  "description": "Three module for deco-api project.",
+  "main": "build/index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/jsdom": "^12.2.4",
+    "@types/mathjs": "^6.0.11",
+    "@types/mkdirp": "^0.5.2",
+    "@types/mv": "^2.1.0",
+    "deco-api": "git+https://github.com/platform5/deco-api.git",
+    "ifc-convert": "^1.2.0",
+    "ifc2json-wrapper": "git+https://github.com/bimaps/ifc2json-wrapper.git",
+    "mathjs": "^9.2.0",
+    "mv": "^2.1.1",
+    "three": "^0.110.0",
+    "three-obj-mtl-loader": "^1.0.3",
+    "typescript": "^3.0.0"
+  },
+  "devDependencies": {}
+}
