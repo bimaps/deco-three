@@ -10,7 +10,6 @@ const path_1 = __importDefault(require("path"));
 var ifcConvert = require('ifc-convert');
 let src = path_1.default.join(__dirname, '../_ifc_sources/0912106-02windows_placement_inside_wall_all_1.ifc');
 let dest = path_1.default.join(__dirname, '../ignored/0912106-02windows_placement_inside_wall_all_1.obj');
-
 try {
     fs_1.default.accessSync(dest, fs_1.default.constants.R_OK);
     // no error, the file exists => we cannot go on
