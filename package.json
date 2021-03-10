@@ -15,14 +15,17 @@
     "@types/mathjs": "^6.0.11",
     "@types/mkdirp": "^0.5.2",
     "@types/mv": "^2.1.0",
+    "mathjs": "^9.2.0",
+    "mv": "^2.1.1"
+  },
+  "devDependencies": {
+    "typescript": "^3.0.0"
+  },
+  "peerDependencies": {
     "deco-api": "git+https://github.com/platform5/deco-api.git#2564909c941eb8195e7c63ddd950248f981d8f4a",
     "ifc-convert": "^1.2.0",
     "ifc2json-wrapper": "git+https://github.com/bimaps/ifc2json-wrapper.git#acc0f3cc7eb76328f34f2386b210d40324461f31",
-    "mathjs": "^9.2.0",
-    "mv": "^2.1.1",
     "three": "^0.110.0",
-    "three-obj-mtl-loader": "^1.0.3",
-    "typescript": "^3.0.0"
-  },
-  "devDependencies": {}
+    "three-obj-mtl-loader": "^1.0.3"
+  }
 }
