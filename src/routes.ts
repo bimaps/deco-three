@@ -17,4 +17,8 @@ router.use('/theme', ThreeThemeController);
 router.use('/style', ThreeStyleController);
 router.use('/checker', ThreeCheckerController);
 
+router.get('/status', (req, res, next) => {
+  res.send({module: 'three', status: 'OK'});
+});
+
 export { router as ThreeRoutes };
