@@ -22,7 +22,7 @@
     "typescript": "^3.0.0"
   },
   "peerDependencies": {
-    "deco-api": "git+https://github.com/platform5/deco-api.git#8361277092ca7fed908e5ca2fdf6be1287311035",
+    "deco-api": "git+https://github.com/platform5/deco-api.git#988cc6de57ffc5cb617d2e61d313505dcddc4f7e",
     "ifc-convert": "^1.2.0",
     "ifc2json-wrapper": "git+https://github.com/bimaps/ifc2json-wrapper.git#2bf114af0aa98eff177bcb3b2bc21e087ce32062",
     "three": "^0.110.0",
