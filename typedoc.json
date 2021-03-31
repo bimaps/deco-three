@@ -1,0 +1,8 @@
+{
+    "out": "docs/",
+    "json": "docs/docs.json",
+    "name": "Deco Three Documentation",
+    "excludeExternals": true,
+    "includeVersion": true,
+    "entryPoints": ["src/index.ts"]
+}

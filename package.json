@@ -16,13 +16,14 @@
     "@types/mkdirp": "^0.5.2",
     "@types/mv": "^2.1.0",
     "mathjs": "^9.2.0",
-    "mv": "^2.1.1"
+    "mv": "^2.1.1",
+    "typedoc": "^0.20.34"
   },
   "devDependencies": {
     "typescript": "^3.9.0"
   },
   "peerDependencies": {
-    "deco-api": "git+https://github.com/platform5/deco-api.git#988cc6de57ffc5cb617d2e61d313505dcddc4f7e",
+    "deco-api": "git+https://github.com/platform5/deco-api.git#d6dcaca814642041c38580e7ef21698d5fe938d2",
     "ifc-convert": "^1.2.0",
     "ifc2json-wrapper": "git+https://github.com/bimaps/ifc2json-wrapper.git#2bf114af0aa98eff177bcb3b2bc21e087ce32062",
     "three": "^0.110.0",
