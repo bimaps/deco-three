@@ -19,7 +19,7 @@
     "mv": "^2.1.1"
   },
   "devDependencies": {
-    "typescript": "^3.0.0"
+    "typescript": "^3.9.0"
   },
   "peerDependencies": {
     "deco-api": "git+https://github.com/platform5/deco-api.git#988cc6de57ffc5cb617d2e61d313505dcddc4f7e",
