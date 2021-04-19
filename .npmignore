@@ -1,0 +1,15 @@
+
+
+/node_modules
+
+# Documentation
+/docs
+typedoc.json
+
+# Source
+/src
+install-last-deco-api.sh
+tsconfig.json
+typedoc.json
+types.d.ts
+
