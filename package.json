@@ -7,9 +7,13 @@
     "tsc": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bimaps/deco-three"
+  },
+  "keywords": ["ThreeJS", "BIM", "IFC"],
+  "author": "platform5",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
     "@types/jsdom": "^12.2.4",
     "@types/mathjs": "^6.0.11",
