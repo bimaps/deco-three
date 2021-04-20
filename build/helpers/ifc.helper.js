@@ -87,7 +87,22 @@ class IfcHelper {
     //   throw new Error('parseIfcMetadata is not available on this server');
     // }
     static parseIfcMetadata(filepath, site, importId) {
-        return ifc2json_wrapper_1.ifc2json(filepath).then((destinationpath) => __awaiter(this, void 0, void 0, function* () {
+        return __awaiter(this, void 0, void 0, function* () {
+            let destinationpath = '';
+            const options = {
+                stdout: '',
+                stderr: '' // ifc2json will store in this property the result of stderr
+            };
+            try {
+                destinationpath = yield ifc2json_wrapper_1.ifc2json(filepath, options);
+            }
+            catch (error) {
+                console.log('IFC2JSON');
+                console.log('stdout', options.stdout);
+                console.log('stderr', options.stderr);
+                throw error;
+            }
+            console.log('ifc2json stdout:', options.stdout);
             const jsonstring = fs_1.default.readFileSync(destinationpath, { encoding: 'utf-8' });
             let json;
             try {
@@ -309,7 +324,7 @@ class IfcHelper {
                 }
                 yield IfcHelper.applyUserDataFromIfc(data, importId, ifc2objectId);
             }
-        }));
+        });
     }
     static psetInMetadata(userData, object) {
         if (!Array.isArray(object.metadata)) {
