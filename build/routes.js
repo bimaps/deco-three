@@ -19,4 +19,7 @@ router.use('/geometry', three_geometry_controller_1.ThreeGeometryController);
 router.use('/theme', three_theme_controller_1.ThreeThemeController);
 router.use('/style', three_style_controller_1.ThreeStyleController);
 router.use('/checker', three_checker2_controller_1.ThreeCheckerController);
+router.get('/status', (req, res, next) => {
+    res.send({ module: 'three', status: 'OK' });
+});
 //# sourceMappingURL=routes.js.map
