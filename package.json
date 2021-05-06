@@ -11,7 +11,11 @@
     "type": "git",
     "url": "https://github.com/bimaps/deco-three"
   },
-  "keywords": ["ThreeJS", "BIM", "IFC"],
+  "keywords": [
+    "ThreeJS",
+    "BIM",
+    "IFC"
+  ],
   "author": "platform5",
   "license": "AGPL-3.0-or-later",
   "dependencies": {
@@ -19,15 +23,15 @@
     "@types/mathjs": "^6.0.11",
     "@types/mkdirp": "^0.5.2",
     "@types/mv": "^2.1.0",
+    "deco-api": "^1.1.0",
     "mathjs": "^9.2.0",
     "mv": "^2.1.1"
   },
   "devDependencies": {
-    "typescript": "^3.9.0",
-    "typedoc": "^0.20.34"
+    "typedoc": "^0.20.34",
+    "typescript": "^3.9.0"
   },
   "peerDependencies": {
-    "deco-api": "^1.0.2",
     "ifc-convert": "^1.2.0",
     "ifc2json-wrapper": "^1.0.0",
     "three": "^0.110.0",

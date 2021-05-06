@@ -9,7 +9,7 @@ import { ThreeGeometryModel } from './../models/geometry.model';
 import { ThreeMaterialModel } from './../models/material.model';
 import { ThreeBuildingModel } from './../models/building.model';
 import { ThreeStoreyModel } from './../models/storey.model';
-import { StringAnyMap, StringTMap, ObjectId, Model } from 'deco-api';
+import { ObjectId, Model } from 'deco-api';
 import { ThreeMaterialHelper } from './three.material';
 import crypto from 'crypto';
 import * as THREE from 'three';
@@ -40,7 +40,7 @@ export interface ThreeJsonBase {
   importId: string;
   childrenIds: Array<ObjectId>;
   parentId: ObjectId;
-  userData?: StringAnyMap;
+  userData?: {[key: string]: any};
 }
 
 export interface ThreeJsonObject extends ThreeJsonBase {
@@ -78,7 +78,7 @@ export interface ThreeImporterOptions {
   importId?: string;
   saveLights?: boolean;
   scaleFactor?: number;
-  userData?: StringAnyMap;
+  userData?: {[key: string]: any};
 }
 
 export interface ThreeDeleteData {
@@ -102,7 +102,7 @@ export class ThreeImporterHelper {
   public importId: string;
   private saveLights: boolean = false;
 
-  private measures: StringTMap<{_min: THREE.Vector3, _max: THREE.Vector3}> = {};
+  private measures: {[key: string]: {_min: THREE.Vector3, _max: THREE.Vector3}} = {};
   
   private startedImportDate: moment.Moment;
 
@@ -251,7 +251,7 @@ export class ThreeImporterHelper {
     });
   }
 
-  private parse(userData?: StringAnyMap) {
+  private parse(userData?: {[key: string]: any}) {
     this.parseGeometries();
     this.roundGeometriesValues();
     this.parseMaterials();
@@ -283,7 +283,7 @@ export class ThreeImporterHelper {
     }
   }
 
-  private parseObject(object: ThreeJsonObject, userData?: StringAnyMap, parent: ThreeJsonObject | null = null) {
+  private parseObject(object: ThreeJsonObject, userData?: {[key: string]: any}, parent: ThreeJsonObject | null = null) {
     if (object.type.toLowerCase().indexOf('camera') !== -1) return;
     if (object.type.toLowerCase().indexOf('light') !== -1 && !this.saveLights) return;
 
@@ -430,7 +430,7 @@ export class ThreeImporterHelper {
     return this.removeImport(this.site._id, this.importId, this.startedImportDate); 
   }
 
-  private keyDiffs(object1: StringAnyMap, object2: StringAnyMap): Array<string> {
+  private keyDiffs(object1: {[key: string]: any}, object2: {[key: string]: any}): Array<string> {
     let keys1 = Object.keys(object1);
     let keys2 = Object.keys(object2);
     return keys1.filter(k => keys2.indexOf(k) === -1);

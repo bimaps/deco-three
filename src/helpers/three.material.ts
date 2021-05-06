@@ -1,4 +1,3 @@
-import { StringStringMap } from 'deco-api';
 import { ThreeMaterialModel } from './../models/material.model';
 import { ThreeJsonData, ThreeJsonObject } from './three.importer';
 let debug = require('debug')('app:helpers:three:material');
@@ -12,8 +11,8 @@ export class ThreeMaterialHelper {
 
   static reduceMaterials(json: ThreeJsonData, options: ReduceMaterialsOptions = {}) {
     let newMaterials: Array<any> = [];
-    let materialMap: StringStringMap = {};
-    let materialHashes: StringStringMap = {};
+    let materialMap: {[key: string]: string} = {};
+    let materialHashes: {[key: string]: string} = {};
     let stats: any = {
       nbMaterialsOrigin: json.materials.length
     };

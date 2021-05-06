@@ -1,5 +1,5 @@
 import { ThreeSiteModel } from './../models/site.model';
-import { StringAnyMap, ObjectId } from 'deco-api';
+import { ObjectId } from 'deco-api';
 import * as THREE from 'three';
 import moment from 'moment';
 export interface ThreeJsonData {
@@ -22,7 +22,9 @@ export interface ThreeJsonBase {
     importId: string;
     childrenIds: Array<ObjectId>;
     parentId: ObjectId;
-    userData?: StringAnyMap;
+    userData?: {
+        [key: string]: any;
+    };
 }
 export interface ThreeJsonObject extends ThreeJsonBase {
     children?: Array<ThreeJsonObject>;
@@ -55,7 +57,9 @@ export interface ThreeImporterOptions {
     importId?: string;
     saveLights?: boolean;
     scaleFactor?: number;
-    userData?: StringAnyMap;
+    userData?: {
+        [key: string]: any;
+    };
 }
 export interface ThreeDeleteData {
     model: string;
