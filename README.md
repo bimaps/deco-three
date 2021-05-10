@@ -3,9 +3,9 @@
 
 ## IFC importation
 
-L'importation des fichiers IFC est basé au niveau du model Site.
+L'importation des fichiers IFC est basée au niveau du modèle Site.
 
-Dans le controleur `Site`, le fichier est téléchargé est transformé pour l'importation dans la base de donnée Mongo :
+Dans le contrôleur `Site`, le fichier est téléchargé est transformé pour l'importation dans la base de données Mongo :
 
 * Source : `/src/controllers/three.site.controller.ts`
 * Endpoint: `POST /three/site/:siteId/import/ifc`
@@ -63,8 +63,8 @@ HttpResponse<String> response = Unirest.post("http://localhost:3001/three/site/5
 
 **Status**
 
-* in-progress : En cours de traitement **
-* completed : Fin du traitment
+* in-progress : En cours de traitement
+* completed : Fin du traitement
 
 
 **Workflow**
@@ -72,6 +72,6 @@ HttpResponse<String> response = Unirest.post("http://localhost:3001/three/site/5
 2. Importation des OBJ dans Three
 3. Importation dans MongoDB
 4. Ifc2Json
-5. Fusion des méta-données dans la base de donnée
+5. Fusion des métadonnées dans la base de données
 
 
