@@ -7,16 +7,19 @@ L'importation des fichiers IFC est basée au niveau du modèle Site.
 
 Dans le contrôleur `Site`, le fichier est téléchargé est transformé pour l'importation dans la base de données Mongo :
 
-* Source : `/src/controllers/three.site.controller.ts`
+* Source : [/src/controllers/three.site.controller.ts](https://docs.bimaps.io/api/deco-three/modules.html#threesitecontroller)
 * Endpoint: `POST /three/site/:siteId/import/ifc`
 * Content-Type: `multipart/form-data`
 * Body: `ifc` contenant le fichier IFC à envoyer
+
 
 Remarque importante: cette requête n'attend pas la fin de l'importation du fichier pour renvoyer une réponse. Au contraire, si l'API reçoit un fichier correct elle renvoie immédiatement pour avertir le client que le fichier est bien reçu et qu'il est en traitement.
 
 Le fichier doit être envoyé en mode `multipart` et attaché à la requête sous le nom de `ifc`. 
 
-importIFC
+La fonction `importIfc` est appelée pour lancer le processus : 
+ [/src/controllers/three.core.controller.ts](https://docs.bimaps.io/api/deco-three/classes/threecorecontrollermiddleware.html#importifc)
+
 
 ### Exemple d'un envoi de fichier IFC
 
@@ -75,3 +78,7 @@ HttpResponse<String> response = Unirest.post("http://localhost:3001/three/site/5
 5. Fusion des métadonnées dans la base de données
 
 
+
+## Flux & Rapport (calculator)
+
+- API REST for check : [API Checker](https://docs.bimaps.io/api/restapi#vue-d'ensemble-des-checkers)
