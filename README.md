@@ -1,4 +1,4 @@
-# Deco Three
+# deco-three
 
 
 ## IFC importation
