@@ -40,7 +40,7 @@ export class ThreeSiteModel extends Model {
 
   @type.float
   @io.all
-  public originalCameraZoom: number = 10
+  public originalCameraZoom: number = 10;
   
   @type.any
   @io.all
