@@ -1,16 +1,19 @@
 import { ThreeThemeModel } from './../models/theme.model';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { Router } from 'express';
-import { ControllerMiddleware, AppMiddleware, AuthMiddleware } from 'deco-api';
+import { ControllerMiddleware, AppMiddleware } from 'deco-api';
 let debug = require('debug')('app:controller:three:theme');
 
 const router: Router = Router();
 
 let mdController = new ThreeCoreControllerMiddleware(ThreeThemeModel);
 
+router.use(mdController.registerPolicyMountingPoint(['three.theme']))
+
 router.get(
   ControllerMiddleware.getAllRoute(),
   AppMiddleware.fetchWithPublicKey,
+  mdController.registerPolicyMountingPoint(['three.theme.get']),
   mdController.prepareQueryFromReq(),
   mdController.getAll(null, {enableLastModifiedCaching: false})
 );
@@ -18,32 +21,28 @@ router.get(
 router.get(
   ControllerMiddleware.getOneRoute(),
   AppMiddleware.fetchWithPublicKey,
+  mdController.registerPolicyMountingPoint(['three.theme.get']),
   mdController.getOne()
 );
 
 router.post(
   ControllerMiddleware.postRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
+  mdController.registerPolicyMountingPoint(['three.theme.write', 'three.theme.post']),
   mdController.post()
 );
 
 router.put(
   ControllerMiddleware.putRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
+  mdController.registerPolicyMountingPoint(['three.theme.write', 'three.theme.put']),
   mdController.put()
 );
 
 router.delete(
   ControllerMiddleware.deleteRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  mdController.registerPolicyMountingPoint(['three.theme.write', 'three.theme.delete']),
   mdController.delete()
 );
 

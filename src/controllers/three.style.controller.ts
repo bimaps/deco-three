@@ -2,12 +2,14 @@ import { ThreeStyleModel } from './../models/style.model';
 import { ThreeThemeModel } from './../models/theme.model';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { Router, Request, Response, NextFunction } from 'express';
-import { ControllerMiddleware, Query, AuthMiddleware, AppMiddleware } from 'deco-api';
+import { ControllerMiddleware, Query, AppMiddleware } from 'deco-api';
 let debug = require('debug')('app:controller:three:style');
 
 const router: Router = Router();
 
 let mdController = new ThreeCoreControllerMiddleware(ThreeStyleModel);
+
+router.use(mdController.registerPolicyMountingPoint(['three.style']))
 
 function removeStyleFromAllThemes() {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -40,6 +42,7 @@ function removeStyleFromAllThemes() {
 router.get(
   ControllerMiddleware.getAllRoute(),
   AppMiddleware.fetchWithPublicKey,
+  mdController.registerPolicyMountingPoint(['three.style.get']),
   mdController.prepareQueryFromReq(),
   mdController.getAll(null, {enableLastModifiedCaching: false})
 );
@@ -47,32 +50,28 @@ router.get(
 router.get(
   ControllerMiddleware.getOneRoute(),
   AppMiddleware.fetchWithPublicKey,
+  mdController.registerPolicyMountingPoint(['three.style.get']),
   mdController.getOne()
 );
 
 router.post(
   ControllerMiddleware.postRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
+  mdController.registerPolicyMountingPoint(['three.style.write', 'three.style.post']),
   mdController.post()
 );
 
 router.put(
   ControllerMiddleware.putRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
+  mdController.registerPolicyMountingPoint(['three.style.write', 'three.style.put']),
   mdController.put()
 );
 
 router.delete(
   ControllerMiddleware.deleteRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  mdController.registerPolicyMountingPoint(['three.style.write', 'three.style.delete']),
   mdController.getOne({ignoreDownload: true, ignoreOutput: true, ignoreSend: true}),
   removeStyleFromAllThemes(),
   mdController.delete()

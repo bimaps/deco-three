@@ -4,7 +4,7 @@ import { CheckerFlowModel, modelsByType, ReportOutput, FlowOutput } from './../m
 import { CheckerModuleBaseModel } from './../models/checkers/checker-internals';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { Router, Request, Response, NextFunction } from 'express';
-import { ObjectId, ControllerMiddleware, Model, AppMiddleware, PolicyFactory, PolicyController, CacheLastModified, AuthMiddleware } from 'deco-api';
+import { ObjectId, ControllerMiddleware, Model, AppMiddleware, PolicyFactory, PolicyController, CacheLastModified } from 'deco-api';
 let debug = require('debug')('app:controller:three:geometry');
 
 const router: Router = Router();
@@ -48,11 +48,15 @@ class CheckerModuleControllerMiddleware extends ControllerMiddleware {
 
 let moduleController = new CheckerModuleControllerMiddleware(CheckerModuleBaseModel);
 
+router.use(flowController.registerPolicyMountingPoint(['three.flow']))
+router.use(reportController.registerPolicyMountingPoint(['three.report']))
+
 
 router.get(
   '/flow' + ControllerMiddleware.getAllRoute(),
-  CacheLastModified.init(),
   AppMiddleware.fetchWithPublicKey,
+  flowController.registerPolicyMountingPoint(['three.flow.get']),
+  // CacheLastModified.init(),
   flowController.prepareQueryFromReq(),
   flowController.getAll(null, {enableLastModifiedCaching: false}),
   // CacheLastModified.send()
@@ -61,25 +65,23 @@ router.get(
 router.get(
   '/flow' + ControllerMiddleware.getOneRoute(),
   AppMiddleware.fetchWithPublicKey,
+  flowController.registerPolicyMountingPoint(['three.flow.get']),
   flowController.getOne()
 );
 
 router.post(
   '/flow' + ControllerMiddleware.postRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
+  flowController.registerPolicyMountingPoint(['three.flow.write', 'three.flow.post']),
   flowController.post()
 );
 
 router.post(
   '/flow/:flowId/run',
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
   fetchFlow(),
   PolicyController.addPolicy(flowIdPolicy()),
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  flowController.registerPolicyMountingPoint(['three.flow.run']),
   runFlow(),
   reportController.sendLocals('output')
 );
@@ -87,17 +89,14 @@ router.post(
 router.put(
   '/flow' + ControllerMiddleware.putRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
+  flowController.registerPolicyMountingPoint(['three.flow.write', 'three.flow.put']),
   flowController.put()
 );
 
 router.delete(
   '/flow' + ControllerMiddleware.deleteRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  flowController.registerPolicyMountingPoint(['three.flow.write', 'three.flow.delete']),
   flowController.getOne({ignoreDownload: true, ignoreOutput: true, ignoreSend: true}),
   removeFlowFromAllReports(),
   deleteAllModules(),
@@ -108,9 +107,9 @@ router.get(
   '/flow/:flowId/module' + ControllerMiddleware.getAllRoute(),
   CacheLastModified.init(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
   fetchFlow(),
   PolicyController.addPolicy(flowIdPolicy()),
+  flowController.registerPolicyMountingPoint(['three.flow.module', 'three.flow.module.get']),
   moduleController.prepareQueryFromReq(),
   moduleController.getAll(null, {enableLastModifiedCaching: false}),
   // CacheLastModified.send()
@@ -119,20 +118,18 @@ router.get(
 router.get(
   '/flow/:flowId/module' + ControllerMiddleware.getOneRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
   fetchFlow(),
   PolicyController.addPolicy(flowIdPolicy()),
+  flowController.registerPolicyMountingPoint(['three.flow.module', 'three.flow.module.get']),
   moduleController.getOne()
 );
 
 router.post(
   '/flow/:flowId/module' + ControllerMiddleware.postRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
   fetchFlow(),
   PolicyController.addPolicy(flowIdPolicy()),
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
+  flowController.registerPolicyMountingPoint(['three.flow.module', 'three.flow.module.write', 'three.flow.module.post']),
   moduleController.post({ignoreOutput: false, ignoreSend: true}),
   addModuleToFlow()
 );
@@ -140,46 +137,40 @@ router.post(
 router.put(
   '/flow/:flowId/module' + ControllerMiddleware.putRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
   fetchFlow(),
   PolicyController.addPolicy(flowIdPolicy()),
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
+  flowController.registerPolicyMountingPoint(['three.flow.module', 'three.flow.module.write', 'three.flow.module.put']),
   moduleController.put()
 );
 
 router.delete(
   '/flow/:flowId/module' + ControllerMiddleware.deleteRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
   fetchFlow(),
   PolicyController.addPolicy(flowIdPolicy()),
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  flowController.registerPolicyMountingPoint(['three.flow.module', 'three.flow.module.write', 'three.flow.module.delete']),
   moduleController.delete()
 );
 
 router.get(
   '/report' + ControllerMiddleware.getAllRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
   reportController.prepareQueryFromReq(),
+  flowController.registerPolicyMountingPoint(['three.report.get']),
   reportController.getAll(null, {enableLastModifiedCaching: false})
 );
 
 router.get(
   '/report' + ControllerMiddleware.getOneRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  flowController.registerPolicyMountingPoint(['three.report.get']),
   reportController.getOne()
 );
 
 router.get(
   '/report' + ControllerMiddleware.getOneRoute() + '/run',
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  flowController.registerPolicyMountingPoint(['three.report.run']),
   reportController.getOne({ignoreDownload: true, ignoreSend: true, ignoreOutput: true}),
   runReport(),
   reportController.sendLocals('output')
@@ -187,27 +178,22 @@ router.get(
 
 router.post(
   '/report' + ControllerMiddleware.postRoute(),
+  flowController.registerPolicyMountingPoint(['three.report.write', 'three.report.post']),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
   reportController.post()
 );
 
 router.put(
   '/report' + ControllerMiddleware.putRoute(),
+  flowController.registerPolicyMountingPoint(['three.report.write', 'three.report.put']),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
   reportController.put()
 );
 
 router.delete(
   '/report' + ControllerMiddleware.deleteRoute(),
+  flowController.registerPolicyMountingPoint(['three.report.write', 'three.report.delete']),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
   reportController.delete()
 );
 

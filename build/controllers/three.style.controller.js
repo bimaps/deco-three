@@ -18,6 +18,7 @@ const deco_api_1 = require("deco-api");
 let debug = require('debug')('app:controller:three:style');
 const router = express_1.Router();
 let mdController = new three_core_controller_1.ThreeCoreControllerMiddleware(style_model_1.ThreeStyleModel);
+router.use(mdController.registerPolicyMountingPoint(['three.style']));
 function removeStyleFromAllThemes() {
     return (req, res, next) => {
         if (!res.locals.app)
@@ -48,14 +49,10 @@ function removeStyleFromAllThemes() {
         })).then(next).catch(next);
     };
 }
-router.get(deco_api_1.ControllerMiddleware.getAllRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, mdController.prepareQueryFromReq(), mdController.getAll(null, { enableLastModifiedCaching: false }));
-router.get(deco_api_1.ControllerMiddleware.getOneRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, mdController.getOne());
-router.post(deco_api_1.ControllerMiddleware.postRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), 
-// AppMiddleware.addAppIdToBody('appId'),
-mdController.post());
-router.put(deco_api_1.ControllerMiddleware.putRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), 
-// AppMiddleware.addAppIdToBody('appId'),
-mdController.put());
-router.delete(deco_api_1.ControllerMiddleware.deleteRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), mdController.getOne({ ignoreDownload: true, ignoreOutput: true, ignoreSend: true }), removeStyleFromAllThemes(), mdController.delete());
+router.get(deco_api_1.ControllerMiddleware.getAllRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, mdController.registerPolicyMountingPoint(['three.style.get']), mdController.prepareQueryFromReq(), mdController.getAll(null, { enableLastModifiedCaching: false }));
+router.get(deco_api_1.ControllerMiddleware.getOneRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, mdController.registerPolicyMountingPoint(['three.style.get']), mdController.getOne());
+router.post(deco_api_1.ControllerMiddleware.postRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, mdController.registerPolicyMountingPoint(['three.style.write', 'three.style.post']), mdController.post());
+router.put(deco_api_1.ControllerMiddleware.putRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, mdController.registerPolicyMountingPoint(['three.style.write', 'three.style.put']), mdController.put());
+router.delete(deco_api_1.ControllerMiddleware.deleteRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, mdController.registerPolicyMountingPoint(['three.style.write', 'three.style.delete']), mdController.getOne({ ignoreDownload: true, ignoreOutput: true, ignoreSend: true }), removeStyleFromAllThemes(), mdController.delete());
 exports.ThreeStyleController = router;
 //# sourceMappingURL=three.style.controller.js.map

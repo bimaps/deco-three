@@ -2,7 +2,7 @@ import { ThreeCheckerControllerMiddleware } from './three.checker.controller.mid
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { ThreeSiteModel } from './../models/site.model';
 import { Router } from 'express';
-import { ControllerMiddleware, AppMiddleware, AuthMiddleware, Operation } from 'deco-api';
+import { ControllerMiddleware, AppMiddleware, Operation } from 'deco-api';
 import multer from 'multer';
 const storage = multer.memoryStorage()
 const disk = multer.diskStorage({});
@@ -14,9 +14,12 @@ const router: Router = Router();
 
 let mdController = new ThreeCoreControllerMiddleware(ThreeSiteModel);
 
+router.use(mdController.registerPolicyMountingPoint(['three.site']))
+
 router.get(
   ControllerMiddleware.getAllRoute(),
   AppMiddleware.fetchWithPublicKey,
+  mdController.registerPolicyMountingPoint(['three.site.get']),
   mdController.prepareQueryFromReq(),
   mdController.getAll()
 );
@@ -24,6 +27,7 @@ router.get(
 router.get(
   ControllerMiddleware.getOneRoute(),
   AppMiddleware.fetchWithPublicKey,
+  mdController.registerPolicyMountingPoint(['three.site.get']),
   mdController.getOne({ignoreDownload: false, ignoreOutput: true, ignoreSend: true}),
   mdController.fetchBuildingsInfos()
 );
@@ -31,10 +35,8 @@ router.get(
 router.post(
   '/:elementId/import/json',
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  mdController.registerPolicyMountingPoint(['three.site.import']),
   mdController.getOne({ignoreDownload: true, ignoreOutput: true, ignoreSend: true}),
-  // AppMiddleware.addAppIdToBody('appId'),
   memoryUpload.single('json'),
   mdController.importJSON
 );
@@ -42,10 +44,8 @@ router.post(
 router.post(
   '/:elementId/import/ifc',
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  mdController.registerPolicyMountingPoint(['three.site.import']),
   mdController.getOne({ignoreDownload: true, ignoreOutput: true, ignoreSend: true}),
-  // AppMiddleware.addAppIdToBody('appId'),
   diskUpload.single('ifc'),
   Operation.startMiddelware,
   mdController.importIFC,
@@ -54,96 +54,78 @@ router.post(
 
 router.get(
   '/:elementId/import/ifc/:operationId',
+  mdController.registerPolicyMountingPoint(['three.site.import']),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
   Operation.waitForCompletion
 );
 
 router.delete(
   '/:elementId/delete-data',
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  mdController.registerPolicyMountingPoint(['three.site.write', 'three.site.delete']),
   mdController.getOne({ignoreDownload: true, ignoreOutput: true, ignoreSend: true}),
-  // AppMiddleware.addAppIdToBody('appId'),
   mdController.deleteData
 );
 
 router.delete(
   '/:elementId/clear-import',
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  mdController.registerPolicyMountingPoint(['three.site.write', 'three.site.delete']),
   mdController.getOne({ignoreDownload: true, ignoreOutput: true, ignoreSend: true}),
-  // AppMiddleware.addAppIdToBody('appId'),
   mdController.clearImport
 );
 
 router.post(
   ControllerMiddleware.postRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
+  mdController.registerPolicyMountingPoint(['three.site.write', 'three.site.post']),
   mdController.post()
 );
 
 router.put(
   ControllerMiddleware.putRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
+  mdController.registerPolicyMountingPoint(['three.site.write', 'three.site.put']),
   mdController.put()
 );
 
 router.delete(
   ControllerMiddleware.deleteRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  mdController.registerPolicyMountingPoint(['three.site.write', 'three.site.delete']),
   mdController.delete()
 );
 
 router.get(
   '/:elementId/key-values',
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
+  mdController.registerPolicyMountingPoint(['three.site.get']),
   mdController.getOne({ignoreDownload: true, ignoreSend: true, ignoreOutput: true}),
   mdController.fetchKeyValues()
 )
 
+// Following routes should be depractated soon
 router.get(
   '/:siteId/checker/:configId/run',
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
   ThreeCheckerControllerMiddleware.run()
 );
 
 router.get(
   '/:siteId/checker/:configId/run/pdf',
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
   ThreeCheckerControllerMiddleware.run(true)
 );
 
 router.get(
   '/:siteId/checker/report/:reportId/run',
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
   ThreeCheckerControllerMiddleware.runReport()
 );
 
 router.get(
   '/:siteId/checker/report/:reportId/run/pdf',
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
   ThreeCheckerControllerMiddleware.runReport(true)
 );
 

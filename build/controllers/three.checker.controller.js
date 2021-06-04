@@ -12,21 +12,17 @@ let configController = new three_core_controller_1.ThreeCoreControllerMiddleware
 let reportController = new three_core_controller_1.ThreeCoreControllerMiddleware(checker_report_model_1.ThreeCheckerReportModel);
 router.get('/report' + deco_api_1.ControllerMiddleware.getAllRoute(), deco_api_1.CacheLastModified.init(), deco_api_1.AppMiddleware.fetchWithPublicKey, reportController.prepareQueryFromReq(), reportController.getAll(null, { enableLastModifiedCaching: true }));
 router.get('/report' + deco_api_1.ControllerMiddleware.getOneRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, reportController.getOne());
-router.post('/report' + deco_api_1.ControllerMiddleware.postRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), 
-// AppMiddleware.addAppIdToBody('appId'),
-reportController.post());
-router.put('/report' + deco_api_1.ControllerMiddleware.putRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), 
-// AppMiddleware.addAppIdToBody('appId'),
-reportController.put());
-router.delete('/report' + deco_api_1.ControllerMiddleware.deleteRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), reportController.delete());
+router.post('/report' + deco_api_1.ControllerMiddleware.postRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, reportController.post());
+router.put('/report' + deco_api_1.ControllerMiddleware.putRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, reportController.put());
+router.delete('/report' + deco_api_1.ControllerMiddleware.deleteRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, reportController.delete());
 router.get(deco_api_1.ControllerMiddleware.getAllRoute(), deco_api_1.CacheLastModified.init(), deco_api_1.AppMiddleware.fetchWithPublicKey, configController.prepareQueryFromReq(), configController.getAll(null, { enableLastModifiedCaching: true }));
 router.get(deco_api_1.ControllerMiddleware.getOneRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, configController.getOne());
-router.post(deco_api_1.ControllerMiddleware.postRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), 
+router.post(deco_api_1.ControllerMiddleware.postRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, 
 // AppMiddleware.addAppIdToBody('appId'),
 configController.post());
-router.put(deco_api_1.ControllerMiddleware.putRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), 
+router.put(deco_api_1.ControllerMiddleware.putRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, 
 // AppMiddleware.addAppIdToBody('appId'),
 configController.put());
-router.delete(deco_api_1.ControllerMiddleware.deleteRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), configController.delete());
+router.delete(deco_api_1.ControllerMiddleware.deleteRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, configController.delete());
 exports.ThreeCheckerController = router;
 //# sourceMappingURL=three.checker.controller.js.map

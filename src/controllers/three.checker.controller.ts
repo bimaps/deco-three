@@ -2,7 +2,7 @@ import { ThreeCheckerConfigModel } from './../models/checker-config.model';
 import { ThreeCheckerReportModel } from './../models/checker-report.model';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { Router } from 'express';
-import { ControllerMiddleware, AuthMiddleware, AppMiddleware, CacheLastModified } from 'deco-api';
+import { ControllerMiddleware, AppMiddleware, CacheLastModified } from 'deco-api';
 let debug = require('debug')('app:controller:three:geometry');
 
 const router: Router = Router();
@@ -28,26 +28,18 @@ router.get(
 router.post(
   '/report' + ControllerMiddleware.postRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
   reportController.post()
 );
 
 router.put(
   '/report' + ControllerMiddleware.putRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
-  // AppMiddleware.addAppIdToBody('appId'),
   reportController.put()
 );
 
 router.delete(
   '/report' + ControllerMiddleware.deleteRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
   reportController.delete()
 );
 
@@ -69,8 +61,6 @@ router.get(
 router.post(
   ControllerMiddleware.postRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
   // AppMiddleware.addAppIdToBody('appId'),
   configController.post()
 );
@@ -78,8 +68,6 @@ router.post(
 router.put(
   ControllerMiddleware.putRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
   // AppMiddleware.addAppIdToBody('appId'),
   configController.put()
 );
@@ -87,8 +75,6 @@ router.put(
 router.delete(
   ControllerMiddleware.deleteRoute(),
   AppMiddleware.fetchWithPublicKey,
-  AuthMiddleware.authenticate,
-  AuthMiddleware.checkUserRoleAccess('adminThreeRoles'),
   configController.delete()
 );
 

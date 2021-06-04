@@ -25,12 +25,12 @@ const object_resolve_path_1 = __importDefault(require("object-resolve-path"));
 const three_report_action_1 = require("./actions/three.report.action");
 const three_send_report_action_1 = require("./actions/three.send-report.action");
 let debug = require('debug')('app:models:three:controller:core');
-class ThreeCoreControllerMiddleware extends deco_api_1.ControllerMiddleware {
+class ThreeCoreControllerMiddleware extends deco_api_1.PolicyController {
     extendGetAllQuery(query, req, res) {
         let appId = res.locals.app._id;
         let readQuery = { appId: appId };
         query.addQuery(readQuery);
-        return super.extendGetAllQuery(query, req, res).then(() => {
+        return super.extendGetAllQuery(query, req, res, {}).then(() => {
         });
     }
     importJSON(req, res, next) {

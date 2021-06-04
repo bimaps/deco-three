@@ -57,35 +57,27 @@ class CheckerModuleControllerMiddleware extends deco_api_1.ControllerMiddleware 
     }
 }
 let moduleController = new CheckerModuleControllerMiddleware(checker_internals_2.CheckerModuleBaseModel);
-router.get('/flow' + deco_api_1.ControllerMiddleware.getAllRoute(), deco_api_1.CacheLastModified.init(), deco_api_1.AppMiddleware.fetchWithPublicKey, flowController.prepareQueryFromReq(), flowController.getAll(null, { enableLastModifiedCaching: false }));
-router.get('/flow' + deco_api_1.ControllerMiddleware.getOneRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, flowController.getOne());
-router.post('/flow' + deco_api_1.ControllerMiddleware.postRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), 
-// AppMiddleware.addAppIdToBody('appId'),
-flowController.post());
-router.post('/flow/:flowId/run', deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, fetchFlow(), deco_api_1.PolicyController.addPolicy(flowIdPolicy()), deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), runFlow(), reportController.sendLocals('output'));
-router.put('/flow' + deco_api_1.ControllerMiddleware.putRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), 
-// AppMiddleware.addAppIdToBody('appId'),
-flowController.put());
-router.delete('/flow' + deco_api_1.ControllerMiddleware.deleteRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), flowController.getOne({ ignoreDownload: true, ignoreOutput: true, ignoreSend: true }), removeFlowFromAllReports(), deleteAllModules(), flowController.delete());
-router.get('/flow/:flowId/module' + deco_api_1.ControllerMiddleware.getAllRoute(), deco_api_1.CacheLastModified.init(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, fetchFlow(), deco_api_1.PolicyController.addPolicy(flowIdPolicy()), moduleController.prepareQueryFromReq(), moduleController.getAll(null, { enableLastModifiedCaching: false }));
-router.get('/flow/:flowId/module' + deco_api_1.ControllerMiddleware.getOneRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, fetchFlow(), deco_api_1.PolicyController.addPolicy(flowIdPolicy()), moduleController.getOne());
-router.post('/flow/:flowId/module' + deco_api_1.ControllerMiddleware.postRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, fetchFlow(), deco_api_1.PolicyController.addPolicy(flowIdPolicy()), deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), 
-// AppMiddleware.addAppIdToBody('appId'),
-moduleController.post({ ignoreOutput: false, ignoreSend: true }), addModuleToFlow());
-router.put('/flow/:flowId/module' + deco_api_1.ControllerMiddleware.putRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, fetchFlow(), deco_api_1.PolicyController.addPolicy(flowIdPolicy()), deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), 
-// AppMiddleware.addAppIdToBody('appId'),
-moduleController.put());
-router.delete('/flow/:flowId/module' + deco_api_1.ControllerMiddleware.deleteRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, fetchFlow(), deco_api_1.PolicyController.addPolicy(flowIdPolicy()), deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), moduleController.delete());
-router.get('/report' + deco_api_1.ControllerMiddleware.getAllRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), reportController.prepareQueryFromReq(), reportController.getAll(null, { enableLastModifiedCaching: false }));
-router.get('/report' + deco_api_1.ControllerMiddleware.getOneRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), reportController.getOne());
-router.get('/report' + deco_api_1.ControllerMiddleware.getOneRoute() + '/run', deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), reportController.getOne({ ignoreDownload: true, ignoreSend: true, ignoreOutput: true }), runReport(), reportController.sendLocals('output'));
-router.post('/report' + deco_api_1.ControllerMiddleware.postRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), 
-// AppMiddleware.addAppIdToBody('appId'),
-reportController.post());
-router.put('/report' + deco_api_1.ControllerMiddleware.putRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), 
-// AppMiddleware.addAppIdToBody('appId'),
-reportController.put());
-router.delete('/report' + deco_api_1.ControllerMiddleware.deleteRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, deco_api_1.AuthMiddleware.authenticate, deco_api_1.AuthMiddleware.checkUserRoleAccess('adminThreeRoles'), reportController.delete());
+router.use(flowController.registerPolicyMountingPoint(['three.flow']));
+router.use(reportController.registerPolicyMountingPoint(['three.report']));
+router.get('/flow' + deco_api_1.ControllerMiddleware.getAllRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, flowController.registerPolicyMountingPoint(['three.flow.get']), 
+// CacheLastModified.init(),
+flowController.prepareQueryFromReq(), flowController.getAll(null, { enableLastModifiedCaching: false }));
+router.get('/flow' + deco_api_1.ControllerMiddleware.getOneRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, flowController.registerPolicyMountingPoint(['three.flow.get']), flowController.getOne());
+router.post('/flow' + deco_api_1.ControllerMiddleware.postRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, flowController.registerPolicyMountingPoint(['three.flow.write', 'three.flow.post']), flowController.post());
+router.post('/flow/:flowId/run', deco_api_1.AppMiddleware.fetchWithPublicKey, fetchFlow(), deco_api_1.PolicyController.addPolicy(flowIdPolicy()), flowController.registerPolicyMountingPoint(['three.flow.run']), runFlow(), reportController.sendLocals('output'));
+router.put('/flow' + deco_api_1.ControllerMiddleware.putRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, flowController.registerPolicyMountingPoint(['three.flow.write', 'three.flow.put']), flowController.put());
+router.delete('/flow' + deco_api_1.ControllerMiddleware.deleteRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, flowController.registerPolicyMountingPoint(['three.flow.write', 'three.flow.delete']), flowController.getOne({ ignoreDownload: true, ignoreOutput: true, ignoreSend: true }), removeFlowFromAllReports(), deleteAllModules(), flowController.delete());
+router.get('/flow/:flowId/module' + deco_api_1.ControllerMiddleware.getAllRoute(), deco_api_1.CacheLastModified.init(), deco_api_1.AppMiddleware.fetchWithPublicKey, fetchFlow(), deco_api_1.PolicyController.addPolicy(flowIdPolicy()), flowController.registerPolicyMountingPoint(['three.flow.module', 'three.flow.module.get']), moduleController.prepareQueryFromReq(), moduleController.getAll(null, { enableLastModifiedCaching: false }));
+router.get('/flow/:flowId/module' + deco_api_1.ControllerMiddleware.getOneRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, fetchFlow(), deco_api_1.PolicyController.addPolicy(flowIdPolicy()), flowController.registerPolicyMountingPoint(['three.flow.module', 'three.flow.module.get']), moduleController.getOne());
+router.post('/flow/:flowId/module' + deco_api_1.ControllerMiddleware.postRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, fetchFlow(), deco_api_1.PolicyController.addPolicy(flowIdPolicy()), flowController.registerPolicyMountingPoint(['three.flow.module', 'three.flow.module.write', 'three.flow.module.post']), moduleController.post({ ignoreOutput: false, ignoreSend: true }), addModuleToFlow());
+router.put('/flow/:flowId/module' + deco_api_1.ControllerMiddleware.putRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, fetchFlow(), deco_api_1.PolicyController.addPolicy(flowIdPolicy()), flowController.registerPolicyMountingPoint(['three.flow.module', 'three.flow.module.write', 'three.flow.module.put']), moduleController.put());
+router.delete('/flow/:flowId/module' + deco_api_1.ControllerMiddleware.deleteRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, fetchFlow(), deco_api_1.PolicyController.addPolicy(flowIdPolicy()), flowController.registerPolicyMountingPoint(['three.flow.module', 'three.flow.module.write', 'three.flow.module.delete']), moduleController.delete());
+router.get('/report' + deco_api_1.ControllerMiddleware.getAllRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, reportController.prepareQueryFromReq(), flowController.registerPolicyMountingPoint(['three.report.get']), reportController.getAll(null, { enableLastModifiedCaching: false }));
+router.get('/report' + deco_api_1.ControllerMiddleware.getOneRoute(), deco_api_1.AppMiddleware.fetchWithPublicKey, flowController.registerPolicyMountingPoint(['three.report.get']), reportController.getOne());
+router.get('/report' + deco_api_1.ControllerMiddleware.getOneRoute() + '/run', deco_api_1.AppMiddleware.fetchWithPublicKey, flowController.registerPolicyMountingPoint(['three.report.run']), reportController.getOne({ ignoreDownload: true, ignoreSend: true, ignoreOutput: true }), runReport(), reportController.sendLocals('output'));
+router.post('/report' + deco_api_1.ControllerMiddleware.postRoute(), flowController.registerPolicyMountingPoint(['three.report.write', 'three.report.post']), deco_api_1.AppMiddleware.fetchWithPublicKey, reportController.post());
+router.put('/report' + deco_api_1.ControllerMiddleware.putRoute(), flowController.registerPolicyMountingPoint(['three.report.write', 'three.report.put']), deco_api_1.AppMiddleware.fetchWithPublicKey, reportController.put());
+router.delete('/report' + deco_api_1.ControllerMiddleware.deleteRoute(), flowController.registerPolicyMountingPoint(['three.report.write', 'three.report.delete']), deco_api_1.AppMiddleware.fetchWithPublicKey, reportController.delete());
 exports.ThreeCheckerController = router;
 function fetchFlow() {
     return (req, res, next) => {

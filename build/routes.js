@@ -9,9 +9,11 @@ const three_material_controller_1 = require("./controllers/three.material.contro
 const three_object_controller_1 = require("./controllers/three.object.controller");
 const three_site_controller_1 = require("./controllers/three.site.controller");
 const express_1 = require("express");
+const deco_api_1 = require("deco-api");
 const router = express_1.Router();
 exports.ThreeRoutes = router;
 // Mount Three Controllers
+router.use(deco_api_1.PolicyController.registerPolicyMountingPoint('three'));
 router.use('/site', three_site_controller_1.ThreeSiteController);
 router.use('/object', three_object_controller_1.ThreeObjectController);
 router.use('/material', three_material_controller_1.ThreeMaterialController);

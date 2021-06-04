@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { ControllerMiddleware, Query } from 'deco-api';
-export declare class ThreeCoreControllerMiddleware extends ControllerMiddleware {
+import { PolicyController, Query } from 'deco-api';
+export declare class ThreeCoreControllerMiddleware extends PolicyController {
     extendGetAllQuery(query: Query, req: Request, res: Response): Promise<void>;
     importJSON(req: Request, res: Response, next: NextFunction): void;
     importIFC(req: Request, res: Response, next: NextFunction): void;

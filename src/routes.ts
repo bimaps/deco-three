@@ -6,9 +6,12 @@ import { ThreeMaterialController } from './controllers/three.material.controller
 import { ThreeObjectController } from './controllers/three.object.controller';
 import { ThreeSiteController } from './controllers/three.site.controller';
 import { Router } from 'express';
+import { PolicyController } from 'deco-api';
 
 const router: Router = Router();
 // Mount Three Controllers
+router.use(PolicyController.registerPolicyMountingPoint('three'));
+
 router.use('/site', ThreeSiteController);
 router.use('/object', ThreeObjectController);
 router.use('/material', ThreeMaterialController);

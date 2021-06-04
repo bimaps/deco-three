@@ -6,13 +6,13 @@ import { ThreeBuildingModel } from './../models/building.model';
 import { IfcHelper, ThreeImporterHelper, ThreeJsonData } from './../helpers';
 import { ThreeSiteModel } from './../models/site.model';
 import { Request, Response, NextFunction } from 'express';
-import { ControllerMiddleware, Query, Operation, ActionsService } from 'deco-api';
+import { PolicyController, Query, Operation, ActionsService } from 'deco-api';
 import resolvePath from 'object-resolve-path';
 import { ThreeReportAction } from './actions/three.report.action';
 import { ThreeSendReportAction } from './actions/three.send-report.action';
 let debug = require('debug')('app:models:three:controller:core');
 
-export class ThreeCoreControllerMiddleware extends ControllerMiddleware {
+export class ThreeCoreControllerMiddleware extends PolicyController {
 
   public extendGetAllQuery(query: Query, req: Request, res: Response): Promise<void> {
 
@@ -20,7 +20,7 @@ export class ThreeCoreControllerMiddleware extends ControllerMiddleware {
     let readQuery: any = {appId: appId};
     query.addQuery(readQuery);
 
-    return super.extendGetAllQuery(query, req, res).then(() => {
+    return super.extendGetAllQuery(query, req, res, {}).then(() => {
 
     });
   }
