@@ -1,6 +1,6 @@
 {
   "name": "deco-three",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Three module for deco-api project.",
   "main": "build/index.js",
   "scripts": {
