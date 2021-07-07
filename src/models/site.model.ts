@@ -63,4 +63,12 @@ export class ThreeSiteModel extends Model {
   @io.all
   public axis?: Array<number>;
 
+  @type.string
+  @io.all
+  @query.filterable()
+  public business: string;
+  
+  @type.array({type: 'string'})
+  @io.all
+  public authorizedBusinesses?: Array<string>;
 }
