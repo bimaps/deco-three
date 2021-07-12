@@ -1,15 +1,19 @@
 {
   "name": "deco-three",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Three module for deco-api project.",
   "main": "build/index.js",
   "scripts": {
-    "tsc": "tsc",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/bimaps/deco-three"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@argon.ceti.etat-ge.ch:DEVELOPPEUR-GDE/clients/bim/deco-three.git"
   },
   "keywords": [
     "ThreeJS",

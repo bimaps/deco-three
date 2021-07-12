@@ -1,0 +1,86 @@
+variables:
+  # Python CLI & modules
+  BUILD_TOOLS_VERSION: 2.2.1  # 02/12/2020 Released 02/12/2020
+
+  # Parameters
+  IDENTIFIER: main
+
+  APP_NAME: app-11016-deco-three
+  APP_DIRECTORY: .
+  APP_DOCKERFILE: Dockerfile
+  APP_NEXUS_PATH: ch/ge/gde/lab/apps/11016
+  APP_MAIN_BRANCH: master
+  HTTP_PROXY: http://proxygeadm.etat-ge.ch:3128
+  HTTPS_PROXY: http://proxygeadm.etat-ge.ch:3128
+  NO_PROXY: etat-ge.ch,localhost,127.0.0.1,10.0.0.0/8,192.168.99.0/24,192.168.39.0/24
+  http_proxy: http://proxygeadm.etat-ge.ch:3128
+  https_proxy: http://proxygeadm.etat-ge.ch:3128
+  no_proxy: etat-ge.ch,localhost,127.0.0.1,10.0.0.0/8,192.168.99.0/24,192.168.39.0/24
+
+
+cache:
+  key: ${IDENTIFIER}-${BUILD_TOOLS_VERSION}
+  paths:
+    - mybuild
+
+before_script:
+
+  # - cloud-init
+  - source /etc/environment
+  - source gitlab-client-init
+  - source build-tools-init python3.8 ${BUILD_TOOLS_VERSION} mybuild [vault]
+  - mybuild/venv/bin/pip freeze
+
+# FIXME split into multiplate stages (build, test, push)
+# -> Cannot define to run multiple stage on same host, se we have to push & pull or rely on artifacts
+# -> https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1107
+# -> https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1099 for BUILD_DATE...
+
+stages:
+  - build
+
+Build:
+  resource_group: ${IDENTIFIER}
+  stage: build
+  retry: 2
+  rules:
+    # Only if its a push for a branch, not a tag ...
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH'
+  tags:
+    - 'for:container-image'
+    - 'container-mode:buildah'
+    - 'host:rhel8-vm'
+    - 'net:gold-dev'
+  script:
+
+    # -- PREPARE -----------------------------------------------------------------------------------
+
+    - sudo -E mybuild/venv/bin/do-container clean-local-images
+
+    # -- BUILD -------------------------------------------------------------------------------------
+
+    - BUILD_DATE=$(date -u +"%Y%m%d_%H%H%S")
+    - echo ${BUILD_DATE}
+
+    - >
+      sudo -E mybuild/venv/bin/do-container build
+      -n ${APP_NAME}
+      -d ${APP_DIRECTORY}
+      -f ${APP_DOCKERFILE}
+      -t ${BUILD_DATE}-{ref_short} latest
+
+    # -- PUSH --------------------------------------------------------------------------------------
+
+    # Push only if on master branch
+    - >
+      if [ "${CI_COMMIT_BRANCH}" == "${APP_MAIN_BRANCH}" ]; then
+          sudo -E mybuild/venv/bin/do-container push \
+          -n ${APP_NAME} \
+          -d ${APP_DIRECTORY} \
+          -x ${APP_NEXUS_PATH} \
+          -t ${BUILD_DATE}-{ref_short} latest \
+          -u ${NEXUS_DOCKER_PUSH_USERNAME} \
+          -p ${NEXUS_DOCKER_PUSH_PASSWORD}
+      else
+          echo Skipping push to Nexus
+      fi
