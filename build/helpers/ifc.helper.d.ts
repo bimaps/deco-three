@@ -11,7 +11,8 @@ export interface ConvertFileResponse {
     jsonPath?: string;
 }
 export declare class IfcHelper {
-    static HOST: string | undefined;
+    static IFC_SERVICE_HOST: string | undefined;
+    static IFC_SERVICE_API_KEY: string | undefined;
     static convertWithMicroservice(filepath: string, formats?: ('json' | 'obj')[]): Promise<ConvertFileResponse>;
     private static waitForOperationCompletion;
     static convert2obj(filepath: string): Promise<ObjFileResponse>;

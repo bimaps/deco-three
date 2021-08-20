@@ -51,14 +51,17 @@ class IfcHelper {
                 ifcPath: filepath
             };
             const method = 'POST';
-            const url = `${IfcHelper.HOST}/ifc-convert?formats=${formats.join(',')}`;
+            const url = `${IfcHelper.IFC_SERVICE_HOST}/ifc-convert?formats=${formats.join(',')}`;
             debug('convertWithMicroservice method/url', method, url);
             const form = new form_data_1.default();
             form.append('ifc', fs_1.default.createReadStream(filepath));
             debug('convertWithMicroservice form', form);
             const response = yield node_fetch_1.default(url, {
                 method: method,
-                body: form
+                body: form,
+                headers: {
+                    "x-api-key": IfcHelper.IFC_SERVICE_API_KEY || ''
+                }
             });
             const operation = yield response.json();
             debug('convertWithMicroservice operation response', JSON.stringify(operation));
@@ -75,10 +78,13 @@ class IfcHelper {
                 }
                 debug('convertWithMicroservice fileId', fileId);
                 const method = 'GET';
-                const url = `${IfcHelper.HOST}/file/${fileId}.${format}`;
+                const url = `${IfcHelper.IFC_SERVICE_HOST}/file/${fileId}.${format}`;
                 debug('convertWithMicroservice get file method/url', method, url);
                 const response = yield node_fetch_1.default(url, {
-                    method: method
+                    method: method,
+                    headers: {
+                        "x-api-key": IfcHelper.IFC_SERVICE_API_KEY || ''
+                    }
                 });
                 const formatBuffer = yield response.buffer();
                 fs_1.default.writeFileSync(`ignored/${fileId}.${format}`, formatBuffer);
@@ -91,10 +97,13 @@ class IfcHelper {
     static waitForOperationCompletion(operation) {
         return __awaiter(this, void 0, void 0, function* () {
             const method = 'GET';
-            const url = `${IfcHelper.HOST}/ifc-convert/${operation.id}?wait=1`;
+            const url = `${IfcHelper.IFC_SERVICE_HOST}/ifc-convert/${operation.id}?wait=1`;
             debug('waitForOperationCompletion method/url', method, url);
             const response = yield node_fetch_1.default(url, {
-                method: method
+                method: method,
+                headers: {
+                    "x-api-key": IfcHelper.IFC_SERVICE_API_KEY || ''
+                }
             });
             const returnedOperation = yield response.json();
             debug('waitForOperationCompletion operation response', JSON.stringify(returnedOperation));
@@ -459,5 +468,6 @@ class IfcHelper {
     }
 }
 exports.IfcHelper = IfcHelper;
-IfcHelper.HOST = process.env.IFC_SERVICE_HOST;
+IfcHelper.IFC_SERVICE_HOST = process.env.IFC_SERVICE_HOST;
+IfcHelper.IFC_SERVICE_API_KEY = process.env.IFC_SERVICE_API_KEY;
 //# sourceMappingURL=ifc.helper.js.map

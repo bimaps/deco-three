@@ -39,7 +39,8 @@ export interface ConvertFileResponse {
 
 export class IfcHelper {
 
-  public static HOST = process.env.IFC_SERVICE_HOST;
+  public static IFC_SERVICE_HOST = process.env.IFC_SERVICE_HOST;
+  public static IFC_SERVICE_API_KEY = process.env.IFC_SERVICE_API_KEY;
 
   public static async convertWithMicroservice(filepath: string, formats: ('json' | 'obj')[] = ['obj', 'json']): Promise<ConvertFileResponse> {
 
@@ -48,7 +49,7 @@ export class IfcHelper {
     };
 
     const method = 'POST';
-    const url = `${IfcHelper.HOST}/ifc-convert?formats=${formats.join(',')}`;
+    const url = `${IfcHelper.IFC_SERVICE_HOST}/ifc-convert?formats=${formats.join(',')}`;
 
     debug('convertWithMicroservice method/url', method, url);
 
@@ -59,7 +60,10 @@ export class IfcHelper {
 
     const response = await fetch(url, {
       method: method,
-      body: form
+      body: form,
+      headers: {
+        "x-api-key": IfcHelper.IFC_SERVICE_API_KEY || ''
+      }
     });
     const operation = await response.json();
     debug('convertWithMicroservice operation response', JSON.stringify(operation));
@@ -79,11 +83,14 @@ export class IfcHelper {
       }
       debug('convertWithMicroservice fileId', fileId);
       const method = 'GET';
-      const url = `${IfcHelper.HOST}/file/${fileId}.${format}`;
+      const url = `${IfcHelper.IFC_SERVICE_HOST}/file/${fileId}.${format}`;
 
       debug('convertWithMicroservice get file method/url', method, url);
       const response = await fetch(url, {
-        method: method
+        method: method,
+        headers: {
+          "x-api-key": IfcHelper.IFC_SERVICE_API_KEY || ''
+        }
       });
       const formatBuffer = await response.buffer();
       fs.writeFileSync(`ignored/${fileId}.${format}`, formatBuffer);
@@ -97,11 +104,14 @@ export class IfcHelper {
 
   private static async waitForOperationCompletion(operation: {id: string}): Promise<{formats: {[key: string]: string}}> {
     const method = 'GET';
-    const url = `${IfcHelper.HOST}/ifc-convert/${operation.id}?wait=1`;
+    const url = `${IfcHelper.IFC_SERVICE_HOST}/ifc-convert/${operation.id}?wait=1`;
 
     debug('waitForOperationCompletion method/url', method, url);
     const response = await fetch(url, {
-      method: method
+      method: method,
+      headers: {
+        "x-api-key": IfcHelper.IFC_SERVICE_API_KEY || ''
+      }
     });
     const returnedOperation = await response.json();
     debug('waitForOperationCompletion operation response', JSON.stringify(returnedOperation));
