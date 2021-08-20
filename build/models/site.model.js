@@ -96,6 +96,15 @@ __decorate([
     deco_api_1.type.array({ type: 'float' }),
     deco_api_1.io.all
 ], ThreeSiteModel.prototype, "axis", void 0);
+__decorate([
+    deco_api_1.type.string,
+    deco_api_1.io.all,
+    deco_api_1.query.filterable()
+], ThreeSiteModel.prototype, "business", void 0);
+__decorate([
+    deco_api_1.type.array({ type: 'string' }),
+    deco_api_1.io.all
+], ThreeSiteModel.prototype, "authorizedBusinesses", void 0);
 ThreeSiteModel = __decorate([
     deco_api_1.model('three_site')
 ], ThreeSiteModel);

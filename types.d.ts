@@ -20,3 +20,8 @@ declare module 'ifc-convert' {
   var ifcConvert: any;
   export = ifcConvert;
 }
+
+declare module 'form-data' {
+  var FormData: any;
+  export = FormData;
+}

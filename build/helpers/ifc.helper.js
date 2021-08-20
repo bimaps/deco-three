@@ -41,8 +41,79 @@ const mv_1 = __importDefault(require("mv"));
 const ifc_convert_1 = __importDefault(require("ifc-convert"));
 const ifc2json_wrapper_1 = require("ifc2json-wrapper");
 const THREE = __importStar(require("three"));
+const node_fetch_1 = __importDefault(require("node-fetch"));
+const form_data_1 = __importDefault(require("form-data"));
 const debug = require('debug')('app:helpers:ifc');
 class IfcHelper {
+    static convertWithMicroservice(filepath, formats = ['obj', 'json']) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const returnedValue = {
+                ifcPath: filepath
+            };
+            const method = 'POST';
+            const url = `${IfcHelper.HOST}/ifc-convert?formats=${formats.join(',')}`;
+            debug('convertWithMicroservice method/url', method, url);
+            const form = new form_data_1.default();
+            form.append('ifc', fs_1.default.createReadStream(filepath));
+            debug('convertWithMicroservice form', form);
+            const response = yield node_fetch_1.default(url, {
+                method: method,
+                body: form
+            });
+            const operation = yield response.json();
+            debug('convertWithMicroservice operation response', JSON.stringify(operation));
+            const completedOperation = yield IfcHelper.waitForOperationCompletion(operation);
+            const formatsToParse = formats;
+            if (formats.includes('obj')) {
+                formatsToParse.push('mtl');
+            }
+            for (const format of formatsToParse) {
+                debug('convertWithMicroservice fetching file for format', format);
+                const fileId = completedOperation.formats[format];
+                if (!fileId) {
+                    throw new Error('Missing fileId for format: ' + format);
+                }
+                debug('convertWithMicroservice fileId', fileId);
+                const method = 'GET';
+                const url = `${IfcHelper.HOST}/file/${fileId}.${format}`;
+                debug('convertWithMicroservice get file method/url', method, url);
+                const response = yield node_fetch_1.default(url, {
+                    method: method
+                });
+                const formatBuffer = yield response.buffer();
+                fs_1.default.writeFileSync(`ignored/${fileId}.${format}`, formatBuffer);
+                returnedValue[format + 'Path'] = `ignored/${fileId}.${format}`;
+            }
+            debug('convertWithMicroservice returnedValue', returnedValue);
+            return returnedValue;
+        });
+    }
+    static waitForOperationCompletion(operation) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const method = 'GET';
+            const url = `${IfcHelper.HOST}/ifc-convert/${operation.id}?wait=1`;
+            debug('waitForOperationCompletion method/url', method, url);
+            const response = yield node_fetch_1.default(url, {
+                method: method
+            });
+            const returnedOperation = yield response.json();
+            debug('waitForOperationCompletion operation response', JSON.stringify(returnedOperation));
+            if (returnedOperation.status === 'succeeded') {
+                return returnedOperation;
+            }
+            else if (returnedOperation.status === 'queued' || returnedOperation.status === 'started') {
+                return IfcHelper.waitForOperationCompletion(operation);
+            }
+            else if (returnedOperation.status === 'canceled') {
+                throw new Error('Operation canceled');
+            }
+            else if (returnedOperation.status === 'errored') {
+                throw new Error(returnedOperation.error || 'Unknown operation error');
+            }
+            throw new Error('Unknown error');
+        });
+    }
+    // @deprectated, use convertWithMicroservice instead
     static convert2obj(filepath) {
         const match = filepath.match(/\/?([^\/]*)$/);
         if (match === null || match.length < 2)
@@ -86,24 +157,35 @@ class IfcHelper {
     // public static parseIfcMetadata(filepath: string, importId: string) {
     //   throw new Error('parseIfcMetadata is not available on this server');
     // }
+    // it is @deprectated to call this method
+    // with an IFC file. The conversion must be done with
+    // IfcHelper.convertWithMicroservice and the json filepath
+    // must be passed on to parseIfcMetadata
     static parseIfcMetadata(filepath, site, importId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let destinationpath = '';
-            const options = {
-                stdout: '',
-                stderr: '' // ifc2json will store in this property the result of stderr
-            };
-            try {
-                destinationpath = yield ifc2json_wrapper_1.ifc2json(filepath, options);
+            let jsonstring = '';
+            if (filepath.includes('.json')) {
+                jsonstring = fs_1.default.readFileSync(filepath, { encoding: 'utf-8' });
             }
-            catch (error) {
-                console.log('IFC2JSON');
-                console.log('stdout', options.stdout);
-                console.log('stderr', options.stderr);
-                throw error;
+            else {
+                let destinationpath = '';
+                const options = {
+                    stdout: '',
+                    stderr: '' // ifc2json will store in this property the result of stderr
+                };
+                try {
+                    destinationpath = yield ifc2json_wrapper_1.ifc2json(filepath, options);
+                }
+                catch (error) {
+                    console.log('IFC2JSON');
+                    console.log('stdout', options.stdout);
+                    console.log('stderr', options.stderr);
+                    throw error;
+                }
+                console.log('ifc2json stdout:', options.stdout);
+                jsonstring = fs_1.default.readFileSync(destinationpath, { encoding: 'utf-8' });
             }
-            console.log('ifc2json stdout:', options.stdout);
-            const jsonstring = fs_1.default.readFileSync(destinationpath, { encoding: 'utf-8' });
+            debug('jsonstring 0...200', jsonstring.substr(0, 200));
             let json;
             try {
                 json = JSON.parse(jsonstring);
@@ -377,4 +459,5 @@ class IfcHelper {
     }
 }
 exports.IfcHelper = IfcHelper;
+IfcHelper.HOST = process.env.IFC_SERVICE_HOST;
 //# sourceMappingURL=ifc.helper.js.map

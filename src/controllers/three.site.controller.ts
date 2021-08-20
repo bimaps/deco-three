@@ -48,7 +48,7 @@ router.post(
   mdController.getOne({ignoreDownload: true, ignoreOutput: true, ignoreSend: true}),
   diskUpload.single('ifc'),
   Operation.startMiddelware,
-  mdController.importIFC,
+  mdController.importIFCWithMicroService,
   Operation.sendCurrentOperation
 );
 

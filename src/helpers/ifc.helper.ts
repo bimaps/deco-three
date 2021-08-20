@@ -7,10 +7,13 @@ import fs from 'fs';
 import mv from 'mv';
 import ifcConvert from 'ifc-convert';
 import { ifc2json } from 'ifc2json-wrapper';
-import { ObjectId, Metadata, Query } from 'deco-api'; 
+import { ObjectId, Metadata, Query } from 'deco-api'; 
 import * as THREE from 'three';
+import fetch from 'node-fetch';
+import FormData from 'form-data';
 
 const debug = require('debug')('app:helpers:ifc');
+
 
 export interface ObjFileResponse {
   ifcPath: string;
@@ -27,17 +30,104 @@ interface UserDataFromIfc {
   boundary?: GeoJSON.Feature;
 }
 
+export interface ConvertFileResponse {
+  ifcPath: string;
+  objPath?: string;
+  mtlPath?: string;
+  jsonPath?: string;
+}
+
 export class IfcHelper {
+
+  public static HOST = process.env.IFC_SERVICE_HOST;
+
+  public static async convertWithMicroservice(filepath: string, formats: ('json' | 'obj')[] = ['obj', 'json']): Promise<ConvertFileResponse> {
+
+    const returnedValue: ConvertFileResponse = {
+      ifcPath: filepath
+    };
+
+    const method = 'POST';
+    const url = `${IfcHelper.HOST}/ifc-convert?formats=${formats.join(',')}`;
+
+    debug('convertWithMicroservice method/url', method, url);
+
+    const form = new FormData();
+    form.append('ifc', fs.createReadStream(filepath));
+
+    debug('convertWithMicroservice form', form);
+
+    const response = await fetch(url, {
+      method: method,
+      body: form
+    });
+    const operation = await response.json();
+    debug('convertWithMicroservice operation response', JSON.stringify(operation));
+
+    const completedOperation = await IfcHelper.waitForOperationCompletion(operation);
+
+    const formatsToParse: ('json' | 'obj' | 'mtl')[] = formats;
+    if (formats.includes('obj')) {
+      formatsToParse.push('mtl');
+    }
+    
+    for (const format of formatsToParse) {
+      debug('convertWithMicroservice fetching file for format', format);
+      const fileId = completedOperation.formats[format];
+      if (!fileId) {
+        throw new Error('Missing fileId for format: ' + format);
+      }
+      debug('convertWithMicroservice fileId', fileId);
+      const method = 'GET';
+      const url = `${IfcHelper.HOST}/file/${fileId}.${format}`;
+
+      debug('convertWithMicroservice get file method/url', method, url);
+      const response = await fetch(url, {
+        method: method
+      });
+      const formatBuffer = await response.buffer();
+      fs.writeFileSync(`ignored/${fileId}.${format}`, formatBuffer);
+      (returnedValue as any)[format + 'Path'] = `ignored/${fileId}.${format}`;
+    }
+
+    debug('convertWithMicroservice returnedValue', returnedValue)
+
+    return returnedValue;
+  }
+
+  private static async waitForOperationCompletion(operation: {id: string}): Promise<{formats: {[key: string]: string}}> {
+    const method = 'GET';
+    const url = `${IfcHelper.HOST}/ifc-convert/${operation.id}?wait=1`;
+
+    debug('waitForOperationCompletion method/url', method, url);
+    const response = await fetch(url, {
+      method: method
+    });
+    const returnedOperation = await response.json();
+    debug('waitForOperationCompletion operation response', JSON.stringify(returnedOperation));
+    if (returnedOperation.status === 'succeeded') {
+      return returnedOperation;
+    } else if (returnedOperation.status === 'queued' || returnedOperation.status === 'started') {
+      return IfcHelper.waitForOperationCompletion(operation);
+    } else if (returnedOperation.status === 'canceled') {
+      throw new Error('Operation canceled');
+    } else if (returnedOperation.status === 'errored') {
+      throw new Error(returnedOperation.error || 'Unknown operation error');
+    }
+    throw new Error('Unknown error');
+  }
+
+  // @deprectated, use convertWithMicroservice instead
   public static convert2obj(filepath: string): Promise<ObjFileResponse> {
     const match = filepath.match(/\/?([^\/]*)$/);
-    if (match === null || match.length < 2) throw new Error('Invalid filepath');
+    if (match === null || match.length < 2) throw new Error('Invalid filepath');
     const filename = match[1];
     if (filename.indexOf('.') !== -1) throw new Error('Invalid filename, must not contain extension');
     const src = `ignored/${filename}.ifc`;
     const dest = `ignored/${filename}.obj`;
     const mtlDest = `ignored/${filename}.mtl`;
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       mv(filepath, src, (error) => {
         if (error) return reject(error);
         resolve();
@@ -69,22 +159,34 @@ export class IfcHelper {
   //   throw new Error('parseIfcMetadata is not available on this server');
   // }
 
+  // it is @deprectated to call this method
+  // with an IFC file. The conversion must be done with
+  // IfcHelper.convertWithMicroservice and the json filepath
+  // must be passed on to parseIfcMetadata
   public static async parseIfcMetadata(filepath: string, site: ThreeSiteModel, importId: string): Promise<void> {
-    let destinationpath = '';
-    const options = {
-      stdout: '', // ifc2json will store in this property the result of stdout
-      stderr: '' // ifc2json will store in this property the result of stderr
-    };
-    try {
-      destinationpath = await ifc2json(filepath, options);
-    } catch (error) {
-      console.log('IFC2JSON');
-      console.log('stdout', options.stdout);
-      console.log('stderr', options.stderr);
-      throw error;
+    let jsonstring: string = '';
+    if (filepath.includes('.json')) {
+      jsonstring = fs.readFileSync(filepath, {encoding: 'utf-8'});
+    } else {
+      let destinationpath = '';
+      const options = {
+        stdout: '', // ifc2json will store in this property the result of stdout
+        stderr: '' // ifc2json will store in this property the result of stderr
+      };
+      try {
+        destinationpath = await ifc2json(filepath, options);
+      } catch (error) {
+        console.log('IFC2JSON');
+        console.log('stdout', options.stdout);
+        console.log('stderr', options.stderr);
+        throw error;
+      }
+      console.log('ifc2json stdout:', options.stdout);
+      jsonstring = fs.readFileSync(destinationpath, {encoding: 'utf-8'});
     }
-    console.log('ifc2json stdout:', options.stdout);
-    const jsonstring = fs.readFileSync(destinationpath, {encoding: 'utf-8'});
+
+    debug('jsonstring 0...200', jsonstring.substr(0, 200));
+    
     let json: Array<UserDataFromIfc>
     try {
       json = JSON.parse(jsonstring);
@@ -171,7 +273,7 @@ export class IfcHelper {
           building.siteId = site._id;
           building.appId = site.appId;
         }
-        building.name = data.userData.name || '';
+        building.name = data.userData.name || '';
         building.ifcBuildingId = data.id;
         building.importId = importId;
         building.userData = data.userData;
@@ -205,7 +307,7 @@ export class IfcHelper {
           storey.siteId = site._id;
           storey.appId = site.appId;
         }
-        storey.name = data.userData.name || '';
+        storey.name = data.userData.name || '';
         storey.buildingId = ifc2objectId[data.userData.buildingId];
         storey.ifcStoreyId = data.id;
         storey.importId = importId;
@@ -240,7 +342,7 @@ export class IfcHelper {
           space.siteId = site._id;
           space.appId = site.appId;
         }
-        space.name = data.userData.name || '';
+        space.name = data.userData.name || '';
         space.buildingId = ifc2objectId[data.userData.buildingId];
         space.storeyIds = [];
         if (Array.isArray(data.userData.buildingStorey)) {
@@ -324,11 +426,11 @@ export class IfcHelper {
       object.metadata = [];
     }
     const currentKeys: Array<string> = Object.keys(object.metadata);
-    for (let key in userData.pset || {}) {
+    for (let key in userData.pset || {}) {
       const index = currentKeys.indexOf(key);
       if (index !== -1) {
         object.metadata[index].value = userData.pset[key];
-      } else {
+      } else {
         object.metadata.push({key: key, value: userData.pset[key]});
       }
     }
@@ -355,7 +457,7 @@ export class IfcHelper {
           }
         }
         object.storeys = storeys;
-      } else {
+      } else {
         object.storeys = [];
       }
       if (object.userData.spaceId && ifc2objectId[object.userData.spaceId]) {

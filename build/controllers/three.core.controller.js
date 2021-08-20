@@ -137,6 +137,74 @@ class ThreeCoreControllerMiddleware extends deco_api_1.PolicyController {
             return next(new Error('IFC file not found'));
         }
     }
+    importIFCWithMicroService(req, res, next) {
+        if (!res.locals.element)
+            return next(new Error('Import IFC requires to first fetch a site in res.locals.element'));
+        let rightInstance = res.locals.element instanceof site_model_1.ThreeSiteModel;
+        if (!rightInstance)
+            return next(new Error('res.locals.element is not a ThreeSiteModel instance'));
+        if (!res.locals.app)
+            return next(new Error('Missing res.locals.app'));
+        const site = res.locals.element;
+        let _ifcPath;
+        let _jsonPath;
+        const importer = new helpers_1.ThreeImporterHelper();
+        if (req.file && req.file.path) {
+            next(); // pass to the next middleware => will send the currentOperation back to client
+            helpers_1.IfcHelper.convertWithMicroservice(req.file.path, ['obj', 'json']).then(({ ifcPath, objPath, mtlPath, jsonPath }) => {
+                _ifcPath = ifcPath;
+                _jsonPath = jsonPath;
+                return importer.loadMTL(mtlPath).then(() => {
+                    return importer.loadOBJ(objPath);
+                }).then((obj) => {
+                    return importer.rotate90X(obj);
+                });
+            }).catch((error) => {
+                console.error(error);
+                if (error && error.message)
+                    throw error;
+                else
+                    throw new Error('Unexpected error while converting ifc to obj');
+            }).then((result) => {
+                if (!result)
+                    throw new Error('No result when converting and loading IFC in obj/mtl');
+                if (typeof result !== 'boolean' && result.type) {
+                    let json = result.toJSON();
+                    let importId = typeof req.query.importId === 'string' ? req.query.importId : undefined;
+                    let saveLights = req.query.saveLights ? true : false;
+                    return importer.start(site, json, { importId: importId, saveLights: saveLights });
+                }
+                else {
+                    debug('Unexpected result');
+                    debug('result', result);
+                    throw new Error('Unexpected result from ifcConvert');
+                }
+            }).then(() => {
+                // now we can add the metadata from the IFC
+                return helpers_1.IfcHelper.parseIfcMetadata(_jsonPath, site, importer.importId);
+            }).then(() => {
+                deco_api_1.Operation.completeCurrentOperation(res, 'completed', 'Successfully imported').catch((error) => {
+                    debug('Error while setting the operation completed');
+                    debug(' - Error: ', error.message);
+                });
+                if (req.query.reportId && req.query.email) {
+                    deco_api_1.ActionsService.runActions(res, [[
+                            three_report_action_1.ThreeReportAction,
+                            three_send_report_action_1.ThreeSendReportAction,
+                            three_delete_site_actions_1.ThreeDeleteSiteAction
+                        ]], { siteId: site._id, reportId: req.query.reportId, ifcFilename: req.file.originalname, email: req.query.email });
+                }
+            }).catch((error) => {
+                deco_api_1.Operation.completeCurrentOperation(res, 'errored', error.message).catch((error) => {
+                    debug('Error while setting the operation completed');
+                    debug(' - Error: ', error.message);
+                });
+            });
+        }
+        else {
+            return next(new Error('IFC file not found'));
+        }
+    }
     deleteData(req, res, next) {
         if (!res.locals.element)
             return next(new Error('Import JSON requires to first fetch a site in res.locals.element'));

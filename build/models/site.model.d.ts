@@ -14,5 +14,7 @@ export declare class ThreeSiteModel extends Model {
     location?: Array<number>;
     refDirection?: Array<number>;
     axis?: Array<number>;
+    business: string;
+    authorizedBusinesses?: Array<string>;
 }
 //# sourceMappingURL=site.model.d.ts.map

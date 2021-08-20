@@ -47,7 +47,7 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
     }
     
     if (!json.metadata) return next(new Error('Missing metadata in json, are you sure you upload the right JSON format?'));
-    if (!json.metadata.version || parseFloat(json.metadata.version) !== 4.5) return next(new Error('Invalid or not supported version. We currently support version 4.5'));
+    if (!json.metadata.version || parseFloat(json.metadata.version) !== 4.5) return next(new Error('Invalid or not supported version. We currently support version 4.5'));
     
     let importId: string | undefined = typeof req.query.importId === 'string' ? req.query.importId : undefined;
 
@@ -122,6 +122,71 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
     }
   }
 
+  public importIFCWithMicroService(req: Request, res: Response, next: NextFunction) {
+    if (!res.locals.element) return next(new Error('Import IFC requires to first fetch a site in res.locals.element'));
+    let rightInstance = res.locals.element instanceof ThreeSiteModel;
+    if (!rightInstance) return next(new Error('res.locals.element is not a ThreeSiteModel instance'));
+    if (!res.locals.app) return next(new Error('Missing res.locals.app'));
+
+    const site: ThreeSiteModel = res.locals.element;
+
+    let _ifcPath: string;
+    let _jsonPath: string | undefined;
+    const importer = new ThreeImporterHelper();
+
+    if (req.file && req.file.path) {
+      next(); // pass to the next middleware => will send the currentOperation back to client
+
+
+      IfcHelper.convertWithMicroservice(req.file.path, ['obj', 'json']).then(({ifcPath, objPath, mtlPath, jsonPath}) => {
+        _ifcPath = ifcPath;
+        _jsonPath = jsonPath;
+        return importer.loadMTL(mtlPath as string).then(() => {
+          return importer.loadOBJ(objPath as string);
+        }).then((obj) => {
+          return importer.rotate90X(obj);
+        })
+      }).catch((error) => {
+        console.error(error);
+        if (error && error.message) throw error;
+        else throw new Error('Unexpected error while converting ifc to obj');
+      }).then((result) => {
+        if (!result) throw new Error('No result when converting and loading IFC in obj/mtl');
+        if (typeof result !== 'boolean' && result.type) {
+          let json: ThreeJsonData = result.toJSON();
+          let importId: string | undefined = typeof req.query.importId === 'string' ? req.query.importId : undefined;
+          let saveLights = req.query.saveLights ? true : false;
+          return importer.start(site, json, {importId: importId, saveLights: saveLights});
+        } else {
+          debug('Unexpected result');
+          debug('result', result);
+          throw new Error('Unexpected result from ifcConvert');
+        }
+      }).then(() => {
+        // now we can add the metadata from the IFC
+        return IfcHelper.parseIfcMetadata(_jsonPath as string, site, importer.importId);
+      }).then(() => {
+        Operation.completeCurrentOperation(res, 'completed', 'Successfully imported').catch((error) => {
+          debug('Error while setting the operation completed');
+          debug(' - Error: ', error.message);
+        });
+        if (req.query.reportId && req.query.email) {
+          ActionsService.runActions(res, [[
+            ThreeReportAction, 
+            ThreeSendReportAction,
+            ThreeDeleteSiteAction]], {siteId: site._id, reportId: req.query.reportId, ifcFilename: req.file.originalname, email: req.query.email});
+        }
+      }).catch((error) => {
+        Operation.completeCurrentOperation(res, 'errored', error.message).catch((error) => {
+          debug('Error while setting the operation completed');
+          debug(' - Error: ', error.message);
+        });
+      });
+    } else {
+      return next(new Error('IFC file not found'));
+    }
+  }
+
   public deleteData(req: Request, res: Response, next: NextFunction) {
     if (!res.locals.element) return next(new Error('Import JSON requires to first fetch a site in res.locals.element'));
     let rightInstance = res.locals.element instanceof ThreeSiteModel;
@@ -129,7 +194,7 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
     if (!res.locals.app) return next(new Error('Missing res.locals.app'));
 
     let modelNames: Array<string> = req.body.models;
-    if (!Array.isArray(modelNames) || !modelNames.length) return next(new Error('Invalid models'));
+    if (!Array.isArray(modelNames) || !modelNames.length) return next(new Error('Invalid models'));
 
     let importer = new ThreeImporterHelper();
     importer.removeData(res.locals.element._id, modelNames).then((response) => {
