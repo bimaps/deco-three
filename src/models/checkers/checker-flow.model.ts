@@ -7,7 +7,7 @@ import { ThreeObjectModel } from './../object.model';
 import { CheckerModuleBaseModel,  CheckerValueCondition, CheckerFlow, CheckerModuleIORef } from './checker-internals';
 import { CheckerModuleIOTypeValue, CheckerModuleIOType, CheckerObjectCondition } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
-import { model, Model, type, io, query, validate, ObjectId, mongo, Query, Parser, AppModel } from 'deco-api';
+import { model, Model, type, io, query, validate, ObjectId, mongo, Query, Parser, AppModel } from '@bim/deco-api';
 import * as THREE from 'three';
 import moment from 'moment';
 import resolvePath from 'object-resolve-path';

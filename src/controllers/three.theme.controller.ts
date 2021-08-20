@@ -1,7 +1,7 @@
 import { ThreeThemeModel } from './../models/theme.model';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { Router } from 'express';
-import { ControllerMiddleware, AppMiddleware } from 'deco-api';
+import { ControllerMiddleware, AppMiddleware } from '@bim/deco-api';
 let debug = require('debug')('app:controller:three:theme');
 
 const router: Router = Router();

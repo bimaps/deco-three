@@ -1,5 +1,5 @@
 import { ThreeSpaceModel } from './../models/space.model';
-import { PDF, PDFTextBlock } from 'deco-api';
+import { PDF, PDFTextBlock } from '@bim/deco-api';
 import { ThreeGenerator } from '../helpers/three.generator';
 import { ThreeMaterialModel } from './../models/material.model';
 import { ThreeObjectModel } from './../models/object.model';
@@ -8,7 +8,7 @@ import { ThreeCheckerReportModel } from './../models/checker-report.model';
 import { ThreeGeometryModel } from './../models/geometry.model';
 import { ThreeSiteModel } from './../models/site.model';
 import { Request, Response, NextFunction } from 'express';
-import { ControllerMiddleware, Query, ObjectId } from 'deco-api';
+import { ControllerMiddleware, Query, ObjectId } from '@bim/deco-api';
 import * as THREE from 'three';
 import resolvePath from 'object-resolve-path';
 import moment from 'moment';

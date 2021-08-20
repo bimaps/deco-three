@@ -2,7 +2,7 @@ import { ThreeCheckerConfigModel } from './../models/checker-config.model';
 import { ThreeCheckerReportModel } from './../models/checker-report.model';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { Router } from 'express';
-import { ControllerMiddleware, AppMiddleware, CacheLastModified } from 'deco-api';
+import { ControllerMiddleware, AppMiddleware, CacheLastModified } from '@bim/deco-api';
 let debug = require('debug')('app:controller:three:geometry');
 
 const router: Router = Router();

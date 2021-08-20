@@ -1,7 +1,7 @@
 import { ThreeGeometryModel } from './../models/geometry.model';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { Router } from 'express';
-import { ControllerMiddleware,  CacheLastModified, AppMiddleware } from 'deco-api';
+import { ControllerMiddleware,  CacheLastModified, AppMiddleware } from '@bim/deco-api';
 let debug = require('debug')('app:controller:three:geometry');
 
 const router: Router = Router();

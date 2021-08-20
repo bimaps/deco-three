@@ -3,7 +3,7 @@ import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerM
 import { CheckerModuleTypeOptions } from './checker-internals';
 import { CheckerObjectCondition, CheckerConditionOperator } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from 'deco-api';
+import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-filter');
 
 @model('checker_module')

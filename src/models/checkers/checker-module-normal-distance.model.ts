@@ -2,7 +2,7 @@ import { CheckerModuleType } from './checker-internals';
 import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
 import { CheckerModuleTypeOptions, CheckerModuleNormalDistance, CheckerModuleIORef } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from 'deco-api';
+import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 import * as THREE from 'three';
 
 let debug = require('debug')('app:models:three:checker:module-normal-distance');

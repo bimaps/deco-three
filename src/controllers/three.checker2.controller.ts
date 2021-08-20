@@ -4,7 +4,7 @@ import { CheckerFlowModel, modelsByType, ReportOutput, FlowOutput } from './../m
 import { CheckerModuleBaseModel } from './../models/checkers/checker-internals';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { Router, Request, Response, NextFunction } from 'express';
-import { ObjectId, ControllerMiddleware, Model, AppMiddleware, PolicyFactory, PolicyController, CacheLastModified } from 'deco-api';
+import { ObjectId, ControllerMiddleware, Model, AppMiddleware, PolicyFactory, PolicyController, CacheLastModified } from '@bim/deco-api';
 let debug = require('debug')('app:controller:three:geometry');
 
 const router: Router = Router();

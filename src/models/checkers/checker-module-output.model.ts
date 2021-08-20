@@ -3,7 +3,7 @@ import { CheckerModuleType } from './checker-internals';
 import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
 import { CheckerModuleOutput, CheckerOutput, CheckerModuleTypeOptions } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from 'deco-api';
+import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-reducer');
 
 @model('checker_module')

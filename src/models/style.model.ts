@@ -1,5 +1,5 @@
 import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, mongo, AppModel } from 'deco-api';
+import { model, Model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:style');
 
 export interface ThreePos {

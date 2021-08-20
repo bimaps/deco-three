@@ -1,5 +1,5 @@
 import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, Metadata, AppModel, mongo } from 'deco-api';
+import { model, Model, type, io, query, validate, ObjectId, Metadata, AppModel, mongo } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker-config');
 
 @model('checker_config')

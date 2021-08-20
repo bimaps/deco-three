@@ -6,7 +6,7 @@ import { ThreeBuildingModel } from './../models/building.model';
 import { IfcHelper, ThreeImporterHelper, ThreeJsonData } from './../helpers';
 import { ThreeSiteModel } from './../models/site.model';
 import { Request, Response, NextFunction } from 'express';
-import { PolicyController, Query, Operation, ActionsService } from 'deco-api';
+import { PolicyController, Query, Operation, ActionsService } from '@bim/deco-api';
 import resolvePath from 'object-resolve-path';
 import { ThreeReportAction } from './actions/three.report.action';
 import { ThreeSendReportAction } from './actions/three.send-report.action';

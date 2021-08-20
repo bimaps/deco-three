@@ -2,7 +2,7 @@ import { CheckerModuleType } from './checker-internals';
 import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
 import { CheckerModuleMath, CheckerModuleTypeOptions } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from 'deco-api';
+import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 import * as math from 'mathjs';
 let debug = require('debug')('app:models:three:checker:module-extract');
 

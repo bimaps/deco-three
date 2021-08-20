@@ -1,4 +1,4 @@
-import { AppModel, NotificationEmailService } from 'deco-api';
+import { AppModel, NotificationEmailService } from '@bim/deco-api';
 import { Response } from 'express';
 import { Attachment } from 'nodemailer/lib/mailer';
 import path from 'path';

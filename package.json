@@ -1,6 +1,6 @@
 {
   "name": "@bim/deco-three",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Three module for deco-api project.",
   "main": "build/index.js",
   "scripts": {
@@ -22,11 +22,11 @@
   "author": "platform5",
   "license": "AGPL-3.0-or-later",
   "dependencies": {
+    "@bim/deco-api": "^1.2.0",
     "@types/jsdom": "^12.2.4",
     "@types/mathjs": "^6.0.11",
     "@types/mkdirp": "^0.5.2",
     "@types/mv": "^2.1.0",
-    "deco-api": "^1.1.0",
     "mathjs": "^9.2.0",
     "mv": "^2.1.1"
   },

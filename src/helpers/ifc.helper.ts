@@ -7,7 +7,7 @@ import fs from 'fs';
 import mv from 'mv';
 import ifcConvert from 'ifc-convert';
 import { ifc2json } from 'ifc2json-wrapper';
-import { ObjectId, Metadata, Query } from 'deco-api'; 
+import { ObjectId, Metadata, Query } from '@bim/deco-api'; 
 import * as THREE from 'three';
 
 const debug = require('debug')('app:helpers:ifc');

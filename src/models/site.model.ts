@@ -1,4 +1,4 @@
-import { model, Model, type, io, query, validate, ObjectId, Metadata, mongo, AppModel } from 'deco-api';
+import { model, Model, type, io, query, validate, ObjectId, Metadata, mongo, AppModel } from '@bim/deco-api';
 import * as THREE from 'three';
 let debug = require('debug')('app:models:three:site');
 

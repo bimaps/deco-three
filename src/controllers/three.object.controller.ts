@@ -1,7 +1,7 @@
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { ThreeObjectModel } from './../models/object.model';
 import { Router } from 'express';
-import { ControllerMiddleware, AppMiddleware } from 'deco-api';
+import { ControllerMiddleware, AppMiddleware } from '@bim/deco-api';
 let debug = require('debug')('app:controller:three:object');
 
 const router: Router = Router();

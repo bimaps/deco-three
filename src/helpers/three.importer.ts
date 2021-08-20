@@ -9,7 +9,7 @@ import { ThreeGeometryModel } from './../models/geometry.model';
 import { ThreeMaterialModel } from './../models/material.model';
 import { ThreeBuildingModel } from './../models/building.model';
 import { ThreeStoreyModel } from './../models/storey.model';
-import { ObjectId, Model } from 'deco-api';
+import { ObjectId, Model } from '@bim/deco-api';
 import { ThreeMaterialHelper } from './three.material';
 import crypto from 'crypto';
 import * as THREE from 'three';

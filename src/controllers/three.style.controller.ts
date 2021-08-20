@@ -2,7 +2,7 @@ import { ThreeStyleModel } from './../models/style.model';
 import { ThreeThemeModel } from './../models/theme.model';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { Router, Request, Response, NextFunction } from 'express';
-import { ControllerMiddleware, Query, AppMiddleware } from 'deco-api';
+import { ControllerMiddleware, Query, AppMiddleware } from '@bim/deco-api';
 let debug = require('debug')('app:controller:three:style');
 
 const router: Router = Router();

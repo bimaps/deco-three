@@ -1,7 +1,7 @@
 import { CheckerModuleIOStyle } from './checker-interfaces';
 import { CheckerModuleBase, CheckerModuleType, CheckerModuleIOType, CheckerModuleIOTypeValue, CheckerFlowModel } from './checker-internals';
 import { CheckerModuleIORef, modelsByType } from './checker-internals';
-import { model, ObjectId, Model, InstanceFromDocumentOptions } from 'deco-api';
+import { model, ObjectId, Model, InstanceFromDocumentOptions } from '@bim/deco-api';
 import { Request, Response } from 'express';
 
 let debug = require('debug')('app:models:three:checker:module-base');

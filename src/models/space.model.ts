@@ -1,7 +1,7 @@
 import { ThreeStoreyModel } from './storey.model';
 import { ThreeBuildingModel } from './building.model';
 import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, Metadata, AppModel, mongo } from 'deco-api';
+import { model, Model, type, io, query, validate, ObjectId, Metadata, AppModel, mongo } from '@bim/deco-api';
 import GeoJSON from 'geojson';
 let debug = require('debug')('app:models:three:space');
 

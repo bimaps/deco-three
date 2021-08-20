@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ObjectId } from 'deco-api';
+import { ObjectId } from '@bim/deco-api';
 
 export type CheckerModuleType = 'filter' | 'extract' | 'math' | 'reducer' | 'if' | 'projection' | 'distance' | 'normal-distance' | 'output';
 export const CheckerModuleTypeOptions = ['filter', 'extract', 'math', 'reducer', 'if', 'projection', 'distance', 'normal-distance', 'output'];

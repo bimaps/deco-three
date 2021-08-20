@@ -2,7 +2,7 @@ import { ThreeSpaceModel } from './space.model';
 import { ThreeStoreyModel } from './storey.model';
 import { ThreeBuildingModel } from './building.model';
 import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, AppModel, mongo } from 'deco-api';
+import { model, Model, type, io, query, validate, ObjectId, AppModel, mongo } from '@bim/deco-api';
 import * as THREE from 'three';
 let debug = require('debug')('app:models:three:object');
 

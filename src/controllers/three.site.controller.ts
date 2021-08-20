@@ -2,7 +2,7 @@ import { ThreeCheckerControllerMiddleware } from './three.checker.controller.mid
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { ThreeSiteModel } from './../models/site.model';
 import { Router } from 'express';
-import { ControllerMiddleware, AppMiddleware, Operation } from 'deco-api';
+import { ControllerMiddleware, AppMiddleware, Operation } from '@bim/deco-api';
 import multer from 'multer';
 const storage = multer.memoryStorage()
 const disk = multer.diskStorage({});

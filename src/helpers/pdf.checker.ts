@@ -1,5 +1,5 @@
 import { CheckerJsonOutput, ReportOutput, FlowOutput } from './../models/checkers/checker-internals';
-import { PDF, PDFTextBlock } from 'deco-api';
+import { PDF, PDFTextBlock } from '@bim/deco-api';
 
 export class PdfChecker extends PDF {
 
