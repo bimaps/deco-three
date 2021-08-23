@@ -1,14 +1,14 @@
 import { ThreeUtils } from './../../helpers/three-utils';
-import { CheckerModuleType, CheckerExtractTypeOptions } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
-import { CheckerModuleExtract, CheckerModuleTypeOptions, CheckerExtractType, CheckerModuleIORef } from './checker-internals';
+import { ThreeModuleType, ThreeModuleExtractTypeOptions } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleExtract, ThreeModuleTypeOptions, ThreeExtractType, ThreeModuleIORef } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 import * as THREE from 'three';
 let debug = require('debug')('app:models:three:checker:module-extract');
 
 @model('three_module')
-export class ThreeModuleExtractModel extends ThreeModuleBaseModel implements CheckerModuleExtract {
+export class ThreeModuleExtractModel extends ThreeModuleBaseModel implements ThreeModuleExtract {
 
   @type.id
   public _id: ObjectId;
@@ -21,23 +21,16 @@ export class ThreeModuleExtractModel extends ThreeModuleBaseModel implements Che
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.model({model: ThreeSiteModel})
-  @io.all
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
-
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: true})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<CheckerModuleIOType> = ['three-objects', 'scene', 'three-object'];
+  public allowedInputTypes: Array<ThreeModuleIOType> = ['three-objects', 'scene', 'three-object'];
   
-  @type.select({options: CheckerModuleTypeOptions})
+  @type.select({options: ThreeModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: CheckerModuleType = 'extract';
+  public moduleType: ThreeModuleType = 'extract';
 
   @type.string
   @io.all
@@ -53,21 +46,21 @@ export class ThreeModuleExtractModel extends ThreeModuleBaseModel implements Che
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: false})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: CheckerModuleIOType;
+  public outputType: ThreeModuleIOType;
 
-  public outputValue: CheckerModuleIOType;
+  public outputValue: ThreeModuleIOType;
 
   @type.string
   @io.toDocument
   @io.output
   public outputSummary: string;
 
-  @type.select({options: CheckerExtractTypeOptions})
+  @type.select({options: ThreeModuleExtractTypeOptions})
   @io.all
-  public extractType: CheckerExtractType;
+  public extractType: ThreeExtractType;
 
   @type.any
   @io.all
@@ -98,7 +91,7 @@ export class ThreeModuleExtractModel extends ThreeModuleBaseModel implements Che
     }
 
     const output: any[] = [];
-    const refs: CheckerModuleIORef[] = [];
+    const refs: ThreeModuleIORef[] = [];
     for (const object of this.inputObjects) {
       if (this.extractType === 'property') {
         let value = flow.fetchProp(object, this.value);
@@ -110,25 +103,25 @@ export class ThreeModuleExtractModel extends ThreeModuleBaseModel implements Che
       } else if (this.extractType === 'faces') {
         const faces = this.extractFaces(object);
         output.push(...faces);
-        const refsForFaces: CheckerModuleIORef[] = Array(faces.length).fill(object);
+        const refsForFaces: ThreeModuleIORef[] = Array(faces.length).fill(object);
         refs.push(...refsForFaces);
         this.outputType = 'triangles';
       } else if (this.extractType === 'edges') {
         const edges = this.extractEdges(object);
         output.push(...edges);
-        const refForEdges: CheckerModuleIORef[] = Array(edges.length).fill(object);
+        const refForEdges: ThreeModuleIORef[] = Array(edges.length).fill(object);
         refs.push(...refForEdges);
         this.outputType = 'line3s';
       } else if (this.extractType === 'wireframe') {
         const wireframes = this.extractWireframe(object);
         output.push(...wireframes);
-        const refForWireframes: CheckerModuleIORef[] = Array(wireframes.length).fill(object);
+        const refForWireframes: ThreeModuleIORef[] = Array(wireframes.length).fill(object);
         refs.push(...refForWireframes);
         this.outputType = 'line3s';
       } else if (this.extractType === 'vertices') {
         const vertices = this.extractVertices(object);
         output.push(...vertices);
-        const refForVertices: CheckerModuleIORef[] = Array(vertices.length).fill(object);
+        const refForVertices: ThreeModuleIORef[] = Array(vertices.length).fill(object);
         refs.push(...refForVertices);
         this.outputType = 'vector3s'
       }

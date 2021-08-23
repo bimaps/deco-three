@@ -1,14 +1,14 @@
-import { CheckerModuleIOStyle, CheckerModuleIOStyleOptions } from './checker-interfaces';
-import { CheckerModuleType } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
-import { CheckerModuleTypeOptions, CheckerModuleIf, CheckerModuleIfOperations, CheckerValueCondition } from './checker-internals';
+import { ThreeModuleIOStyle, ThreeModuleIOStyleOptions } from './checker-interfaces';
+import { ThreeModuleType } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleTypeOptions, ThreeModuleIf, ThreeModuleIfOperations, ThreeModuleValueCondition } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:checker:module-if');
 
 @model('three_module')
-export class ThreeModuleIfModel extends ThreeModuleBaseModel implements CheckerModuleIf {
+export class ThreeModuleIfModel extends ThreeModuleBaseModel implements ThreeModuleIf {
 
   @type.id
   public _id: ObjectId;
@@ -21,23 +21,16 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements CheckerM
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.model({model: ThreeSiteModel})
-  @io.all
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
-
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: true})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<CheckerModuleIOType> = ['numbers', 'strings', 'number', 'string'];
+  public allowedInputTypes: Array<ThreeModuleIOType> = ['numbers', 'strings', 'number', 'string'];
   
-  @type.select({options: CheckerModuleTypeOptions})
+  @type.select({options: ThreeModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: CheckerModuleType = 'if';
+  public moduleType: ThreeModuleType = 'if';
 
   @type.string
   @io.all
@@ -53,10 +46,10 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements CheckerM
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: CheckerModuleTypeOptions, multiple: false})
+  @type.select({options: ThreeModuleTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: CheckerModuleIOType;
+  public outputType: ThreeModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
@@ -69,9 +62,9 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements CheckerM
   @io.all
   public defaultOutputValue: number | string | boolean;
 
-  @type.select({options: CheckerModuleIOStyleOptions})
+  @type.select({options: ThreeModuleIOStyleOptions})
   @io.all
-  public defaultOutputStyle: CheckerModuleIOStyle;
+  public defaultOutputStyle: ThreeModuleIOStyle;
   
   @type.array({type: 'object', options: {
     keys: {
@@ -83,11 +76,11 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements CheckerM
       }}},
       conditionsOperator: {type: 'select', options: ['and', 'or']},
       outputValue: {type: 'any'},
-      outputStyle: {type: 'select', options: CheckerModuleIOStyleOptions}
+      outputStyle: {type: 'select', options: ThreeModuleIOStyleOptions}
     }
   }})
   @io.all
-  public operations: CheckerModuleIfOperations;
+  public operations: ThreeModuleIfOperations;
 
   private flow: ThreeRuleModel;
 
@@ -108,7 +101,7 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements CheckerM
     if (this.currentInputType === 'numbers' || this.currentInputType === 'strings' || this.currentInputType === 'booleans') {
       const inputs = this.currentInput as number[] | string[] | boolean[];
       const outputs: number[] | string[] | boolean[] = []
-      const styles: CheckerModuleIOStyle[] = [];
+      const styles: ThreeModuleIOStyle[] = [];
       for (const key in inputs) {
         const input = inputs[key];
         const out = this.processOperationsForInput(input, this.operations);
@@ -131,7 +124,7 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements CheckerM
     }
   }
 
-  public processOperationsForInput(input: boolean | number | string, operations: CheckerModuleIfOperations): {value: boolean | number | string | undefined, style: CheckerModuleIOStyle} {
+  public processOperationsForInput(input: boolean | number | string, operations: ThreeModuleIfOperations): {value: boolean | number | string | undefined, style: ThreeModuleIOStyle} {
     for (const operation of operations) {
       let valid = false;
       for (let condition of operation.conditions) {
@@ -150,7 +143,7 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements CheckerM
     return {value: this.defaultOutputValue || input, style: this.defaultOutputStyle};
   }
 
-  public isConditionTrue(input: boolean | number | string, condition: CheckerValueCondition): boolean {
+  public isConditionTrue(input: boolean | number | string, condition: ThreeModuleValueCondition): boolean {
     return false;
   }
 

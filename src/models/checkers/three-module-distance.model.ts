@@ -1,13 +1,13 @@
-import { CheckerModuleType } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
-import { CheckerModuleTypeOptions, CheckerModuleDistance } from './checker-internals';
+import { ThreeModuleType } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleTypeOptions, ThreeModuleDistance } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:checker:module-distance');
 
 @model('three_module')
-export class ThreeModuleDistanceModel extends ThreeModuleBaseModel implements CheckerModuleDistance {
+export class ThreeModuleDistanceModel extends ThreeModuleBaseModel implements ThreeModuleDistance {
 
   @type.id
   public _id: ObjectId;
@@ -20,23 +20,16 @@ export class ThreeModuleDistanceModel extends ThreeModuleBaseModel implements Ch
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.model({model: ThreeSiteModel})
-  @io.all
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
-
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: true})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<CheckerModuleIOType> = ['vector3s', 'vector3', 'vector2s', 'vector2'];
+  public allowedInputTypes: Array<ThreeModuleIOType> = ['vector3s', 'vector3', 'vector2s', 'vector2'];
   
-  @type.select({options: CheckerModuleTypeOptions})
+  @type.select({options: ThreeModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: CheckerModuleType = 'distance';
+  public moduleType: ThreeModuleType = 'distance';
 
   @type.string
   @io.all
@@ -57,10 +50,10 @@ export class ThreeModuleDistanceModel extends ThreeModuleBaseModel implements Ch
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: false})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: CheckerModuleIOType;
+  public outputType: ThreeModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 

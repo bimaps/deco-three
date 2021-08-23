@@ -1,13 +1,13 @@
-import { CheckerModuleType } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
-import { CheckerModuleTypeOptions, CheckerModuleProjection } from './checker-internals';
+import { ThreeModuleType } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleTypeOptions, ThreeModuleProjection } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:checker:module-projection');
 
 @model('three_module')
-export class ThreeModuleProjectionModel extends ThreeModuleBaseModel implements CheckerModuleProjection {
+export class ThreeModuleProjectionModel extends ThreeModuleBaseModel implements ThreeModuleProjection {
 
   @type.id
   public _id: ObjectId;
@@ -20,23 +20,16 @@ export class ThreeModuleProjectionModel extends ThreeModuleBaseModel implements 
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.model({model: ThreeSiteModel})
-  @io.all
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
-
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: true})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<CheckerModuleIOType> = ['numbers', 'strings', 'number', 'string'];
+  public allowedInputTypes: Array<ThreeModuleIOType> = ['numbers', 'strings', 'number', 'string'];
   
-  @type.select({options: CheckerModuleTypeOptions})
+  @type.select({options: ThreeModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: CheckerModuleType = 'projection';
+  public moduleType: ThreeModuleType = 'projection';
 
   @type.string
   @io.all
@@ -52,10 +45,10 @@ export class ThreeModuleProjectionModel extends ThreeModuleBaseModel implements 
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: false})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: CheckerModuleIOType;
+  public outputType: ThreeModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 

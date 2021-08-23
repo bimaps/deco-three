@@ -1,12 +1,12 @@
-import { CheckerModuleType } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions, CheckerModuleIORef } from './checker-internals';
-import { CheckerModuleReducer, CheckerModuleTypeOptions, CheckerModuleReducerOperation, CheckerModuleReducerOperationOptions } from './checker-internals';
+import { ThreeModuleType } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions, ThreeModuleIORef } from './checker-internals';
+import { ThreeModuleReducer, ThreeModuleTypeOptions, ThreeModuleReducerOperation, ThreeModuleReducerOperationOptions } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-reducer');
 
 @model('three_module')
-export class ThreeModuleReducerModel extends ThreeModuleBaseModel implements CheckerModuleReducer {
+export class ThreeModuleReducerModel extends ThreeModuleBaseModel implements ThreeModuleReducer {
 
   @type.id
   public _id: ObjectId;
@@ -19,23 +19,16 @@ export class ThreeModuleReducerModel extends ThreeModuleBaseModel implements Che
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.model({model: ThreeSiteModel})
-  @io.all
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
-
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: true})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<CheckerModuleIOType> = ['three-objects', 'numbers', 'strings'];
+  public allowedInputTypes: Array<ThreeModuleIOType> = ['three-objects', 'numbers', 'strings'];
   
-  @type.select({options: CheckerModuleTypeOptions})
+  @type.select({options: ThreeModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: CheckerModuleType = 'reducer';
+  public moduleType: ThreeModuleType = 'reducer';
 
   @type.string
   @io.all
@@ -51,10 +44,10 @@ export class ThreeModuleReducerModel extends ThreeModuleBaseModel implements Che
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: false})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: CheckerModuleIOType;
+  public outputType: ThreeModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
@@ -63,9 +56,9 @@ export class ThreeModuleReducerModel extends ThreeModuleBaseModel implements Che
   @io.output
   public outputSummary: string;
 
-  @type.select({options: CheckerModuleReducerOperationOptions})
+  @type.select({options: ThreeModuleReducerOperationOptions})
   @io.all
-  public operation: CheckerModuleReducerOperation;
+  public operation: ThreeModuleReducerOperation;
 
   public async process(flow: ThreeRuleModel): Promise<void> {
     super.process(flow);
@@ -90,7 +83,7 @@ export class ThreeModuleReducerModel extends ThreeModuleBaseModel implements Che
         const min = Math.min.apply(null, mathInput); // best perf with min.apply for large arras
         const refKeys = [...Object.keys(mathInput)].filter(i => mathInput[parseInt(i, 10)] === min);
         this.outputValue = min;
-        const inputRefs = (this.currentInputRef as CheckerModuleIORef[]) || [];
+        const inputRefs = (this.currentInputRef as ThreeModuleIORef[]) || [];
         this.outputReference = inputRefs.filter((v, i) => refKeys.includes(i.toString()));
       } else if (this.operation === 'max') {
         // this.outputValue = Math.max(...mathInput);  // very bad perf with spread for large arrays
@@ -98,7 +91,7 @@ export class ThreeModuleReducerModel extends ThreeModuleBaseModel implements Che
         const max = Math.max.apply(null, mathInput); // best perf with max.apply for large arras
         const refKeys = [...Object.keys(mathInput)].filter(i => mathInput[parseInt(i, 10)] === max);
         this.outputValue = max;
-        const inputRefs = (this.currentInputRef as CheckerModuleIORef[]) || [];
+        const inputRefs = (this.currentInputRef as ThreeModuleIORef[]) || [];
         this.outputReference = inputRefs.filter((v, i) => refKeys.includes(i.toString()));
       } else if (this.operation === 'sum') {
         this.outputReference = this.currentInputRef;

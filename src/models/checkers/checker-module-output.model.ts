@@ -1,7 +1,7 @@
-import { CheckerJsonOutput, CheckerModuleIOTypeValue } from './checker-interfaces';
-import { CheckerModuleType } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
-import { CheckerModuleOutput, CheckerOutput, CheckerModuleTypeOptions } from './checker-internals';
+import { CheckerJsonOutput, ThreeModuleIOTypeValue } from './checker-interfaces';
+import { ThreeModuleType } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleOutput, CheckerOutput, ThreeModuleTypeOptions } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-reducer');
@@ -9,7 +9,7 @@ let debug = require('debug')('app:models:three:checker:module-reducer');
 // TODO rules migration: should be considered in reporting
 /** @deprecated New generic reporting mechanism shouldn't use output module for writing reporting */
 @model('checker_module')
-export class CheckerModuleOutputModel extends ThreeModuleBaseModel implements CheckerModuleOutput {
+export class CheckerModuleOutputModel extends ThreeModuleBaseModel implements ThreeModuleOutput {
 
   @type.id
   public _id: ObjectId;
@@ -29,16 +29,16 @@ export class CheckerModuleOutputModel extends ThreeModuleBaseModel implements Ch
   @mongo.index({type: 'single'})
   public siteId: ObjectId;
 
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: true})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<CheckerModuleIOType> = ['number', 'numbers', 'string', 'strings', 'boolean', 'booleans'];
+  public allowedInputTypes: Array<ThreeModuleIOType> = ['number', 'numbers', 'string', 'strings', 'boolean', 'booleans'];
   
-  @type.select({options: CheckerModuleTypeOptions})
+  @type.select({options: ThreeModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: CheckerModuleType = 'output';
+  public moduleType: ThreeModuleType = 'output';
 
   @type.string
   @io.all
@@ -54,12 +54,12 @@ export class CheckerModuleOutputModel extends ThreeModuleBaseModel implements Ch
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: false})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: CheckerModuleIOType = 'json'
+  public outputType: ThreeModuleIOType = 'json'
 
-  public outputValue: CheckerModuleIOTypeValue;
+  public outputValue: ThreeModuleIOTypeValue;
 
   @type.string
   @io.toDocument

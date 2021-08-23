@@ -1,30 +1,30 @@
-import { CheckerModuleIOStyle } from './checker-interfaces';
-import { CheckerModuleShape, CheckerModuleType, CheckerModuleIOType, CheckerModuleIOTypeValue, ThreeRuleModel } from './checker-internals';
-import { CheckerModuleIORef, modelsByType } from './checker-internals';
+import { ThreeModuleIOStyle } from './checker-interfaces';
+import { ThreeModuleShape, ThreeModuleType, ThreeModuleIOType, ThreeModuleIOTypeValue, ThreeRuleModel } from './checker-internals';
+import { ThreeModuleIORef, modelsByType } from './checker-internals';
 import { model, ObjectId, Model, InstanceFromDocumentOptions } from '@bim/deco-api';
 import { Request, Response } from 'express';
 
 let debug = require('debug')('app:models:three:checker:module-base');
 
 @model('three_module')
-export class ThreeModuleBaseModel extends Model implements CheckerModuleShape {
+export class ThreeModuleBaseModel extends Model implements ThreeModuleShape {
 
   public _id: ObjectId;
   public appId: ObjectId;
-  public moduleType: CheckerModuleType;
+  public moduleType: ThreeModuleType;
   public name: string;
-  public allowedInputTypes?: Array<CheckerModuleIOType>;
+  public allowedInputTypes?: Array<ThreeModuleIOType>;
   public inputVarName?: string;
   public outputVarName: string;
-  public outputType: CheckerModuleIOType;
-  public outputValue: CheckerModuleIOTypeValue;
-  public outputReference: CheckerModuleIORef | CheckerModuleIORef[];
-  public outputStyle: CheckerModuleIOStyle | CheckerModuleIOStyle[] = 'default';
+  public outputType: ThreeModuleIOType;
+  public outputValue: ThreeModuleIOTypeValue;
+  public outputReference: ThreeModuleIORef | ThreeModuleIORef[];
+  public outputStyle: ThreeModuleIOStyle | ThreeModuleIOStyle[] = 'default';
   public outputSummary: string;
 
-  protected currentInput: CheckerModuleIOTypeValue;
-  protected currentInputType: CheckerModuleIOType;
-  protected currentInputRef: CheckerModuleIORef | CheckerModuleIORef[];
+  protected currentInput: ThreeModuleIOTypeValue;
+  protected currentInputType: ThreeModuleIOType;
+  protected currentInputRef: ThreeModuleIORef | ThreeModuleIORef[];
 
   public async process(flow: ThreeRuleModel): Promise<void> {
     if (!this.inputVarName) {

@@ -1,6 +1,6 @@
 import { PdfChecker } from '../helpers/pdf.checker';
 import { ThreeCheckerReportModel } from './../models/checker-report.model';
-import { ThreeRuleModel, modelsByType, ReportOutput, FlowOutput } from './../models/checkers/checker-internals';
+import { ThreeRuleModel, modelsByType, ReportOutput, ThreeRuleOutput } from './../models/checkers/checker-internals';
 import { ThreeModuleBaseModel } from './../models/checkers/checker-internals';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { Router, Request, Response, NextFunction } from 'express';
@@ -292,7 +292,7 @@ function runFlow() {
     if (!rightInstance) return next(new Error('Invalid flow instance'));
     
     flow.process().then(async () => {
-      const flowOutput: FlowOutput = {
+      const flowOutput: ThreeRuleOutput = {
         name: flow.name,
         description: flow.description,
         summaries: flow.modules.map(m => m.outputSummary),

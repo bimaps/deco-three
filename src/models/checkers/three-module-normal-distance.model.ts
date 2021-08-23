@@ -1,6 +1,6 @@
-import { CheckerModuleType } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
-import { CheckerModuleTypeOptions, CheckerModuleNormalDistance, CheckerModuleIORef } from './checker-internals';
+import { ThreeModuleType } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleTypeOptions, ThreeModuleNormalDistance, ThreeModuleIORef } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 import * as THREE from 'three';
@@ -8,7 +8,7 @@ import * as THREE from 'three';
 let debug = require('debug')('app:models:three:checker:module-normal-distance');
 
 @model('three_module')
-export class ThreeModuleNormalDistanceModel extends ThreeModuleBaseModel implements CheckerModuleNormalDistance {
+export class ThreeModuleNormalDistanceModel extends ThreeModuleBaseModel implements ThreeModuleNormalDistance {
 
   @type.id
   public _id: ObjectId;
@@ -21,23 +21,16 @@ export class ThreeModuleNormalDistanceModel extends ThreeModuleBaseModel impleme
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.model({model: ThreeSiteModel})
-  @io.all
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
-
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: true})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<CheckerModuleIOType> = ['triangle', 'triangles', 'line3', 'line3s', 'vector3', 'vector3s'];
+  public allowedInputTypes: Array<ThreeModuleIOType> = ['triangle', 'triangles', 'line3', 'line3s', 'vector3', 'vector3s'];
   
-  @type.select({options: CheckerModuleTypeOptions})
+  @type.select({options: ThreeModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: CheckerModuleType = 'normal-distance';
+  public moduleType: ThreeModuleType = 'normal-distance';
 
   @type.string
   @io.all
@@ -57,10 +50,10 @@ export class ThreeModuleNormalDistanceModel extends ThreeModuleBaseModel impleme
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: false})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: CheckerModuleIOType;
+  public outputType: ThreeModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
@@ -95,7 +88,7 @@ export class ThreeModuleNormalDistanceModel extends ThreeModuleBaseModel impleme
 
 
     const distances: Array<number> = [];
-    const refs: Array<CheckerModuleIORef> = [];
+    const refs: Array<ThreeModuleIORef> = [];
     let iAs = Array.isArray(inputA) ? inputA : [inputA];
     let iBs = Array.isArray(inputB) ? inputB : [inputB];
     let refA = Array.isArray(this.currentInputRef) ? this.currentInputRef : [this.currentInputRef];

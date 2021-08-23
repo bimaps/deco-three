@@ -1,11 +1,11 @@
-import { CheckerJsonOutput, CheckerModuleIOStyle } from './checker-interfaces';
+import { CheckerJsonOutput, ThreeModuleIOStyle } from './checker-interfaces';
 import { ThreeSpaceModel } from './../space.model';
 import { ThreeGenerator } from './../../helpers/three.generator';
 import { ThreeGeometryModel } from './../geometry.model';
 import { ThreeMaterialModel } from './../material.model';
 import { ThreeObjectModel } from './../object.model';
-import { ThreeModuleBaseModel,  CheckerValueCondition, CheckerFlow, CheckerModuleIORef } from './checker-internals';
-import { CheckerModuleIOTypeValue, CheckerModuleIOType, CheckerObjectCondition } from './checker-internals';
+import { ThreeModuleBaseModel,  ThreeModuleValueCondition, ThreeFlow, ThreeModuleIORef } from './checker-internals';
+import { ThreeModuleIOTypeValue, ThreeModuleIOType, ThreeModuleObjectCondition } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, Model, type, io, query, validate, ObjectId, mongo, Query, Parser, AppModel } from '@bim/deco-api';
 import * as THREE from 'three';
@@ -14,7 +14,7 @@ import resolvePath from 'object-resolve-path';
 let debug = require('debug')('app:models:three:checkers:flow');
 
 @model('three_rule')
-export class ThreeRuleModel extends Model implements CheckerFlow  {
+export class ThreeRuleModel extends Model implements ThreeFlow  {
 
   @type.id
   public _id: ObjectId;
@@ -128,7 +128,7 @@ export class ThreeRuleModel extends Model implements CheckerFlow  {
     return this.scene;
   }
 
-  public fetchInput(varname: string): {value: CheckerModuleIOTypeValue, type: CheckerModuleIOType, ref: CheckerModuleIORef | CheckerModuleIORef[], style: CheckerModuleIOStyle | CheckerModuleIOStyle[]}  | undefined {
+  public fetchInput(varname: string): {value: ThreeModuleIOTypeValue, type: ThreeModuleIOType, ref: ThreeModuleIORef | ThreeModuleIORef[], style: ThreeModuleIOStyle | ThreeModuleIOStyle[]}  | undefined {
     if (varname === 'scene') {
       return {
         type: 'scene',
@@ -169,12 +169,12 @@ export class ThreeRuleModel extends Model implements CheckerFlow  {
     return resolvePath(object, key);
   }
 
-  public compareObject(object: THREE.Object3D, condition: CheckerObjectCondition): boolean {
+  public compareObject(object: THREE.Object3D, condition: ThreeModuleObjectCondition): boolean {
     const value = this.fetchProp(object, condition.key);
     return this.compareValue(value, condition);
   }
 
-  public compareValue(value: string | boolean | number | Date, condition: CheckerObjectCondition | CheckerValueCondition): boolean {
+  public compareValue(value: string | boolean | number | Date, condition: ThreeModuleObjectCondition | ThreeModuleValueCondition): boolean {
     if (typeof condition.value === 'number' && typeof value === 'string') {
       value = parseFloat(value);
     } else if (condition.value instanceof Date && typeof value === 'string') {

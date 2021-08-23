@@ -1,13 +1,13 @@
-import { CheckerModuleType, CheckerModuleFilter } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
-import { CheckerModuleTypeOptions } from './checker-internals';
-import { CheckerObjectCondition, CheckerConditionOperator } from './checker-internals';
+import { ThreeModuleType, ThreeModuleFilter } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleTypeOptions } from './checker-internals';
+import { ThreeModuleObjectCondition, ThreeModuleConditionOperator } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-filter');
 
 @model('three_module')
-export class ThreeModuleFilterModel extends ThreeModuleBaseModel implements CheckerModuleFilter {
+export class ThreeModuleFilterModel extends ThreeModuleBaseModel implements ThreeModuleFilter {
 
   @type.id
   public _id: ObjectId;
@@ -20,23 +20,16 @@ export class ThreeModuleFilterModel extends ThreeModuleBaseModel implements Chec
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.model({model: ThreeSiteModel})
-  @io.all
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
-
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: true})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<CheckerModuleIOType> = ['three-objects', 'scene'];
+  public allowedInputTypes: Array<ThreeModuleIOType> = ['three-objects', 'scene'];
   
-  @type.select({options: CheckerModuleTypeOptions})
+  @type.select({options: ThreeModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: CheckerModuleType = 'filter';
+  public moduleType: ThreeModuleType = 'filter';
 
   @type.string
   @io.all
@@ -52,10 +45,10 @@ export class ThreeModuleFilterModel extends ThreeModuleBaseModel implements Chec
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: false})
+  @type.select({options: ThreeModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: CheckerModuleIOType = 'three-objects'
+  public outputType: ThreeModuleIOType = 'three-objects'
 
   public outputValue: THREE.Object3D[];
 
@@ -75,11 +68,11 @@ export class ThreeModuleFilterModel extends ThreeModuleBaseModel implements Chec
     }
   })
   @io.all
-  public conditions: Array<CheckerObjectCondition>;
+  public conditions: Array<ThreeModuleObjectCondition>;
 
   @type.select({options: ['or', 'and']})
   @io.all
-  public conditionsOperator: CheckerConditionOperator = 'and';
+  public conditionsOperator: ThreeModuleConditionOperator = 'and';
 
   private inputObjects: Array<THREE.Object3D> = [];
 
