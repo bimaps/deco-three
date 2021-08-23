@@ -1,5 +1,5 @@
 import { CheckerModuleType } from './checker-internals';
-import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
 import { CheckerModuleTypeOptions, CheckerModuleNormalDistance, CheckerModuleIORef } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
@@ -7,8 +7,8 @@ import * as THREE from 'three';
 
 let debug = require('debug')('app:models:three:checker:module-normal-distance');
 
-@model('checker_module')
-export class CheckerModuleNormalDistanceModel extends CheckerModuleBaseModel implements CheckerModuleNormalDistance {
+@model('three_module')
+export class ThreeModuleNormalDistanceModel extends ThreeModuleBaseModel implements CheckerModuleNormalDistance {
 
   @type.id
   public _id: ObjectId;
@@ -75,7 +75,7 @@ export class CheckerModuleNormalDistanceModel extends CheckerModuleBaseModel imp
 
   private sameInputs = false;
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: ThreeRuleModel): Promise<void> {
     super.process(flow);
     this.sameInputs = this.inputVarName === this.input2VarName;
     const inputA = this.currentInput as THREE.Triangle | THREE.Triangle[] | THREE.Line3 | THREE.Line3[] | THREE.Vector3 | THREE.Vector3[];

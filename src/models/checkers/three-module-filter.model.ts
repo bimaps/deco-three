@@ -1,13 +1,13 @@
 import { CheckerModuleType, CheckerModuleFilter } from './checker-internals';
-import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
 import { CheckerModuleTypeOptions } from './checker-internals';
 import { CheckerObjectCondition, CheckerConditionOperator } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-filter');
 
-@model('checker_module')
-export class CheckerModuleFilterModel extends CheckerModuleBaseModel implements CheckerModuleFilter {
+@model('three_module')
+export class ThreeModuleFilterModel extends ThreeModuleBaseModel implements CheckerModuleFilter {
 
   @type.id
   public _id: ObjectId;
@@ -83,7 +83,7 @@ export class CheckerModuleFilterModel extends CheckerModuleBaseModel implements 
 
   private inputObjects: Array<THREE.Object3D> = [];
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: ThreeRuleModel): Promise<void> {
     super.process(flow);
     if (this.currentInput && this.currentInputType === 'three-objects') {
       this.inputObjects = this.currentInput as THREE.Object3D[];

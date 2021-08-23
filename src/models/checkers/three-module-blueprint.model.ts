@@ -1,13 +1,13 @@
 import { CheckerModuleType } from './checker-internals';
-import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
 import { CheckerModuleTypeOptions } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:checker:module-extract');
 
-@model('checker_module')
-export class CheckerModuleBlueprintModel extends CheckerModuleBaseModel /*implements CheckerModuleReducer (add here the interface implementation of the module) */ {
+@model('three_module')
+export class ThreeModuleBlueprintModel extends ThreeModuleBaseModel /*implements CheckerModuleReducer (add here the interface implementation of the module) */ {
 
   @type.id
   public _id: ObjectId;
@@ -66,7 +66,7 @@ export class CheckerModuleBlueprintModel extends CheckerModuleBaseModel /*implem
 
   /* Add here properties for this module */
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: ThreeRuleModel): Promise<void> {
     super.process(flow);
     /* Implement here the process */
     

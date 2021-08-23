@@ -4,7 +4,7 @@ import { ThreeGenerator } from './../../helpers/three.generator';
 import { ThreeGeometryModel } from './../geometry.model';
 import { ThreeMaterialModel } from './../material.model';
 import { ThreeObjectModel } from './../object.model';
-import { CheckerModuleBaseModel,  CheckerValueCondition, CheckerFlow, CheckerModuleIORef } from './checker-internals';
+import { ThreeModuleBaseModel,  CheckerValueCondition, CheckerFlow, CheckerModuleIORef } from './checker-internals';
 import { CheckerModuleIOTypeValue, CheckerModuleIOType, CheckerObjectCondition } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, Model, type, io, query, validate, ObjectId, mongo, Query, Parser, AppModel } from '@bim/deco-api';
@@ -13,8 +13,8 @@ import moment from 'moment';
 import resolvePath from 'object-resolve-path';
 let debug = require('debug')('app:models:three:checkers:flow');
 
-@model('checker_flow')
-export class CheckerFlowModel extends Model implements CheckerFlow  {
+@model('three_rule')
+export class ThreeRuleModel extends Model implements CheckerFlow  {
 
   @type.id
   public _id: ObjectId;
@@ -26,13 +26,6 @@ export class CheckerFlowModel extends Model implements CheckerFlow  {
   @validate.required
   @mongo.index({type: 'single'})
   public appId: ObjectId;
-
-  @type.model({model: ThreeSiteModel})
-  @io.all
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
   
   @type.string
   @io.all
@@ -43,34 +36,37 @@ export class CheckerFlowModel extends Model implements CheckerFlow  {
   @io.all
   public description: string = '';
 
-  @type.models({model: CheckerModuleBaseModel})
+  @type.models({model: ThreeModuleBaseModel})
   @io.all
   public modulesIds: Array<ObjectId> = [];
 
   public scene: THREE.Scene;
-  public modules: Array<CheckerModuleBaseModel> = [];
+  public modules: Array<ThreeModuleBaseModel> = [];
   public outputs: {
     name: string;
     outputs: CheckerJsonOutput[]
   }[] = [];
 
+  /** @deprecated */
   public async process(scene?: THREE.Scene): Promise<THREE.Scene> {
-    this.scene = scene || await this.prepareScene(this.siteId);
-    for (const moduleId of this.modulesIds || []) {
-      const moduleElement = await CheckerModuleBaseModel.deco.db
-        .collection(CheckerModuleBaseModel.deco.collectionName)
-        .findOne({_id: moduleId});
-
-      const instance = await CheckerModuleBaseModel.instanceFromDocument(moduleElement);
-      if (instance) {
-        this.modules.push(instance);
-        await instance.process(this);
-        await instance.summary();
-      }
-    }
+    // TODO rules migration: The scene should be process during reporting or theme views
+    // this.scene = scene || await this.prepareScene(this.siteId);
+    // for (const moduleId of this.modulesIds || []) {
+    //   const moduleElement = await CheckerModuleBaseModel.deco.db
+    //     .collection(CheckerModuleBaseModel.deco.collectionName)
+    //     .findOne({_id: moduleId});
+    //
+    //   const instance = await CheckerModuleBaseModel.instanceFromDocument(moduleElement);
+    //   if (instance) {
+    //     this.modules.push(instance);
+    //     await instance.process(this);
+    //     await instance.summary();
+    //   }
+    // }
     return this.scene;
   }
 
+  /** @deprecated */
   private async prepareScene(siteId: string | ObjectId): Promise<THREE.Scene> {
     const site = await ThreeSiteModel.getOneWithId(siteId);
     if (!site) {

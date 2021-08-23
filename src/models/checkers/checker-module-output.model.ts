@@ -1,13 +1,15 @@
 import { CheckerJsonOutput, CheckerModuleIOTypeValue } from './checker-interfaces';
 import { CheckerModuleType } from './checker-internals';
-import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
 import { CheckerModuleOutput, CheckerOutput, CheckerModuleTypeOptions } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-reducer');
 
+// TODO rules migration: should be considered in reporting
+/** @deprecated New generic reporting mechanism shouldn't use output module for writing reporting */
 @model('checker_module')
-export class CheckerModuleOutputModel extends CheckerModuleBaseModel implements CheckerModuleOutput {
+export class CheckerModuleOutputModel extends ThreeModuleBaseModel implements CheckerModuleOutput {
 
   @type.id
   public _id: ObjectId;
@@ -75,7 +77,7 @@ export class CheckerModuleOutputModel extends CheckerModuleBaseModel implements 
   @io.all
   public outputs: CheckerOutput[] = [];
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: ThreeRuleModel): Promise<void> {
     
     const output: CheckerJsonOutput[] = [];
     for (const outputConfig of this.outputs) {

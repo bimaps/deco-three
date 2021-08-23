@@ -1,4 +1,4 @@
-import { CheckerModuleBaseModel, CheckerFlowModel } from './../models/checkers/checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel } from './../models/checkers/checker-internals';
 import { ThreeCheckerReportModel } from './../models/checker-report.model';
 import { ThreeStyleModel } from './../models/style.model';
 import { ThreeThemeModel } from './../models/theme.model';
@@ -214,8 +214,8 @@ export class ThreeImporterHelper {
       else if (modelName === 'theme') model = ThreeThemeModel;
       else if (modelName === 'style') model = ThreeStyleModel;
       else if (modelName === 'report') model = ThreeCheckerReportModel;
-      else if (modelName === 'checker-flow') model = CheckerFlowModel;
-      else if (modelName === 'checker-modules') model = CheckerModuleBaseModel;
+      else if (modelName === 'checker-flow') model = ThreeRuleModel;
+      else if (modelName === 'checker-modules') model = ThreeModuleBaseModel;
       else continue;
       let query = {siteId: siteId, _createdAt: {$lt: bd.toDate()}};
       deletePromises.push(model.deco.db.collection(model.deco.collectionName).deleteMany(query).then((result) => {

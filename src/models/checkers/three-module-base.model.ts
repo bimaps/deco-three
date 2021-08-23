@@ -1,33 +1,32 @@
 import { CheckerModuleIOStyle } from './checker-interfaces';
-import { CheckerModuleBase, CheckerModuleType, CheckerModuleIOType, CheckerModuleIOTypeValue, CheckerFlowModel } from './checker-internals';
+import { CheckerModuleShape, CheckerModuleType, CheckerModuleIOType, CheckerModuleIOTypeValue, ThreeRuleModel } from './checker-internals';
 import { CheckerModuleIORef, modelsByType } from './checker-internals';
 import { model, ObjectId, Model, InstanceFromDocumentOptions } from '@bim/deco-api';
 import { Request, Response } from 'express';
 
 let debug = require('debug')('app:models:three:checker:module-base');
 
-@model('checker_module')
-export class CheckerModuleBaseModel extends Model implements CheckerModuleBase {
+@model('three_module')
+export class ThreeModuleBaseModel extends Model implements CheckerModuleShape {
 
   public _id: ObjectId;
   public appId: ObjectId;
-  public siteId: ObjectId;
   public moduleType: CheckerModuleType;
   public name: string;
-  public allowedInputTypes?: Array<CheckerModuleIOType>;
+  public allowedInputTypes?: Array<CheckerModuleIOType>;
   public inputVarName?: string;
   public outputVarName: string;
   public outputType: CheckerModuleIOType;
   public outputValue: CheckerModuleIOTypeValue;
-  public outputReference: CheckerModuleIORef | CheckerModuleIORef[];
+  public outputReference: CheckerModuleIORef | CheckerModuleIORef[];
   public outputStyle: CheckerModuleIOStyle | CheckerModuleIOStyle[] = 'default';
   public outputSummary: string;
 
   protected currentInput: CheckerModuleIOTypeValue;
   protected currentInputType: CheckerModuleIOType;
-  protected currentInputRef: CheckerModuleIORef | CheckerModuleIORef[];
+  protected currentInputRef: CheckerModuleIORef | CheckerModuleIORef[];
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: ThreeRuleModel): Promise<void> {
     if (!this.inputVarName) {
       throw new Error('Missing inputVarName');
     }

@@ -56,7 +56,7 @@ export abstract class CheckerModule {
 
 export type CheckerModuleIORef = THREE.Object3D | THREE.Object3D[] | undefined;
 
-export interface CheckerModuleBase {
+export interface CheckerModuleShape {
     moduleType: CheckerModuleType;
     name: string;
     allowedInputTypes?: Array<CheckerModuleIOType>;
@@ -68,14 +68,14 @@ export interface CheckerModuleBase {
     outputSummary?: string;
 }
 
-export interface CheckerModuleFilter extends CheckerModuleBase {
+export interface CheckerModuleFilter extends CheckerModuleShape {
     // allowedInputType = ['three-objects'];
     conditions: Array<CheckerObjectCondition>;
     conditionsOperator: CheckerConditionOperator;
     // outputType = 'three-objects';
 }
 
-export interface CheckerModuleExtract extends CheckerModuleBase {
+export interface CheckerModuleExtract extends CheckerModuleShape {
     // allowedInputType = ['three-objects', 'three-object'];
     extractType: CheckerExtractType;
     value: any;
@@ -83,7 +83,7 @@ export interface CheckerModuleExtract extends CheckerModuleBase {
     // outputType = 'numbers' | 'strings' | 'booleans';
 }
 
-export interface CheckerModuleMath extends CheckerModuleBase {
+export interface CheckerModuleMath extends CheckerModuleShape {
     // allowedInputType = ['numbers', 'number'];
     expression: string;
     // outputType = 'numbers' | 'number';
@@ -91,7 +91,7 @@ export interface CheckerModuleMath extends CheckerModuleBase {
 
 export type CheckerModuleReducerOperation = 'min' | 'max' | 'average' | 'count' | 'sum';
 export const CheckerModuleReducerOperationOptions = ['min', 'max', 'average', 'count', 'sum'];
-export interface CheckerModuleReducer extends CheckerModuleBase {
+export interface CheckerModuleReducer extends CheckerModuleShape {
     // allowedInputType = ['numbers', 'number'];
     operation: CheckerModuleReducerOperation;
     // outputType = 'numbers' | 'number';
@@ -104,7 +104,7 @@ export type CheckerModuleIfOperation = {
     outputStyle: CheckerModuleIOStyle;
 }
 export type CheckerModuleIfOperations = Array<CheckerModuleIfOperation>;
-export interface CheckerModuleIf extends CheckerModuleBase {
+export interface CheckerModuleIf extends CheckerModuleShape {
     // allowedInputType = ['numbers', 'number'];
     defaultOutputValue: number | string | boolean;
     defaultOutputStyle: CheckerModuleIOStyle;
@@ -112,19 +112,19 @@ export interface CheckerModuleIf extends CheckerModuleBase {
     // outputType = 'numbers' | 'strings' | 'booleans';
 }
 
-export interface CheckerModuleBbbox extends CheckerModuleBase {
+export interface CheckerModuleBbbox extends CheckerModuleShape {
 
 }
 
-export interface CheckerModuleProjection extends CheckerModuleBase {
+export interface CheckerModuleProjection extends CheckerModuleShape {
   projectionAxis: 'x' | 'y' | 'z';
 }
 
-export interface CheckerModuleDistance extends CheckerModuleBase {
+export interface CheckerModuleDistance extends CheckerModuleShape {
     distanceType: '2d-2d' | '3d-3d';
 }
 
-export interface CheckerModuleNormalDistance extends CheckerModuleBase {
+export interface CheckerModuleNormalDistance extends CheckerModuleShape {
     operation: 'min' | 'max';
 }
 
@@ -135,7 +135,7 @@ export interface CheckerOutput {
     display: 'paragraph' | 'blocks';
 }
 
-export interface CheckerModuleOutput extends CheckerModuleBase {
+export interface CheckerModuleOutput extends CheckerModuleShape {
     outputs: CheckerOutput[];
 }
 

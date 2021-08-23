@@ -1,12 +1,12 @@
 import { CheckerModuleType } from './checker-internals';
-import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions, CheckerModuleIORef } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions, CheckerModuleIORef } from './checker-internals';
 import { CheckerModuleReducer, CheckerModuleTypeOptions, CheckerModuleReducerOperation, CheckerModuleReducerOperationOptions } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-reducer');
 
-@model('checker_module')
-export class CheckerModuleReducerModel extends CheckerModuleBaseModel implements CheckerModuleReducer {
+@model('three_module')
+export class ThreeModuleReducerModel extends ThreeModuleBaseModel implements CheckerModuleReducer {
 
   @type.id
   public _id: ObjectId;
@@ -67,7 +67,7 @@ export class CheckerModuleReducerModel extends CheckerModuleBaseModel implements
   @io.all
   public operation: CheckerModuleReducerOperation;
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: ThreeRuleModel): Promise<void> {
     super.process(flow);
 
     if (!Array.isArray(this.currentInput)) {

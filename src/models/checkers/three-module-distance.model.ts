@@ -1,13 +1,13 @@
 import { CheckerModuleType } from './checker-internals';
-import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
 import { CheckerModuleTypeOptions, CheckerModuleDistance } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:checker:module-distance');
 
-@model('checker_module')
-export class CheckerModuleDistanceModel extends CheckerModuleBaseModel implements CheckerModuleDistance {
+@model('three_module')
+export class ThreeModuleDistanceModel extends ThreeModuleBaseModel implements CheckerModuleDistance {
 
   @type.id
   public _id: ObjectId;
@@ -73,7 +73,7 @@ export class CheckerModuleDistanceModel extends CheckerModuleBaseModel implement
   @io.all
   public distanceType: '2d-2d' | '3d-3d';
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: ThreeRuleModel): Promise<void> {
     super.process(flow);
     /* Implement here the process */
 

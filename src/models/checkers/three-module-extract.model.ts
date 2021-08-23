@@ -1,14 +1,14 @@
 import { ThreeUtils } from './../../helpers/three-utils';
 import { CheckerModuleType, CheckerExtractTypeOptions } from './checker-internals';
-import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
 import { CheckerModuleExtract, CheckerModuleTypeOptions, CheckerExtractType, CheckerModuleIORef } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 import * as THREE from 'three';
 let debug = require('debug')('app:models:three:checker:module-extract');
 
-@model('checker_module')
-export class CheckerModuleExtractModel extends CheckerModuleBaseModel implements CheckerModuleExtract {
+@model('three_module')
+export class ThreeModuleExtractModel extends ThreeModuleBaseModel implements CheckerModuleExtract {
 
   @type.id
   public _id: ObjectId;
@@ -80,7 +80,7 @@ export class CheckerModuleExtractModel extends CheckerModuleBaseModel implements
   private inputObjects: Array<THREE.Object3D> = [];
   private multiple = true;
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: ThreeRuleModel): Promise<void> {
     super.process(flow);
     this.multiple = true;
     if (this.currentInput && this.currentInputType === 'three-objects') {

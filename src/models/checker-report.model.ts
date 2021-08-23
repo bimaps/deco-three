@@ -1,6 +1,6 @@
 import { ThreeSiteModel } from './site.model';
 import { model, Model, type, io, query, validate, ObjectId, Metadata, AppModel, mongo } from '@bim/deco-api';
-import { CheckerFlowModel } from './checkers/checker-internals';
+import { ThreeRuleModel } from './checkers/checker-internals';
 let debug = require('debug')('app:models:three:checker-config');
 
 @model('checker_report')
@@ -38,7 +38,7 @@ export class ThreeCheckerReportModel extends Model {
   // @io.all
   // public checkers: Array<ObjectId> = [];
 
-  @type.models({model: CheckerFlowModel})
+  @type.models({model: ThreeRuleModel})
   @io.all
   @query.filterable({type: 'auto'})
   public flows: Array<ObjectId> = [];

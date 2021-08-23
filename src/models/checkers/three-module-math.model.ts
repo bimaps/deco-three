@@ -1,13 +1,13 @@
 import { CheckerModuleType } from './checker-internals';
-import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
+import { ThreeModuleBaseModel, ThreeRuleModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
 import { CheckerModuleMath, CheckerModuleTypeOptions } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 import * as math from 'mathjs';
 let debug = require('debug')('app:models:three:checker:module-extract');
 
-@model('checker_module')
-export class CheckerModuleMathModel extends CheckerModuleBaseModel implements CheckerModuleMath {
+@model('three_module')
+export class ThreeModuleMathModel extends ThreeModuleBaseModel implements CheckerModuleMath {
 
   @type.id
   public _id: ObjectId;
@@ -71,7 +71,7 @@ export class CheckerModuleMathModel extends CheckerModuleBaseModel implements Ch
   private inputObjects: number[];
   private multiple = true;
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: ThreeRuleModel): Promise<void> {
     super.process(flow);
     
     let arrayLength = 0;
