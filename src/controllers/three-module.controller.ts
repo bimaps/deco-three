@@ -42,3 +42,6 @@ router.delete(
     PolicyController.registerPolicyMountingPoint(['three.module.write', 'three.module.delete']),
     moduleController.delete()
 );
+
+/** The express router handling three module http requests */
+export const ThreeModuleController = router;
