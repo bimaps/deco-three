@@ -1,4 +1,4 @@
-import { RuleModuleType, RuleModuleFilter } from './checker-internals';
+import {RuleModuleType, RuleModuleFilter, RULE_MODULE_MONGO_COLLECTION_NAME} from './checker-internals';
 import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
 import { RuleModuleTypeOptions } from './checker-internals';
 import { RuleModuleObjectCondition, RuleModuleConditionOperator } from './checker-internals';
@@ -6,7 +6,7 @@ import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-filter');
 
-@model('three_module')
+@model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleModuleFilter {
 
   @type.id

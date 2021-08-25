@@ -1,4 +1,4 @@
-import { RuleModuleType } from './checker-internals';
+import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
 import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
 import { RuleModuleTypeOptions, RuleModuleNormalDistance, RuleModuleIORef } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
@@ -7,7 +7,7 @@ import * as THREE from 'three';
 
 let debug = require('debug')('app:models:three:checker:module-normal-distance');
 
-@model('three_module')
+@model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implements RuleModuleNormalDistance {
 
   @type.id

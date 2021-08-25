@@ -6,8 +6,12 @@ import { Request, Response } from 'express';
 
 let debug = require('debug')('app:models:three:checker:module-base');
 
-@model('three_module')
+/** THe name of the MongoDbCollection for all types of rule modules */
+export const RULE_MODULE_MONGO_COLLECTION_NAME = 'rule_module';
+
+@model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleBaseModel extends Model implements RuleModuleShape {
+
 
   public _id: ObjectId;
   public appId: ObjectId;

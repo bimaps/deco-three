@@ -1,4 +1,4 @@
-import { RuleModuleType } from './checker-internals';
+import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
 import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
 import { RuleModuleTypeOptions, RuleModuleDistance } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
@@ -6,7 +6,7 @@ import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bi
 
 let debug = require('debug')('app:models:three:checker:module-distance');
 
-@model('three_module')
+@model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleDistanceModel extends RuleModuleBaseModel implements RuleModuleDistance {
 
   @type.id

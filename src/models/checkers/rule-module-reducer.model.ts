@@ -1,11 +1,11 @@
-import { RuleModuleType } from './checker-internals';
+import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
 import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions, RuleModuleIORef } from './checker-internals';
 import { RuleModuleReducer, RuleModuleTypeOptions, RuleModuleReducerOperation, RuleModuleReducerOperationOptions } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-reducer');
 
-@model('three_module')
+@model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleModuleReducer {
 
   @type.id

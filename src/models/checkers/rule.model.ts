@@ -13,7 +13,7 @@ import moment from 'moment';
 import resolvePath from 'object-resolve-path';
 let debug = require('debug')('app:models:three:checkers:flow');
 
-@model('three_rule')
+@model('rule')
 export class RuleModel extends Model implements ThreeFlow  {
 
   @type.id

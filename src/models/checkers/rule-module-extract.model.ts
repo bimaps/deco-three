@@ -1,5 +1,5 @@
 import { ThreeUtils } from './../../helpers/three-utils';
-import { RuleModuleType, RuleModuleExtractTypeOptions } from './checker-internals';
+import {RuleModuleType, RuleModuleExtractTypeOptions, RULE_MODULE_MONGO_COLLECTION_NAME} from './checker-internals';
 import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
 import { RuleModuleExtract, RuleModuleTypeOptions, ThreeExtractType, RuleModuleIORef } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
@@ -7,7 +7,7 @@ import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bi
 import * as THREE from 'three';
 let debug = require('debug')('app:models:three:checker:module-extract');
 
-@model('three_module')
+@model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleModuleExtract {
 
   @type.id

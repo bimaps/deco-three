@@ -1,4 +1,4 @@
-import { RuleModuleType } from './checker-internals';
+import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
 import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
 import { RuleModuleTypeOptions, RuleModuleProjection } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
@@ -6,7 +6,7 @@ import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bi
 
 let debug = require('debug')('app:models:three:checker:module-projection');
 
-@model('three_module')
+@model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleProjectionModel extends RuleModuleBaseModel implements RuleModuleProjection {
 
   @type.id
