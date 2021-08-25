@@ -1,11 +1,11 @@
 import {AppMiddleware, ControllerMiddleware, PolicyController} from '@bim/deco-api';
 import {Router} from 'express';
-import {ThreeModuleBaseModel} from '../models';
+import {RuleModuleBaseModel} from '../models';
 import {ThreeModuleControllerMiddleware} from './three-module-controller.middleware';
 
 const router: Router = Router();
 
-const moduleController = new ThreeModuleControllerMiddleware(ThreeModuleBaseModel);
+const moduleController = new ThreeModuleControllerMiddleware(RuleModuleBaseModel);
 
 router.get(
     ControllerMiddleware.getAllRoute(),

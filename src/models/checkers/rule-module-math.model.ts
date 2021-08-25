@@ -1,13 +1,13 @@
-import { ThreeModuleType } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions } from './checker-internals';
-import { ThreeModuleMath, ThreeModuleTypeOptions } from './checker-internals';
+import { RuleModuleType } from './checker-internals';
+import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
+import { RuleModuleMath, RuleModuleTypeOptions } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 import * as math from 'mathjs';
 let debug = require('debug')('app:models:three:checker:module-extract');
 
 @model('three_module')
-export class ThreeModuleMathModel extends ThreeModuleBaseModel implements ThreeModuleMath {
+export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModuleMath {
 
   @type.id
   public _id: ObjectId;
@@ -20,20 +20,25 @@ export class ThreeModuleMathModel extends ThreeModuleBaseModel implements ThreeM
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<ThreeModuleIOType> = ['numbers', 'strings', 'number', 'string'];
+  public allowedInputTypes: Array<RuleModuleIOType> = ['numbers', 'strings', 'number', 'string'];
   
-  @type.select({options: ThreeModuleTypeOptions})
+  @type.select({options: RuleModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: ThreeModuleType = 'math';
+  public moduleType: RuleModuleType = 'math';
 
   @type.string
   @io.all
+  @validate.required
   public name: string = '';
+
+  @type.string
+  @io.all
+  public description: string = '';
 
   @type.string
   @io.all
@@ -45,10 +50,10 @@ export class ThreeModuleMathModel extends ThreeModuleBaseModel implements ThreeM
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: ThreeModuleIOTypeOptions, multiple: false})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: ThreeModuleIOType;
+  public outputType: RuleModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
@@ -64,7 +69,7 @@ export class ThreeModuleMathModel extends ThreeModuleBaseModel implements ThreeM
   private inputObjects: number[];
   private multiple = true;
 
-  public async process(flow: ThreeRuleModel): Promise<void> {
+  public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
     
     let arrayLength = 0;

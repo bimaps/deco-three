@@ -1,11 +1,11 @@
-import { CheckerJsonOutput, ThreeModuleIOStyle } from './checker-interfaces';
+import { CheckerJsonOutput, RuleModuleIOStyle } from './checker-interfaces';
 import { ThreeSpaceModel } from './../space.model';
 import { ThreeGenerator } from './../../helpers/three.generator';
 import { ThreeGeometryModel } from './../geometry.model';
 import { ThreeMaterialModel } from './../material.model';
 import { ThreeObjectModel } from './../object.model';
-import { ThreeModuleBaseModel,  ThreeModuleValueCondition, ThreeFlow, ThreeModuleIORef } from './checker-internals';
-import { ThreeModuleIOTypeValue, ThreeModuleIOType, ThreeModuleObjectCondition } from './checker-internals';
+import { RuleModuleBaseModel,  RuleModuleValueCondition, ThreeFlow, RuleModuleIORef } from './checker-internals';
+import { RuleModuleIOTypeValue, RuleModuleIOType, RuleModuleObjectCondition } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, Model, type, io, query, validate, ObjectId, mongo, Query, Parser, AppModel } from '@bim/deco-api';
 import * as THREE from 'three';
@@ -14,7 +14,7 @@ import resolvePath from 'object-resolve-path';
 let debug = require('debug')('app:models:three:checkers:flow');
 
 @model('three_rule')
-export class ThreeRuleModel extends Model implements ThreeFlow  {
+export class RuleModel extends Model implements ThreeFlow  {
 
   @type.id
   public _id: ObjectId;
@@ -36,12 +36,12 @@ export class ThreeRuleModel extends Model implements ThreeFlow  {
   @io.all
   public description: string = '';
 
-  @type.models({model: ThreeModuleBaseModel})
+  @type.models({model: RuleModuleBaseModel})
   @io.all
   public modulesIds: Array<ObjectId> = [];
 
   public scene: THREE.Scene;
-  public modules: Array<ThreeModuleBaseModel> = [];
+  public modules: Array<RuleModuleBaseModel> = [];
   public outputs: {
     name: string;
     outputs: CheckerJsonOutput[]
@@ -128,7 +128,7 @@ export class ThreeRuleModel extends Model implements ThreeFlow  {
     return this.scene;
   }
 
-  public fetchInput(varname: string): {value: ThreeModuleIOTypeValue, type: ThreeModuleIOType, ref: ThreeModuleIORef | ThreeModuleIORef[], style: ThreeModuleIOStyle | ThreeModuleIOStyle[]}  | undefined {
+  public fetchInput(varname: string): {value: RuleModuleIOTypeValue, type: RuleModuleIOType, ref: RuleModuleIORef | RuleModuleIORef[], style: RuleModuleIOStyle | RuleModuleIOStyle[]}  | undefined {
     if (varname === 'scene') {
       return {
         type: 'scene',
@@ -169,12 +169,12 @@ export class ThreeRuleModel extends Model implements ThreeFlow  {
     return resolvePath(object, key);
   }
 
-  public compareObject(object: THREE.Object3D, condition: ThreeModuleObjectCondition): boolean {
+  public compareObject(object: THREE.Object3D, condition: RuleModuleObjectCondition): boolean {
     const value = this.fetchProp(object, condition.key);
     return this.compareValue(value, condition);
   }
 
-  public compareValue(value: string | boolean | number | Date, condition: ThreeModuleObjectCondition | ThreeModuleValueCondition): boolean {
+  public compareValue(value: string | boolean | number | Date, condition: RuleModuleObjectCondition | RuleModuleValueCondition): boolean {
     if (typeof condition.value === 'number' && typeof value === 'string') {
       value = parseFloat(value);
     } else if (condition.value instanceof Date && typeof value === 'string') {

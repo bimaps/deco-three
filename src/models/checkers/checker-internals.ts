@@ -1,46 +1,46 @@
 export * from './checker-interfaces';
-export * from './three-module-base.model';
-export * from './three-module-filter.model';
-export * from './three-module-extract.model';
-export * from './three-module-math.model';
-export * from './three-module-reducer.model';
-export * from './three-module-if.model';
-export * from './three-module-projection.model';
-export * from './three-module-distance.model';
-export * from './three-module-normal-distance.model';
+export * from './rule-module-base.model';
+export * from './rule-module-filter.model';
+export * from './rule-module-extract.model';
+export * from './rule-module-math.model';
+export * from './rule-module-reducer.model';
+export * from './rule-module-if.model';
+export * from './rule-module-projection.model';
+export * from './rule-module-distance.model';
+export * from './rule-module-normal-distance.model';
 export * from './checker-module-output.model';
-export * from './three-rule.model';
+export * from './rule.model';
 
 // import { CheckerModuleBaseModel } from './checker-module-base.model';
-import { ThreeModuleFilterModel } from './three-module-filter.model';
-import { ThreeModuleExtractModel } from './three-module-extract.model';
-import { ThreeModuleMathModel } from './three-module-math.model';
-import { ThreeModuleReducerModel } from './three-module-reducer.model';
-import { ThreeModuleIfModel } from './three-module-if.model';
-import { ThreeModuleProjectionModel } from './three-module-projection.model';
-import { ThreeModuleDistanceModel } from './three-module-distance.model';
-import { ThreeModuleNormalDistanceModel } from './three-module-normal-distance.model';
+import { RuleModuleFilterModel } from './rule-module-filter.model';
+import { RuleModuleExtractModel } from './rule-module-extract.model';
+import { RuleModuleMathModel } from './rule-module-math.model';
+import { RuleModuleReducerModel } from './rule-module-reducer.model';
+import { RuleModuleIfModel } from './rule-module-if.model';
+import { RuleModuleProjectionModel } from './rule-module-projection.model';
+import { RuleModuleDistanceModel } from './rule-module-distance.model';
+import { RuleModuleNormalDistanceModel } from './rule-module-normal-distance.model';
 import { CheckerModuleOutputModel } from './checker-module-output.model';
 
 export const modelsByType: {
   [key: string]: 
-    typeof ThreeModuleFilterModel
-    | typeof ThreeModuleExtractModel
-    | typeof ThreeModuleMathModel
-    | typeof ThreeModuleReducerModel
-    | typeof ThreeModuleIfModel
-    | typeof ThreeModuleProjectionModel
-    | typeof ThreeModuleDistanceModel
-    | typeof ThreeModuleNormalDistanceModel
+    typeof RuleModuleFilterModel
+    | typeof RuleModuleExtractModel
+    | typeof RuleModuleMathModel
+    | typeof RuleModuleReducerModel
+    | typeof RuleModuleIfModel
+    | typeof RuleModuleProjectionModel
+    | typeof RuleModuleDistanceModel
+    | typeof RuleModuleNormalDistanceModel
  //   | typeof CheckerModuleOutputModel
 } = {
-  filter: ThreeModuleFilterModel,
-  extract: ThreeModuleExtractModel,
-  math: ThreeModuleMathModel,
-  reducer: ThreeModuleReducerModel,
-  if: ThreeModuleIfModel,
-  projection: ThreeModuleProjectionModel,
-  distance: ThreeModuleDistanceModel,
-  "normal-distance": ThreeModuleNormalDistanceModel,
+  filter: RuleModuleFilterModel,
+  extract: RuleModuleExtractModel,
+  math: RuleModuleMathModel,
+  reducer: RuleModuleReducerModel,
+  if: RuleModuleIfModel,
+  projection: RuleModuleProjectionModel,
+  distance: RuleModuleDistanceModel,
+  "normal-distance": RuleModuleNormalDistanceModel,
  // output: CheckerModuleOutputModel,
 };

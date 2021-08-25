@@ -1,13 +1,13 @@
-import { ThreeModuleType } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions } from './checker-internals';
-import { ThreeModuleTypeOptions, ThreeModuleProjection } from './checker-internals';
+import { RuleModuleType } from './checker-internals';
+import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
+import { RuleModuleTypeOptions, RuleModuleProjection } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:checker:module-projection');
 
 @model('three_module')
-export class ThreeModuleProjectionModel extends ThreeModuleBaseModel implements ThreeModuleProjection {
+export class RuleModuleProjectionModel extends RuleModuleBaseModel implements RuleModuleProjection {
 
   @type.id
   public _id: ObjectId;
@@ -20,20 +20,25 @@ export class ThreeModuleProjectionModel extends ThreeModuleBaseModel implements 
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<ThreeModuleIOType> = ['numbers', 'strings', 'number', 'string'];
+  public allowedInputTypes: Array<RuleModuleIOType> = ['numbers', 'strings', 'number', 'string'];
   
-  @type.select({options: ThreeModuleTypeOptions})
+  @type.select({options: RuleModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: ThreeModuleType = 'projection';
+  public moduleType: RuleModuleType = 'projection';
 
   @type.string
   @io.all
+  @validate.required
   public name: string = '';
+
+  @type.string
+  @io.all
+  public description: string = '';
 
   @type.string
   @io.all
@@ -45,10 +50,10 @@ export class ThreeModuleProjectionModel extends ThreeModuleBaseModel implements 
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: ThreeModuleIOTypeOptions, multiple: false})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: ThreeModuleIOType;
+  public outputType: RuleModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
@@ -63,7 +68,7 @@ export class ThreeModuleProjectionModel extends ThreeModuleBaseModel implements 
   @io.all
   public projectionAxis: 'x' | 'y' | 'z';
 
-  public async process(flow: ThreeRuleModel): Promise<void> {
+  public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
     /* Implement here the process */
     

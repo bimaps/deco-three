@@ -1,7 +1,7 @@
 import { PdfChecker } from '../helpers/pdf.checker';
 import { ThreeCheckerReportModel } from './../models/checker-report.model';
-import { ThreeRuleModel, modelsByType, ReportOutput, ThreeRuleOutput } from './../models/checkers/checker-internals';
-import { ThreeModuleBaseModel } from './../models/checkers/checker-internals';
+import { RuleModel, modelsByType, ReportOutput, RuleOutput } from './../models/checkers/checker-internals';
+import { RuleModuleBaseModel } from './../models/checkers/checker-internals';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { Router, Request, Response, NextFunction } from 'express';
 import { ObjectId, ControllerMiddleware, Model, AppMiddleware, PolicyFactory, PolicyController, CacheLastModified } from '@bim/deco-api';
@@ -11,7 +11,7 @@ const router: Router = Router();
 
 
 /** @deprecated Flows are now rules and are not tied to reporting anymore  */
-let flowController = new ThreeCoreControllerMiddleware(ThreeRuleModel);
+let flowController = new ThreeCoreControllerMiddleware(RuleModel);
 /** @deprecated not tied to reporting anymore */
 let reportController = new ThreeCoreControllerMiddleware(ThreeCheckerReportModel);
 
@@ -49,7 +49,7 @@ class CheckerModuleControllerMiddleware extends ControllerMiddleware {
 }
 
 /** @deprecated Modules are not referencing Flows/rules anymore. Rules are now composed by modules  */
-let moduleController = new CheckerModuleControllerMiddleware(ThreeModuleBaseModel);
+let moduleController = new CheckerModuleControllerMiddleware(RuleModuleBaseModel);
 
 router.use(flowController.registerPolicyMountingPoint(['three.flow']))
 router.use(reportController.registerPolicyMountingPoint(['three.report']))
@@ -214,7 +214,7 @@ function fetchFlow() {
     } catch (error) {
       return next(new Error('Invalid flowId'));
     }
-    ThreeRuleModel.getOneWithQuery({appId: res.locals.app._id, _id: flowId}).then((element) => {
+    RuleModel.getOneWithQuery({appId: res.locals.app._id, _id: flowId}).then((element) => {
       if (element) {
         res.locals.flow = element;
         req.body.flowId = element._id.toString();
@@ -236,8 +236,8 @@ function addModuleToFlow() {
     if (!res.locals.element.id) return next(new Error('Missing element id'));
     if (!req.params.flowId) return next(new Error('Missing flowId'));
     if (!res.locals.flow) return next(new Error('Missing flow'));
-    const flow: ThreeRuleModel = res.locals.flow;
-    const rightInstance = flow instanceof ThreeRuleModel;
+    const flow: RuleModel = res.locals.flow;
+    const rightInstance = flow instanceof RuleModel;
     if (!rightInstance) return next(new Error('Invalid flow instance'));
 
     if (!Array.isArray(flow.modulesIds)) {
@@ -256,9 +256,9 @@ function removeFlowFromAllReports() {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!res.locals.app) return next(new Error('Missing app')); // not required anymore as this is handled by policy
     if (!res.locals.element) return next(new Error('Missing element'));
-    const rightInstance = res.locals.element instanceof ThreeRuleModel;
+    const rightInstance = res.locals.element instanceof RuleModel;
     if (!rightInstance) return next(new Error('Invalid flow'));
-    const flowId = (res.locals.element as ThreeRuleModel)._id;
+    const flowId = (res.locals.element as RuleModel)._id;
 
     ThreeCheckerReportModel.deco.db.collection(ThreeCheckerReportModel.deco.collectionName).update({
       flows: flowId
@@ -272,11 +272,11 @@ function deleteAllModules() {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!res.locals.app) return next(new Error('Missing app')); // not required anymore as this is handled by policy
     if (!res.locals.element) return next(new Error('Missing element'));
-    const rightInstance = res.locals.element instanceof ThreeRuleModel;
+    const rightInstance = res.locals.element instanceof RuleModel;
     if (!rightInstance) return next(new Error('Invalid flow'));
-    const flow = (res.locals.element as ThreeRuleModel);
+    const flow = (res.locals.element as RuleModel);
 
-    ThreeModuleBaseModel.deco.db.collection(ThreeModuleBaseModel.deco.collectionName).remove({_id: {$in: flow.modulesIds}}).then(() => {
+    RuleModuleBaseModel.deco.db.collection(RuleModuleBaseModel.deco.collectionName).remove({_id: {$in: flow.modulesIds}}).then(() => {
       next();
     }).catch(next);
   }
@@ -287,12 +287,12 @@ function runFlow() {
     if (!res.locals.app) return next(new Error('Missing app')); // not required anymore as this is handled by policy
     if (!req.params.flowId) return next(new Error('Missing flowId'));
     if (!res.locals.flow) return next(new Error('Missing flow'));
-    const flow: ThreeRuleModel = res.locals.flow;
-    const rightInstance = flow instanceof ThreeRuleModel;
+    const flow: RuleModel = res.locals.flow;
+    const rightInstance = flow instanceof RuleModel;
     if (!rightInstance) return next(new Error('Invalid flow instance'));
     
     flow.process().then(async () => {
-      const flowOutput: ThreeRuleOutput = {
+      const flowOutput: RuleOutput = {
         name: flow.name,
         description: flow.description,
         summaries: flow.modules.map(m => m.outputSummary),
@@ -339,7 +339,7 @@ function runReport() {
           flows: []
         };
         for (const flowId of report.flows) {
-          const flow = await ThreeRuleModel.getOneWithId(flowId);
+          const flow = await RuleModel.getOneWithId(flowId);
           if (!flow) {
             throw new Error('Required flow not found');
           }

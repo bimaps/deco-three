@@ -1,4 +1,4 @@
-import { CheckerJsonOutput, ReportOutput, ThreeRuleOutput } from './../models/checkers/checker-internals';
+import { CheckerJsonOutput, ReportOutput, RuleOutput } from './../models/checkers/checker-internals';
 import { PDF, PDFTextBlock } from '@bim/deco-api';
 
 export class PdfChecker extends PDF {
@@ -33,7 +33,7 @@ export class PdfChecker extends PDF {
     info: '0,0,1',
   };
 
-  public printFlowHead(flowOutput: ThreeRuleOutput) {
+  public printFlowHead(flowOutput: RuleOutput) {
     const block = new PDFTextBlock(this);
     block.fontSizeHeader = this.fontSizeHeader;
     block.fontSize = 10;
@@ -46,7 +46,7 @@ export class PdfChecker extends PDF {
     block.apply();
   }
 
-  public printFlowOutputs(flowOutput: ThreeRuleOutput) {
+  public printFlowOutputs(flowOutput: RuleOutput) {
     const block = new PDFTextBlock(this);
     block.fontSizeHeader = this.fontSizeHeader;
     block.fontSize = 10;

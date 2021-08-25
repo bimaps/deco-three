@@ -1,13 +1,13 @@
-import { ThreeModuleType } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions } from './checker-internals';
-import { ThreeModuleTypeOptions, ThreeModuleDistance } from './checker-internals';
+import { RuleModuleType } from './checker-internals';
+import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
+import { RuleModuleTypeOptions, RuleModuleDistance } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:checker:module-distance');
 
 @model('three_module')
-export class ThreeModuleDistanceModel extends ThreeModuleBaseModel implements ThreeModuleDistance {
+export class RuleModuleDistanceModel extends RuleModuleBaseModel implements RuleModuleDistance {
 
   @type.id
   public _id: ObjectId;
@@ -20,20 +20,25 @@ export class ThreeModuleDistanceModel extends ThreeModuleBaseModel implements Th
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<ThreeModuleIOType> = ['vector3s', 'vector3', 'vector2s', 'vector2'];
+  public allowedInputTypes: Array<RuleModuleIOType> = ['vector3s', 'vector3', 'vector2s', 'vector2'];
   
-  @type.select({options: ThreeModuleTypeOptions})
+  @type.select({options: RuleModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: ThreeModuleType = 'distance';
+  public moduleType: RuleModuleType = 'distance';
 
   @type.string
   @io.all
+  @validate.required
   public name: string = '';
+
+  @type.string
+  @io.all
+  public description: string = '';
 
   @type.string
   @io.all
@@ -50,10 +55,10 @@ export class ThreeModuleDistanceModel extends ThreeModuleBaseModel implements Th
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: ThreeModuleIOTypeOptions, multiple: false})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: ThreeModuleIOType;
+  public outputType: RuleModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
@@ -66,7 +71,7 @@ export class ThreeModuleDistanceModel extends ThreeModuleBaseModel implements Th
   @io.all
   public distanceType: '2d-2d' | '3d-3d';
 
-  public async process(flow: ThreeRuleModel): Promise<void> {
+  public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
     /* Implement here the process */
 

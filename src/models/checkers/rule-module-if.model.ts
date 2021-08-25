@@ -1,14 +1,14 @@
-import { ThreeModuleIOStyle, ThreeModuleIOStyleOptions } from './checker-interfaces';
-import { ThreeModuleType } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions } from './checker-internals';
-import { ThreeModuleTypeOptions, ThreeModuleIf, ThreeModuleIfOperations, ThreeModuleValueCondition } from './checker-internals';
+import { RuleModuleIOStyle, RuleModuleIOStyleOptions } from './checker-interfaces';
+import { RuleModuleType } from './checker-internals';
+import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
+import { RuleModuleTypeOptions, RuleModuleIf, RuleModuleIfOperations, RuleModuleValueCondition } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:checker:module-if');
 
 @model('three_module')
-export class ThreeModuleIfModel extends ThreeModuleBaseModel implements ThreeModuleIf {
+export class RuleModuleIfModel extends RuleModuleBaseModel implements RuleModuleIf {
 
   @type.id
   public _id: ObjectId;
@@ -21,20 +21,25 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements ThreeMod
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<ThreeModuleIOType> = ['numbers', 'strings', 'number', 'string'];
+  public allowedInputTypes: Array<RuleModuleIOType> = ['numbers', 'strings', 'number', 'string'];
   
-  @type.select({options: ThreeModuleTypeOptions})
+  @type.select({options: RuleModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: ThreeModuleType = 'if';
+  public moduleType: RuleModuleType = 'if';
 
   @type.string
   @io.all
+  @validate.required
   public name: string = '';
+
+  @type.string
+  @io.all
+  public description: string = '';
 
   @type.string
   @io.all
@@ -46,10 +51,10 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements ThreeMod
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: ThreeModuleTypeOptions, multiple: false})
+  @type.select({options: RuleModuleTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: ThreeModuleIOType;
+  public outputType: RuleModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
@@ -62,9 +67,9 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements ThreeMod
   @io.all
   public defaultOutputValue: number | string | boolean;
 
-  @type.select({options: ThreeModuleIOStyleOptions})
+  @type.select({options: RuleModuleIOStyleOptions})
   @io.all
-  public defaultOutputStyle: ThreeModuleIOStyle;
+  public defaultOutputStyle: RuleModuleIOStyle;
   
   @type.array({type: 'object', options: {
     keys: {
@@ -76,15 +81,15 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements ThreeMod
       }}},
       conditionsOperator: {type: 'select', options: ['and', 'or']},
       outputValue: {type: 'any'},
-      outputStyle: {type: 'select', options: ThreeModuleIOStyleOptions}
+      outputStyle: {type: 'select', options: RuleModuleIOStyleOptions}
     }
   }})
   @io.all
-  public operations: ThreeModuleIfOperations;
+  public operations: RuleModuleIfOperations;
 
-  private flow: ThreeRuleModel;
+  private flow: RuleModel;
 
-  public async process(flow: ThreeRuleModel): Promise<void> {
+  public async process(flow: RuleModel): Promise<void> {
     this.flow = flow;
     super.process(flow);
 
@@ -101,7 +106,7 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements ThreeMod
     if (this.currentInputType === 'numbers' || this.currentInputType === 'strings' || this.currentInputType === 'booleans') {
       const inputs = this.currentInput as number[] | string[] | boolean[];
       const outputs: number[] | string[] | boolean[] = []
-      const styles: ThreeModuleIOStyle[] = [];
+      const styles: RuleModuleIOStyle[] = [];
       for (const key in inputs) {
         const input = inputs[key];
         const out = this.processOperationsForInput(input, this.operations);
@@ -124,7 +129,7 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements ThreeMod
     }
   }
 
-  public processOperationsForInput(input: boolean | number | string, operations: ThreeModuleIfOperations): {value: boolean | number | string | undefined, style: ThreeModuleIOStyle} {
+  public processOperationsForInput(input: boolean | number | string, operations: RuleModuleIfOperations): {value: boolean | number | string | undefined, style: RuleModuleIOStyle} {
     for (const operation of operations) {
       let valid = false;
       for (let condition of operation.conditions) {
@@ -143,7 +148,7 @@ export class ThreeModuleIfModel extends ThreeModuleBaseModel implements ThreeMod
     return {value: this.defaultOutputValue || input, style: this.defaultOutputStyle};
   }
 
-  public isConditionTrue(input: boolean | number | string, condition: ThreeModuleValueCondition): boolean {
+  public isConditionTrue(input: boolean | number | string, condition: RuleModuleValueCondition): boolean {
     return false;
   }
 

@@ -1,21 +1,21 @@
 import * as THREE from 'three';
-import { ObjectId } from '@bim/deco-api';
+import { ObjectId } from '@bim/deco-api';
 
-export type ThreeModuleType = 'filter' | 'extract' | 'math' | 'reducer' | 'if' | 'projection' | 'distance' | 'normal-distance' | 'output';
-export const ThreeModuleTypeOptions = ['filter', 'extract', 'math', 'reducer', 'if', 'projection', 'distance', 'normal-distance', 'output'];
+export const RuleModuleTypeOptions = ['filter', 'extract', 'math', 'reducer', 'if', 'projection', 'distance', 'normal-distance'] as const;
+export type RuleModuleType = typeof RuleModuleTypeOptions[number];
 
-export type ThreeModuleIOType = 'scene' | 'three-objects' | 'three-object' | 'triangles' | 'triangle' | 'line3s' | 'line3' | 'vector3s' | 'vector3' | 'vector2s' | 'vector2' | 'box3s' | 'box3' | 'strings' | 'string' | 'numbers' | 'number' | 'booleans' | 'boolean' | 'json';
-export const ThreeModuleIOTypeOptions = ['scene', 'three-objects', 'three-object', 'triangles', 'triangle', 'line3s', 'line3', 'vector3s', 'vector3', 'vector2s', 'vector2', 'box3s', 'box3', 'strings', 'string', 'numbers', 'number', 'booleans', 'boolean', 'json'];
-export type ThreeModuleIOTypeValue = THREE.Scene | THREE.Object3D[] | THREE.Object3D | THREE.Triangle | THREE.Triangle[] | THREE.Line3 | THREE.Line3[] | THREE.Vector3 | THREE.Vector3[] | THREE.Vector2 | THREE.Vector2[] | THREE.Box3 | THREE.Box3[] | string[] | string | number[] | number | boolean[] | boolean | CheckerJsonOutput[];
+export const RuleModuleIOTypeOptions = ['scene', 'three-objects', 'three-object', 'triangles', 'triangle', 'line3s', 'line3', 'vector3s', 'vector3', 'vector2s', 'vector2', 'box3s', 'box3', 'strings', 'string', 'numbers', 'number', 'booleans', 'boolean', 'json'] as const;
+export type RuleModuleIOType = typeof RuleModuleIOTypeOptions[number];
+export type RuleModuleIOTypeValue = THREE.Scene | THREE.Object3D[] | THREE.Object3D | THREE.Triangle | THREE.Triangle[] | THREE.Line3 | THREE.Line3[] | THREE.Vector3 | THREE.Vector3[] | THREE.Vector2 | THREE.Vector2[] | THREE.Box3 | THREE.Box3[] | string[] | string | number[] | number | boolean[] | boolean | CheckerJsonOutput[];
 
-export type ThreeModuleIOStyle = 'default' | 'correct' | 'incorrect' | 'danger' | 'info';
-export const ThreeModuleIOStyleOptions = ['default', 'correct', 'incorrect', 'danger', 'info'];
+export type RuleModuleIOStyle = 'default' | 'correct' | 'incorrect' | 'danger' | 'info';
+export const RuleModuleIOStyleOptions = ['default', 'correct', 'incorrect', 'danger', 'info'];
 export interface CheckerJsonOutput {
     prefix: string;
     value: any;
-    type: ThreeModuleIOType;
-    ref: ThreeModuleIORef | ThreeModuleIORef[] | {ifcId: string} | {ifcId: string}[];
-    style?: ThreeModuleIOStyle | ThreeModuleIOStyle[];
+    type: RuleModuleIOType;
+    ref: RuleModuleIORef | RuleModuleIORef[] | {ifcId: string} | {ifcId: string}[];
+    style?: RuleModuleIOStyle | RuleModuleIOStyle[];
     suffix: string;
     display: 'paragraph' | 'blocks';
 }
@@ -23,28 +23,28 @@ export interface CheckerJsonOutput {
 export type ReportOutput = {
     name: string;
     description: string;
-    flows: ThreeRuleOutput[]
+    flows: RuleOutput[]
 };
 
-export type ThreeRuleOutput = {
+export type RuleOutput = {
     name: string;
     description: string;
     summaries: string[],
     outputs: {name: string, outputs: CheckerJsonOutput[]}[]
 };
 
-export type ThreeModuleConditionOperator = 'or' | 'and';
+export type RuleModuleConditionOperator = 'or' | 'and';
 
 export type ThreeExtractType = 'faces' | 'edges' | 'vertices' | 'wireframe' | 'property';
-export const ThreeModuleExtractTypeOptions = ['faces', 'edges', 'vertices', 'wireframe', 'property'];
+export const RuleModuleExtractTypeOptions = ['faces', 'edges', 'vertices', 'wireframe', 'property'];
 
-export interface ThreeModuleObjectCondition {
+export interface RuleModuleObjectCondition {
     key: string;
     operation: string;
     value: string | Date;
 }
 
-export interface ThreeModuleValueCondition {
+export interface RuleModuleValueCondition {
     operation: string;
     value: string | Date;
 }
@@ -54,28 +54,28 @@ export abstract class ThreeModule {
 }
 
 
-export type ThreeModuleIORef = THREE.Object3D | THREE.Object3D[] | undefined;
+export type RuleModuleIORef = THREE.Object3D | THREE.Object3D[] | undefined;
 
-export interface ThreeModuleShape {
-    moduleType: ThreeModuleType;
+export interface RuleModuleShape {
+    moduleType: RuleModuleType;
     name: string;
-    allowedInputTypes?: Array<ThreeModuleIOType>;
+    allowedInputTypes?: Array<RuleModuleIOType>;
     inputVarName?: string;
     outputVarName: string;
-    outputType: ThreeModuleIOType;
-    outputValue: ThreeModuleIOTypeValue;
-    outputReference: ThreeModuleIORef | ThreeModuleIORef[];
+    outputType: RuleModuleIOType;
+    outputValue: RuleModuleIOTypeValue;
+    outputReference: RuleModuleIORef | RuleModuleIORef[];
     outputSummary?: string;
 }
 
-export interface ThreeModuleFilter extends ThreeModuleShape {
+export interface RuleModuleFilter extends RuleModuleShape {
     // allowedInputType = ['three-objects'];
-    conditions: Array<ThreeModuleObjectCondition>;
-    conditionsOperator: ThreeModuleConditionOperator;
+    conditions: Array<RuleModuleObjectCondition>;
+    conditionsOperator: RuleModuleConditionOperator;
     // outputType = 'three-objects';
 }
 
-export interface ThreeModuleExtract extends ThreeModuleShape {
+export interface RuleModuleExtract extends RuleModuleShape {
     // allowedInputType = ['three-objects', 'three-object'];
     extractType: ThreeExtractType;
     value: any;
@@ -83,48 +83,48 @@ export interface ThreeModuleExtract extends ThreeModuleShape {
     // outputType = 'numbers' | 'strings' | 'booleans';
 }
 
-export interface ThreeModuleMath extends ThreeModuleShape {
+export interface RuleModuleMath extends RuleModuleShape {
     // allowedInputType = ['numbers', 'number'];
     expression: string;
     // outputType = 'numbers' | 'number';
 }
 
-export type ThreeModuleReducerOperation = 'min' | 'max' | 'average' | 'count' | 'sum';
-export const ThreeModuleReducerOperationOptions = ['min', 'max', 'average', 'count', 'sum'];
-export interface ThreeModuleReducer extends ThreeModuleShape {
+export type RuleModuleReducerOperation = 'min' | 'max' | 'average' | 'count' | 'sum';
+export const RuleModuleReducerOperationOptions = ['min', 'max', 'average', 'count', 'sum'];
+export interface RuleModuleReducer extends RuleModuleShape {
     // allowedInputType = ['numbers', 'number'];
-    operation: ThreeModuleReducerOperation;
+    operation: RuleModuleReducerOperation;
     // outputType = 'numbers' | 'number';
 }
 
-export type ThreeModuleIfOperation = {
-    conditions: Array<ThreeModuleValueCondition>;
-    conditionsOperator: ThreeModuleConditionOperator;
+export type RuleModuleIfOperation = {
+    conditions: Array<RuleModuleValueCondition>;
+    conditionsOperator: RuleModuleConditionOperator;
     outputValue: number | string | boolean;
-    outputStyle: ThreeModuleIOStyle;
+    outputStyle: RuleModuleIOStyle;
 }
-export type ThreeModuleIfOperations = Array<ThreeModuleIfOperation>;
-export interface ThreeModuleIf extends ThreeModuleShape {
+export type RuleModuleIfOperations = Array<RuleModuleIfOperation>;
+export interface RuleModuleIf extends RuleModuleShape {
     // allowedInputType = ['numbers', 'number'];
     defaultOutputValue: number | string | boolean;
-    defaultOutputStyle: ThreeModuleIOStyle;
-    operations: ThreeModuleIfOperations;
+    defaultOutputStyle: RuleModuleIOStyle;
+    operations: RuleModuleIfOperations;
     // outputType = 'numbers' | 'strings' | 'booleans';
 }
 
-export interface ThreeModuleBbbox extends ThreeModuleShape {
+export interface RuleModuleBbbox extends RuleModuleShape {
 
 }
 
-export interface ThreeModuleProjection extends ThreeModuleShape {
+export interface RuleModuleProjection extends RuleModuleShape {
   projectionAxis: 'x' | 'y' | 'z';
 }
 
-export interface ThreeModuleDistance extends ThreeModuleShape {
+export interface RuleModuleDistance extends RuleModuleShape {
     distanceType: '2d-2d' | '3d-3d';
 }
 
-export interface ThreeModuleNormalDistance extends ThreeModuleShape {
+export interface RuleModuleNormalDistance extends RuleModuleShape {
     operation: 'min' | 'max';
 }
 
@@ -135,7 +135,7 @@ export interface CheckerOutput {
     display: 'paragraph' | 'blocks';
 }
 
-export interface ThreeModuleOutput extends ThreeModuleShape {
+export interface RuleModuleOutput extends RuleModuleShape {
     outputs: CheckerOutput[];
 }
 

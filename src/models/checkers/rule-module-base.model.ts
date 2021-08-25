@@ -1,32 +1,33 @@
-import { ThreeModuleIOStyle } from './checker-interfaces';
-import { ThreeModuleShape, ThreeModuleType, ThreeModuleIOType, ThreeModuleIOTypeValue, ThreeRuleModel } from './checker-internals';
-import { ThreeModuleIORef, modelsByType } from './checker-internals';
+import { RuleModuleIOStyle } from './checker-interfaces';
+import { RuleModuleShape, RuleModuleType, RuleModuleIOType, RuleModuleIOTypeValue, RuleModel } from './checker-internals';
+import { RuleModuleIORef, modelsByType } from './checker-internals';
 import { model, ObjectId, Model, InstanceFromDocumentOptions } from '@bim/deco-api';
 import { Request, Response } from 'express';
 
 let debug = require('debug')('app:models:three:checker:module-base');
 
 @model('three_module')
-export class ThreeModuleBaseModel extends Model implements ThreeModuleShape {
+export class RuleModuleBaseModel extends Model implements RuleModuleShape {
 
   public _id: ObjectId;
   public appId: ObjectId;
-  public moduleType: ThreeModuleType;
+  public moduleType: RuleModuleType;
   public name: string;
-  public allowedInputTypes?: Array<ThreeModuleIOType>;
+  public description: string;
+  public allowedInputTypes?: Array<RuleModuleIOType>;
   public inputVarName?: string;
   public outputVarName: string;
-  public outputType: ThreeModuleIOType;
-  public outputValue: ThreeModuleIOTypeValue;
-  public outputReference: ThreeModuleIORef | ThreeModuleIORef[];
-  public outputStyle: ThreeModuleIOStyle | ThreeModuleIOStyle[] = 'default';
+  public outputType: RuleModuleIOType;
+  public outputValue: RuleModuleIOTypeValue;
+  public outputReference: RuleModuleIORef | RuleModuleIORef[];
+  public outputStyle: RuleModuleIOStyle | RuleModuleIOStyle[] = 'default';
   public outputSummary: string;
 
-  protected currentInput: ThreeModuleIOTypeValue;
-  protected currentInputType: ThreeModuleIOType;
-  protected currentInputRef: ThreeModuleIORef | ThreeModuleIORef[];
+  protected currentInput: RuleModuleIOTypeValue;
+  protected currentInputType: RuleModuleIOType;
+  protected currentInputRef: RuleModuleIORef | RuleModuleIORef[];
 
-  public async process(flow: ThreeRuleModel): Promise<void> {
+  public async process(flow: RuleModel): Promise<void> {
     if (!this.inputVarName) {
       throw new Error('Missing inputVarName');
     }

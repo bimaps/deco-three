@@ -1,13 +1,13 @@
-import { ThreeModuleType, ThreeModuleFilter } from './checker-internals';
-import { ThreeModuleBaseModel, ThreeRuleModel, ThreeModuleIOType, ThreeModuleIOTypeOptions } from './checker-internals';
-import { ThreeModuleTypeOptions } from './checker-internals';
-import { ThreeModuleObjectCondition, ThreeModuleConditionOperator } from './checker-internals';
+import { RuleModuleType, RuleModuleFilter } from './checker-internals';
+import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
+import { RuleModuleTypeOptions } from './checker-internals';
+import { RuleModuleObjectCondition, RuleModuleConditionOperator } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-filter');
 
 @model('three_module')
-export class ThreeModuleFilterModel extends ThreeModuleBaseModel implements ThreeModuleFilter {
+export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleModuleFilter {
 
   @type.id
   public _id: ObjectId;
@@ -20,20 +20,25 @@ export class ThreeModuleFilterModel extends ThreeModuleBaseModel implements Thre
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.select({options: ThreeModuleIOTypeOptions, multiple: true})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<ThreeModuleIOType> = ['three-objects', 'scene'];
+  public allowedInputTypes: Array<RuleModuleIOType> = ['three-objects', 'scene'];
   
-  @type.select({options: ThreeModuleTypeOptions})
+  @type.select({options: RuleModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: ThreeModuleType = 'filter';
+  public moduleType: RuleModuleType = 'filter';
 
   @type.string
   @io.all
+  @validate.required
   public name: string = '';
+
+  @type.string
+  @io.all
+  public description: string = '';
 
   @type.string
   @io.all
@@ -45,10 +50,10 @@ export class ThreeModuleFilterModel extends ThreeModuleBaseModel implements Thre
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: ThreeModuleIOTypeOptions, multiple: false})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: ThreeModuleIOType = 'three-objects'
+  public outputType: RuleModuleIOType = 'three-objects'
 
   public outputValue: THREE.Object3D[];
 
@@ -68,15 +73,15 @@ export class ThreeModuleFilterModel extends ThreeModuleBaseModel implements Thre
     }
   })
   @io.all
-  public conditions: Array<ThreeModuleObjectCondition>;
+  public conditions: Array<RuleModuleObjectCondition>;
 
   @type.select({options: ['or', 'and']})
   @io.all
-  public conditionsOperator: ThreeModuleConditionOperator = 'and';
+  public conditionsOperator: RuleModuleConditionOperator = 'and';
 
   private inputObjects: Array<THREE.Object3D> = [];
 
-  public async process(flow: ThreeRuleModel): Promise<void> {
+  public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
     if (this.currentInput && this.currentInputType === 'three-objects') {
       this.inputObjects = this.currentInput as THREE.Object3D[];
