@@ -1,46 +1,46 @@
 export * from './checker-interfaces';
-export * from './checker-module-base.model';
-export * from './checker-module-filter.model';
-export * from './checker-module-extract.model';
-export * from './checker-module-math.model';
-export * from './checker-module-reducer.model';
-export * from './checker-module-if.model';
-export * from './checker-module-projection.model';
-export * from './checker-module-distance.model';
-export * from './checker-module-normal-distance.model';
+export * from './rule-module-base.model';
+export * from './rule-module-filter.model';
+export * from './rule-module-extract.model';
+export * from './rule-module-math.model';
+export * from './rule-module-reducer.model';
+export * from './rule-module-if.model';
+export * from './rule-module-projection.model';
+export * from './rule-module-distance.model';
+export * from './rule-module-normal-distance.model';
 export * from './checker-module-output.model';
-export * from './checker-flow.model';
+export * from './rule.model';
 
 // import { CheckerModuleBaseModel } from './checker-module-base.model';
-import { CheckerModuleFilterModel } from './checker-module-filter.model';
-import { CheckerModuleExtractModel } from './checker-module-extract.model';
-import { CheckerModuleMathModel } from './checker-module-math.model';
-import { CheckerModuleReducerModel } from './checker-module-reducer.model';
-import { CheckerModuleIfModel } from './checker-module-if.model';
-import { CheckerModuleProjectionModel } from './checker-module-projection.model';
-import { CheckerModuleDistanceModel } from './checker-module-distance.model';
-import { CheckerModuleNormalDistanceModel } from './checker-module-normal-distance.model';
+import { RuleModuleFilterModel } from './rule-module-filter.model';
+import { RuleModuleExtractModel } from './rule-module-extract.model';
+import { RuleModuleMathModel } from './rule-module-math.model';
+import { RuleModuleReducerModel } from './rule-module-reducer.model';
+import { RuleModuleIfModel } from './rule-module-if.model';
+import { RuleModuleProjectionModel } from './rule-module-projection.model';
+import { RuleModuleDistanceModel } from './rule-module-distance.model';
+import { RuleModuleNormalDistanceModel } from './rule-module-normal-distance.model';
 import { CheckerModuleOutputModel } from './checker-module-output.model';
 
 export const modelsByType: {
   [key: string]: 
-    typeof CheckerModuleFilterModel
-    | typeof CheckerModuleExtractModel
-    | typeof CheckerModuleMathModel
-    | typeof CheckerModuleReducerModel
-    | typeof CheckerModuleIfModel
-    | typeof CheckerModuleProjectionModel
-    | typeof CheckerModuleDistanceModel
-    | typeof CheckerModuleNormalDistanceModel
-    | typeof CheckerModuleOutputModel
+    typeof RuleModuleFilterModel
+    | typeof RuleModuleExtractModel
+    | typeof RuleModuleMathModel
+    | typeof RuleModuleReducerModel
+    | typeof RuleModuleIfModel
+    | typeof RuleModuleProjectionModel
+    | typeof RuleModuleDistanceModel
+    | typeof RuleModuleNormalDistanceModel
+ //   | typeof CheckerModuleOutputModel
 } = {
-  filter: CheckerModuleFilterModel,
-  extract: CheckerModuleExtractModel,
-  math: CheckerModuleMathModel,
-  reducer: CheckerModuleReducerModel,
-  if: CheckerModuleIfModel,
-  projection: CheckerModuleProjectionModel,
-  distance: CheckerModuleDistanceModel,
-  "normal-distance": CheckerModuleNormalDistanceModel,
-  output: CheckerModuleOutputModel,
+  filter: RuleModuleFilterModel,
+  extract: RuleModuleExtractModel,
+  math: RuleModuleMathModel,
+  reducer: RuleModuleReducerModel,
+  if: RuleModuleIfModel,
+  projection: RuleModuleProjectionModel,
+  distance: RuleModuleDistanceModel,
+  "normal-distance": RuleModuleNormalDistanceModel,
+ // output: CheckerModuleOutputModel,
 };

@@ -1,12 +1,12 @@
-import { CheckerModuleType } from './checker-internals';
-import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions, CheckerModuleIORef } from './checker-internals';
-import { CheckerModuleReducer, CheckerModuleTypeOptions, CheckerModuleReducerOperation, CheckerModuleReducerOperationOptions } from './checker-internals';
+import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
+import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions, RuleModuleIORef } from './checker-internals';
+import { RuleModuleReducer, RuleModuleTypeOptions, RuleModuleReducerOperation, RuleModuleReducerOperationOptions } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-reducer');
 
-@model('checker_module')
-export class CheckerModuleReducerModel extends CheckerModuleBaseModel implements CheckerModuleReducer {
+@model(RULE_MODULE_MONGO_COLLECTION_NAME)
+export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleModuleReducer {
 
   @type.id
   public _id: ObjectId;
@@ -19,27 +19,25 @@ export class CheckerModuleReducerModel extends CheckerModuleBaseModel implements
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.model({model: ThreeSiteModel})
-  @io.all
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
-
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: true})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<CheckerModuleIOType> = ['three-objects', 'numbers', 'strings'];
+  public allowedInputTypes: Array<RuleModuleIOType> = ['three-objects', 'numbers', 'strings'];
   
-  @type.select({options: CheckerModuleTypeOptions})
+  @type.select({options: RuleModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: CheckerModuleType = 'reducer';
+  public moduleType: RuleModuleType = 'reducer';
 
   @type.string
   @io.all
+  @validate.required
   public name: string = '';
+
+  @type.string
+  @io.all
+  public description: string = '';
 
   @type.string
   @io.all
@@ -51,10 +49,10 @@ export class CheckerModuleReducerModel extends CheckerModuleBaseModel implements
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: false})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: CheckerModuleIOType;
+  public outputType: RuleModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
@@ -63,11 +61,11 @@ export class CheckerModuleReducerModel extends CheckerModuleBaseModel implements
   @io.output
   public outputSummary: string;
 
-  @type.select({options: CheckerModuleReducerOperationOptions})
+  @type.select({options: RuleModuleReducerOperationOptions})
   @io.all
-  public operation: CheckerModuleReducerOperation;
+  public operation: RuleModuleReducerOperation;
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
 
     if (!Array.isArray(this.currentInput)) {
@@ -90,7 +88,7 @@ export class CheckerModuleReducerModel extends CheckerModuleBaseModel implements
         const min = Math.min.apply(null, mathInput); // best perf with min.apply for large arras
         const refKeys = [...Object.keys(mathInput)].filter(i => mathInput[parseInt(i, 10)] === min);
         this.outputValue = min;
-        const inputRefs = (this.currentInputRef as CheckerModuleIORef[]) || [];
+        const inputRefs = (this.currentInputRef as RuleModuleIORef[]) || [];
         this.outputReference = inputRefs.filter((v, i) => refKeys.includes(i.toString()));
       } else if (this.operation === 'max') {
         // this.outputValue = Math.max(...mathInput);  // very bad perf with spread for large arrays
@@ -98,7 +96,7 @@ export class CheckerModuleReducerModel extends CheckerModuleBaseModel implements
         const max = Math.max.apply(null, mathInput); // best perf with max.apply for large arras
         const refKeys = [...Object.keys(mathInput)].filter(i => mathInput[parseInt(i, 10)] === max);
         this.outputValue = max;
-        const inputRefs = (this.currentInputRef as CheckerModuleIORef[]) || [];
+        const inputRefs = (this.currentInputRef as RuleModuleIORef[]) || [];
         this.outputReference = inputRefs.filter((v, i) => refKeys.includes(i.toString()));
       } else if (this.operation === 'sum') {
         this.outputReference = this.currentInputRef;

@@ -1,33 +1,37 @@
-import { CheckerModuleIOStyle } from './checker-interfaces';
-import { CheckerModuleBase, CheckerModuleType, CheckerModuleIOType, CheckerModuleIOTypeValue, CheckerFlowModel } from './checker-internals';
-import { CheckerModuleIORef, modelsByType } from './checker-internals';
+import { RuleModuleIOStyle } from './checker-interfaces';
+import { RuleModuleShape, RuleModuleType, RuleModuleIOType, RuleModuleIOTypeValue, RuleModel } from './checker-internals';
+import { RuleModuleIORef, modelsByType } from './checker-internals';
 import { model, ObjectId, Model, InstanceFromDocumentOptions } from '@bim/deco-api';
 import { Request, Response } from 'express';
 
 let debug = require('debug')('app:models:three:checker:module-base');
 
-@model('checker_module')
-export class CheckerModuleBaseModel extends Model implements CheckerModuleBase {
+/** THe name of the MongoDbCollection for all types of rule modules */
+export const RULE_MODULE_MONGO_COLLECTION_NAME = 'rule_module';
+
+@model(RULE_MODULE_MONGO_COLLECTION_NAME)
+export class RuleModuleBaseModel extends Model implements RuleModuleShape {
+
 
   public _id: ObjectId;
   public appId: ObjectId;
-  public siteId: ObjectId;
-  public moduleType: CheckerModuleType;
+  public moduleType: RuleModuleType;
   public name: string;
-  public allowedInputTypes?: Array<CheckerModuleIOType>;
+  public description: string;
+  public allowedInputTypes?: Array<RuleModuleIOType>;
   public inputVarName?: string;
   public outputVarName: string;
-  public outputType: CheckerModuleIOType;
-  public outputValue: CheckerModuleIOTypeValue;
-  public outputReference: CheckerModuleIORef | CheckerModuleIORef[];
-  public outputStyle: CheckerModuleIOStyle | CheckerModuleIOStyle[] = 'default';
+  public outputType: RuleModuleIOType;
+  public outputValue: RuleModuleIOTypeValue;
+  public outputReference: RuleModuleIORef | RuleModuleIORef[];
+  public outputStyle: RuleModuleIOStyle | RuleModuleIOStyle[] = 'default';
   public outputSummary: string;
 
-  protected currentInput: CheckerModuleIOTypeValue;
-  protected currentInputType: CheckerModuleIOType;
-  protected currentInputRef: CheckerModuleIORef | CheckerModuleIORef[];
+  protected currentInput: RuleModuleIOTypeValue;
+  protected currentInputType: RuleModuleIOType;
+  protected currentInputRef: RuleModuleIORef | RuleModuleIORef[];
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: RuleModel): Promise<void> {
     if (!this.inputVarName) {
       throw new Error('Missing inputVarName');
     }

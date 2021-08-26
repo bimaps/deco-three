@@ -1,13 +1,12 @@
-import { CheckerModuleType } from './checker-internals';
-import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
-import { CheckerModuleMath, CheckerModuleTypeOptions } from './checker-internals';
-import { ThreeSiteModel } from '../site.model';
+import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
+import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
+import { RuleModuleMath, RuleModuleTypeOptions } from './checker-internals';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 import * as math from 'mathjs';
 let debug = require('debug')('app:models:three:checker:module-extract');
 
-@model('checker_module')
-export class CheckerModuleMathModel extends CheckerModuleBaseModel implements CheckerModuleMath {
+@model(RULE_MODULE_MONGO_COLLECTION_NAME)
+export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModuleMath {
 
   @type.id
   public _id: ObjectId;
@@ -20,27 +19,25 @@ export class CheckerModuleMathModel extends CheckerModuleBaseModel implements Ch
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.model({model: ThreeSiteModel})
-  @io.all
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
-
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: true})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<CheckerModuleIOType> = ['numbers', 'strings', 'number', 'string'];
+  public allowedInputTypes: Array<RuleModuleIOType> = ['numbers', 'strings', 'number', 'string'];
   
-  @type.select({options: CheckerModuleTypeOptions})
+  @type.select({options: RuleModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: CheckerModuleType = 'math';
+  public moduleType: RuleModuleType = 'math';
 
   @type.string
   @io.all
+  @validate.required
   public name: string = '';
+
+  @type.string
+  @io.all
+  public description: string = '';
 
   @type.string
   @io.all
@@ -52,10 +49,10 @@ export class CheckerModuleMathModel extends CheckerModuleBaseModel implements Ch
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: false})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: CheckerModuleIOType;
+  public outputType: RuleModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
@@ -71,7 +68,7 @@ export class CheckerModuleMathModel extends CheckerModuleBaseModel implements Ch
   private inputObjects: number[];
   private multiple = true;
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
     
     let arrayLength = 0;

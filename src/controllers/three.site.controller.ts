@@ -12,7 +12,7 @@ let debug = require('debug')('app:controller:data');
 
 const router: Router = Router();
 
-let mdController = new ThreeCoreControllerMiddleware(ThreeSiteModel);
+const mdController = new ThreeCoreControllerMiddleware(ThreeSiteModel);
 
 router.use(mdController.registerPolicyMountingPoint(['three.site']))
 

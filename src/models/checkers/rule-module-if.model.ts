@@ -1,14 +1,14 @@
-import { CheckerModuleIOStyle, CheckerModuleIOStyleOptions } from './checker-interfaces';
-import { CheckerModuleType } from './checker-internals';
-import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
-import { CheckerModuleTypeOptions, CheckerModuleIf, CheckerModuleIfOperations, CheckerValueCondition } from './checker-internals';
+import { RuleModuleIOStyle, RuleModuleIOStyleOptions } from './checker-interfaces';
+import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
+import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
+import { RuleModuleTypeOptions, RuleModuleIf, RuleModuleIfOperations, RuleModuleValueCondition } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:checker:module-if');
 
-@model('checker_module')
-export class CheckerModuleIfModel extends CheckerModuleBaseModel implements CheckerModuleIf {
+@model(RULE_MODULE_MONGO_COLLECTION_NAME)
+export class RuleModuleIfModel extends RuleModuleBaseModel implements RuleModuleIf {
 
   @type.id
   public _id: ObjectId;
@@ -21,27 +21,25 @@ export class CheckerModuleIfModel extends CheckerModuleBaseModel implements Chec
   @mongo.index({type: 'single'})
   public appId: ObjectId;
 
-  @type.model({model: ThreeSiteModel})
-  @io.all
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
-
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: true})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<CheckerModuleIOType> = ['numbers', 'strings', 'number', 'string'];
+  public allowedInputTypes: Array<RuleModuleIOType> = ['numbers', 'strings', 'number', 'string'];
   
-  @type.select({options: CheckerModuleTypeOptions})
+  @type.select({options: RuleModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: CheckerModuleType = 'if';
+  public moduleType: RuleModuleType = 'if';
 
   @type.string
   @io.all
+  @validate.required
   public name: string = '';
+
+  @type.string
+  @io.all
+  public description: string = '';
 
   @type.string
   @io.all
@@ -53,10 +51,10 @@ export class CheckerModuleIfModel extends CheckerModuleBaseModel implements Chec
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: CheckerModuleTypeOptions, multiple: false})
+  @type.select({options: RuleModuleTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: CheckerModuleIOType;
+  public outputType: RuleModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
@@ -69,9 +67,9 @@ export class CheckerModuleIfModel extends CheckerModuleBaseModel implements Chec
   @io.all
   public defaultOutputValue: number | string | boolean;
 
-  @type.select({options: CheckerModuleIOStyleOptions})
+  @type.select({options: RuleModuleIOStyleOptions})
   @io.all
-  public defaultOutputStyle: CheckerModuleIOStyle;
+  public defaultOutputStyle: RuleModuleIOStyle;
   
   @type.array({type: 'object', options: {
     keys: {
@@ -83,15 +81,15 @@ export class CheckerModuleIfModel extends CheckerModuleBaseModel implements Chec
       }}},
       conditionsOperator: {type: 'select', options: ['and', 'or']},
       outputValue: {type: 'any'},
-      outputStyle: {type: 'select', options: CheckerModuleIOStyleOptions}
+      outputStyle: {type: 'select', options: RuleModuleIOStyleOptions}
     }
   }})
   @io.all
-  public operations: CheckerModuleIfOperations;
+  public operations: RuleModuleIfOperations;
 
-  private flow: CheckerFlowModel;
+  private flow: RuleModel;
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: RuleModel): Promise<void> {
     this.flow = flow;
     super.process(flow);
 
@@ -108,7 +106,7 @@ export class CheckerModuleIfModel extends CheckerModuleBaseModel implements Chec
     if (this.currentInputType === 'numbers' || this.currentInputType === 'strings' || this.currentInputType === 'booleans') {
       const inputs = this.currentInput as number[] | string[] | boolean[];
       const outputs: number[] | string[] | boolean[] = []
-      const styles: CheckerModuleIOStyle[] = [];
+      const styles: RuleModuleIOStyle[] = [];
       for (const key in inputs) {
         const input = inputs[key];
         const out = this.processOperationsForInput(input, this.operations);
@@ -131,7 +129,7 @@ export class CheckerModuleIfModel extends CheckerModuleBaseModel implements Chec
     }
   }
 
-  public processOperationsForInput(input: boolean | number | string, operations: CheckerModuleIfOperations): {value: boolean | number | string | undefined, style: CheckerModuleIOStyle} {
+  public processOperationsForInput(input: boolean | number | string, operations: RuleModuleIfOperations): {value: boolean | number | string | undefined, style: RuleModuleIOStyle} {
     for (const operation of operations) {
       let valid = false;
       for (let condition of operation.conditions) {
@@ -150,7 +148,7 @@ export class CheckerModuleIfModel extends CheckerModuleBaseModel implements Chec
     return {value: this.defaultOutputValue || input, style: this.defaultOutputStyle};
   }
 
-  public isConditionTrue(input: boolean | number | string, condition: CheckerValueCondition): boolean {
+  public isConditionTrue(input: boolean | number | string, condition: RuleModuleValueCondition): boolean {
     return false;
   }
 

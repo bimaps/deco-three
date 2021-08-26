@@ -1,13 +1,15 @@
-import { CheckerJsonOutput, CheckerModuleIOTypeValue } from './checker-interfaces';
-import { CheckerModuleType } from './checker-internals';
-import { CheckerModuleBaseModel, CheckerFlowModel, CheckerModuleIOType, CheckerModuleIOTypeOptions } from './checker-internals';
-import { CheckerModuleOutput, CheckerOutput, CheckerModuleTypeOptions } from './checker-internals';
+import { CheckerJsonOutput, RuleModuleIOTypeValue } from './checker-interfaces';
+import { RuleModuleType } from './checker-internals';
+import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
+import { RuleModuleOutput, CheckerOutput, RuleModuleTypeOptions } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 let debug = require('debug')('app:models:three:checker:module-reducer');
 
+// TODO rules migration: should be considered in reporting
+/** @deprecated New generic reporting mechanism shouldn't use output module for writing reporting */
 @model('checker_module')
-export class CheckerModuleOutputModel extends CheckerModuleBaseModel implements CheckerModuleOutput {
+export class CheckerModuleOutputModel extends RuleModuleBaseModel implements RuleModuleOutput {
 
   @type.id
   public _id: ObjectId;
@@ -27,16 +29,16 @@ export class CheckerModuleOutputModel extends CheckerModuleBaseModel implements 
   @mongo.index({type: 'single'})
   public siteId: ObjectId;
 
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: true})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<CheckerModuleIOType> = ['number', 'numbers', 'string', 'strings', 'boolean', 'booleans'];
+  public allowedInputTypes: Array<RuleModuleIOType> = ['number', 'numbers', 'string', 'strings', 'boolean', 'booleans'];
   
-  @type.select({options: CheckerModuleTypeOptions})
+  @type.select({options: RuleModuleTypeOptions})
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: CheckerModuleType = 'output';
+  public moduleType: RuleModuleType = 'output' as any; // Hack to allow this property value even if output doesnt exist anymore
 
   @type.string
   @io.all
@@ -52,12 +54,12 @@ export class CheckerModuleOutputModel extends CheckerModuleBaseModel implements 
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: CheckerModuleIOTypeOptions, multiple: false})
+  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
   @io.toDocument
   @io.output
-  public outputType: CheckerModuleIOType = 'json'
+  public outputType: RuleModuleIOType = 'json'
 
-  public outputValue: CheckerModuleIOTypeValue;
+  public outputValue: RuleModuleIOTypeValue;
 
   @type.string
   @io.toDocument
@@ -75,7 +77,7 @@ export class CheckerModuleOutputModel extends CheckerModuleBaseModel implements 
   @io.all
   public outputs: CheckerOutput[] = [];
 
-  public async process(flow: CheckerFlowModel): Promise<void> {
+  public async process(flow: RuleModel): Promise<void> {
     
     const output: CheckerJsonOutput[] = [];
     for (const outputConfig of this.outputs) {

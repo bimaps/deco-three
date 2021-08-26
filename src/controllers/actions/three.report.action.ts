@@ -1,4 +1,4 @@
-import { ReportOutput, CheckerFlowModel } from './../../models/checkers/checker-internals';
+import { ReportOutput, RuleModel } from './../../models/checkers/checker-internals';
 import { ThreeCheckerReportModel } from '../../models/checker-report.model';
 import { PdfChecker } from '../../helpers/pdf.checker';
 import { Response } from 'express';
@@ -27,7 +27,7 @@ export class ThreeReportAction {
     debug('start processing', report.flows.length, 'flows');
     for (const flowId of report.flows) {
       debug('flowId', flowId);
-      const flow = await CheckerFlowModel.getOneWithId(flowId);
+      const flow = await RuleModel.getOneWithId(flowId);
       if (!flow) {
         throw new Error('Required flow not found');
       }

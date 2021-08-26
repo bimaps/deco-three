@@ -1,21 +1,21 @@
 import * as THREE from 'three';
-import { ObjectId } from '@bim/deco-api';
+import { ObjectId } from '@bim/deco-api';
 
-export type CheckerModuleType = 'filter' | 'extract' | 'math' | 'reducer' | 'if' | 'projection' | 'distance' | 'normal-distance' | 'output';
-export const CheckerModuleTypeOptions = ['filter', 'extract', 'math', 'reducer', 'if', 'projection', 'distance', 'normal-distance', 'output'];
+export const RuleModuleTypeOptions = ['filter', 'extract', 'math', 'reducer', 'if', 'projection', 'distance', 'normal-distance'] as const;
+export type RuleModuleType = typeof RuleModuleTypeOptions[number];
 
-export type CheckerModuleIOType = 'scene' | 'three-objects' | 'three-object' | 'triangles' | 'triangle' | 'line3s' | 'line3' | 'vector3s' | 'vector3' | 'vector2s' | 'vector2' | 'box3s' | 'box3' | 'strings' | 'string' | 'numbers' | 'number' | 'booleans' | 'boolean' | 'json';
-export const CheckerModuleIOTypeOptions = ['scene', 'three-objects', 'three-object', 'triangles', 'triangle', 'line3s', 'line3', 'vector3s', 'vector3', 'vector2s', 'vector2', 'box3s', 'box3', 'strings', 'string', 'numbers', 'number', 'booleans', 'boolean', 'json'];
-export type CheckerModuleIOTypeValue = THREE.Scene | THREE.Object3D[] | THREE.Object3D | THREE.Triangle | THREE.Triangle[] | THREE.Line3 | THREE.Line3[] | THREE.Vector3 | THREE.Vector3[] | THREE.Vector2 | THREE.Vector2[] | THREE.Box3 | THREE.Box3[] | string[] | string | number[] | number | boolean[] | boolean | CheckerJsonOutput[];
+export const RuleModuleIOTypeOptions = ['scene', 'three-objects', 'three-object', 'triangles', 'triangle', 'line3s', 'line3', 'vector3s', 'vector3', 'vector2s', 'vector2', 'box3s', 'box3', 'strings', 'string', 'numbers', 'number', 'booleans', 'boolean', 'json'] as const;
+export type RuleModuleIOType = typeof RuleModuleIOTypeOptions[number];
+export type RuleModuleIOTypeValue = THREE.Scene | THREE.Object3D[] | THREE.Object3D | THREE.Triangle | THREE.Triangle[] | THREE.Line3 | THREE.Line3[] | THREE.Vector3 | THREE.Vector3[] | THREE.Vector2 | THREE.Vector2[] | THREE.Box3 | THREE.Box3[] | string[] | string | number[] | number | boolean[] | boolean | CheckerJsonOutput[];
 
-export type CheckerModuleIOStyle = 'default' | 'correct' | 'incorrect' | 'danger' | 'info';
-export const CheckerModuleIOStyleOptions = ['default', 'correct', 'incorrect', 'danger', 'info'];
+export type RuleModuleIOStyle = 'default' | 'correct' | 'incorrect' | 'danger' | 'info';
+export const RuleModuleIOStyleOptions = ['default', 'correct', 'incorrect', 'danger', 'info'];
 export interface CheckerJsonOutput {
     prefix: string;
     value: any;
-    type: CheckerModuleIOType;
-    ref: CheckerModuleIORef | CheckerModuleIORef[] | {ifcId: string} | {ifcId: string}[];
-    style?: CheckerModuleIOStyle | CheckerModuleIOStyle[];
+    type: RuleModuleIOType;
+    ref: RuleModuleIORef | RuleModuleIORef[] | {ifcId: string} | {ifcId: string}[];
+    style?: RuleModuleIOStyle | RuleModuleIOStyle[];
     suffix: string;
     display: 'paragraph' | 'blocks';
 }
@@ -23,108 +23,108 @@ export interface CheckerJsonOutput {
 export type ReportOutput = {
     name: string;
     description: string;
-    flows: FlowOutput[]
+    flows: RuleOutput[]
 };
 
-export type FlowOutput = {
+export type RuleOutput = {
     name: string;
     description: string;
     summaries: string[],
     outputs: {name: string, outputs: CheckerJsonOutput[]}[]
 };
 
-export type CheckerConditionOperator = 'or' | 'and';
+export type RuleModuleConditionOperator = 'or' | 'and';
 
-export type CheckerExtractType = 'faces' | 'edges' | 'vertices' | 'wireframe' | 'property';
-export const CheckerExtractTypeOptions = ['faces', 'edges', 'vertices', 'wireframe', 'property'];
+export type ThreeExtractType = 'faces' | 'edges' | 'vertices' | 'wireframe' | 'property';
+export const RuleModuleExtractTypeOptions = ['faces', 'edges', 'vertices', 'wireframe', 'property'];
 
-export interface CheckerObjectCondition {
+export interface RuleModuleObjectCondition {
     key: string;
-    operation: string;
-    value: string | Date;
-}
-
-export interface CheckerValueCondition {
     operation: string;
     value: string | Date;
 }
 
-export abstract class CheckerModule {
+export interface RuleModuleValueCondition {
+    operation: string;
+    value: string | Date;
+}
+
+export abstract class ThreeModule {
     public abstract process(): Promise<void>;
 }
 
 
-export type CheckerModuleIORef = THREE.Object3D | THREE.Object3D[] | undefined;
+export type RuleModuleIORef = THREE.Object3D | THREE.Object3D[] | undefined;
 
-export interface CheckerModuleBase {
-    moduleType: CheckerModuleType;
+export interface RuleModuleShape {
+    moduleType: RuleModuleType;
     name: string;
-    allowedInputTypes?: Array<CheckerModuleIOType>;
+    allowedInputTypes?: Array<RuleModuleIOType>;
     inputVarName?: string;
     outputVarName: string;
-    outputType: CheckerModuleIOType;
-    outputValue: CheckerModuleIOTypeValue;
-    outputReference: CheckerModuleIORef | CheckerModuleIORef[];
+    outputType: RuleModuleIOType;
+    outputValue: RuleModuleIOTypeValue;
+    outputReference: RuleModuleIORef | RuleModuleIORef[];
     outputSummary?: string;
 }
 
-export interface CheckerModuleFilter extends CheckerModuleBase {
-    // allowedInputType = ['three-objects'];
-    conditions: Array<CheckerObjectCondition>;
-    conditionsOperator: CheckerConditionOperator;
-    // outputType = 'three-objects';
+export interface RuleModuleFilter extends RuleModuleShape {
+    // allowedInputType = ['three-objects'];
+    conditions: Array<RuleModuleObjectCondition>;
+    conditionsOperator: RuleModuleConditionOperator;
+    // outputType = 'three-objects';
 }
 
-export interface CheckerModuleExtract extends CheckerModuleBase {
-    // allowedInputType = ['three-objects', 'three-object'];
-    extractType: CheckerExtractType;
+export interface RuleModuleExtract extends RuleModuleShape {
+    // allowedInputType = ['three-objects', 'three-object'];
+    extractType: ThreeExtractType;
     value: any;
     forceOutputAsNumber: boolean;
-    // outputType = 'numbers' | 'strings' | 'booleans';
+    // outputType = 'numbers' | 'strings' | 'booleans';
 }
 
-export interface CheckerModuleMath extends CheckerModuleBase {
-    // allowedInputType = ['numbers', 'number'];
+export interface RuleModuleMath extends RuleModuleShape {
+    // allowedInputType = ['numbers', 'number'];
     expression: string;
-    // outputType = 'numbers' | 'number';
+    // outputType = 'numbers' | 'number';
 }
 
-export type CheckerModuleReducerOperation = 'min' | 'max' | 'average' | 'count' | 'sum';
-export const CheckerModuleReducerOperationOptions = ['min', 'max', 'average', 'count', 'sum'];
-export interface CheckerModuleReducer extends CheckerModuleBase {
-    // allowedInputType = ['numbers', 'number'];
-    operation: CheckerModuleReducerOperation;
-    // outputType = 'numbers' | 'number';
+export type RuleModuleReducerOperation = 'min' | 'max' | 'average' | 'count' | 'sum';
+export const RuleModuleReducerOperationOptions = ['min', 'max', 'average', 'count', 'sum'];
+export interface RuleModuleReducer extends RuleModuleShape {
+    // allowedInputType = ['numbers', 'number'];
+    operation: RuleModuleReducerOperation;
+    // outputType = 'numbers' | 'number';
 }
 
-export type CheckerModuleIfOperation = {
-    conditions: Array<CheckerValueCondition>;
-    conditionsOperator: CheckerConditionOperator;
+export type RuleModuleIfOperation = {
+    conditions: Array<RuleModuleValueCondition>;
+    conditionsOperator: RuleModuleConditionOperator;
     outputValue: number | string | boolean;
-    outputStyle: CheckerModuleIOStyle;
+    outputStyle: RuleModuleIOStyle;
 }
-export type CheckerModuleIfOperations = Array<CheckerModuleIfOperation>;
-export interface CheckerModuleIf extends CheckerModuleBase {
-    // allowedInputType = ['numbers', 'number'];
+export type RuleModuleIfOperations = Array<RuleModuleIfOperation>;
+export interface RuleModuleIf extends RuleModuleShape {
+    // allowedInputType = ['numbers', 'number'];
     defaultOutputValue: number | string | boolean;
-    defaultOutputStyle: CheckerModuleIOStyle;
-    operations: CheckerModuleIfOperations;
-    // outputType = 'numbers' | 'strings' | 'booleans';
+    defaultOutputStyle: RuleModuleIOStyle;
+    operations: RuleModuleIfOperations;
+    // outputType = 'numbers' | 'strings' | 'booleans';
 }
 
-export interface CheckerModuleBbbox extends CheckerModuleBase {
+export interface RuleModuleBbbox extends RuleModuleShape {
 
 }
 
-export interface CheckerModuleProjection extends CheckerModuleBase {
+export interface RuleModuleProjection extends RuleModuleShape {
   projectionAxis: 'x' | 'y' | 'z';
 }
 
-export interface CheckerModuleDistance extends CheckerModuleBase {
+export interface RuleModuleDistance extends RuleModuleShape {
     distanceType: '2d-2d' | '3d-3d';
 }
 
-export interface CheckerModuleNormalDistance extends CheckerModuleBase {
+export interface RuleModuleNormalDistance extends RuleModuleShape {
     operation: 'min' | 'max';
 }
 
@@ -135,11 +135,11 @@ export interface CheckerOutput {
     display: 'paragraph' | 'blocks';
 }
 
-export interface CheckerModuleOutput extends CheckerModuleBase {
+export interface RuleModuleOutput extends RuleModuleShape {
     outputs: CheckerOutput[];
 }
 
-export interface CheckerFlow {
+export interface ThreeFlow {
     name: string;
     description: string;
     modulesIds: Array<ObjectId>;

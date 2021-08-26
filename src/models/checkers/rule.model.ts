@@ -1,11 +1,11 @@
-import { CheckerJsonOutput, CheckerModuleIOStyle } from './checker-interfaces';
+import { CheckerJsonOutput, RuleModuleIOStyle } from './checker-interfaces';
 import { ThreeSpaceModel } from './../space.model';
 import { ThreeGenerator } from './../../helpers/three.generator';
 import { ThreeGeometryModel } from './../geometry.model';
 import { ThreeMaterialModel } from './../material.model';
 import { ThreeObjectModel } from './../object.model';
-import { CheckerModuleBaseModel,  CheckerValueCondition, CheckerFlow, CheckerModuleIORef } from './checker-internals';
-import { CheckerModuleIOTypeValue, CheckerModuleIOType, CheckerObjectCondition } from './checker-internals';
+import { RuleModuleBaseModel,  RuleModuleValueCondition, ThreeFlow, RuleModuleIORef } from './checker-internals';
+import { RuleModuleIOTypeValue, RuleModuleIOType, RuleModuleObjectCondition } from './checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, Model, type, io, query, validate, ObjectId, mongo, Query, Parser, AppModel } from '@bim/deco-api';
 import * as THREE from 'three';
@@ -13,8 +13,8 @@ import moment from 'moment';
 import resolvePath from 'object-resolve-path';
 let debug = require('debug')('app:models:three:checkers:flow');
 
-@model('checker_flow')
-export class CheckerFlowModel extends Model implements CheckerFlow  {
+@model('rule')
+export class RuleModel extends Model implements ThreeFlow  {
 
   @type.id
   public _id: ObjectId;
@@ -26,13 +26,6 @@ export class CheckerFlowModel extends Model implements CheckerFlow  {
   @validate.required
   @mongo.index({type: 'single'})
   public appId: ObjectId;
-
-  @type.model({model: ThreeSiteModel})
-  @io.all
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
   
   @type.string
   @io.all
@@ -43,34 +36,37 @@ export class CheckerFlowModel extends Model implements CheckerFlow  {
   @io.all
   public description: string = '';
 
-  @type.models({model: CheckerModuleBaseModel})
+  @type.models({model: RuleModuleBaseModel})
   @io.all
   public modulesIds: Array<ObjectId> = [];
 
   public scene: THREE.Scene;
-  public modules: Array<CheckerModuleBaseModel> = [];
+  public modules: Array<RuleModuleBaseModel> = [];
   public outputs: {
     name: string;
     outputs: CheckerJsonOutput[]
   }[] = [];
 
+  /** @deprecated */
   public async process(scene?: THREE.Scene): Promise<THREE.Scene> {
-    this.scene = scene || await this.prepareScene(this.siteId);
-    for (const moduleId of this.modulesIds || []) {
-      const moduleElement = await CheckerModuleBaseModel.deco.db
-        .collection(CheckerModuleBaseModel.deco.collectionName)
-        .findOne({_id: moduleId});
-
-      const instance = await CheckerModuleBaseModel.instanceFromDocument(moduleElement);
-      if (instance) {
-        this.modules.push(instance);
-        await instance.process(this);
-        await instance.summary();
-      }
-    }
+    // TODO rules migration: The scene should be process during reporting or theme views
+    // this.scene = scene || await this.prepareScene(this.siteId);
+    // for (const moduleId of this.modulesIds || []) {
+    //   const moduleElement = await CheckerModuleBaseModel.deco.db
+    //     .collection(CheckerModuleBaseModel.deco.collectionName)
+    //     .findOne({_id: moduleId});
+    //
+    //   const instance = await CheckerModuleBaseModel.instanceFromDocument(moduleElement);
+    //   if (instance) {
+    //     this.modules.push(instance);
+    //     await instance.process(this);
+    //     await instance.summary();
+    //   }
+    // }
     return this.scene;
   }
 
+  /** @deprecated */
   private async prepareScene(siteId: string | ObjectId): Promise<THREE.Scene> {
     const site = await ThreeSiteModel.getOneWithId(siteId);
     if (!site) {
@@ -132,7 +128,7 @@ export class CheckerFlowModel extends Model implements CheckerFlow  {
     return this.scene;
   }
 
-  public fetchInput(varname: string): {value: CheckerModuleIOTypeValue, type: CheckerModuleIOType, ref: CheckerModuleIORef | CheckerModuleIORef[], style: CheckerModuleIOStyle | CheckerModuleIOStyle[]}  | undefined {
+  public fetchInput(varname: string): {value: RuleModuleIOTypeValue, type: RuleModuleIOType, ref: RuleModuleIORef | RuleModuleIORef[], style: RuleModuleIOStyle | RuleModuleIOStyle[]}  | undefined {
     if (varname === 'scene') {
       return {
         type: 'scene',
@@ -173,12 +169,12 @@ export class CheckerFlowModel extends Model implements CheckerFlow  {
     return resolvePath(object, key);
   }
 
-  public compareObject(object: THREE.Object3D, condition: CheckerObjectCondition): boolean {
+  public compareObject(object: THREE.Object3D, condition: RuleModuleObjectCondition): boolean {
     const value = this.fetchProp(object, condition.key);
     return this.compareValue(value, condition);
   }
 
-  public compareValue(value: string | boolean | number | Date, condition: CheckerObjectCondition | CheckerValueCondition): boolean {
+  public compareValue(value: string | boolean | number | Date, condition: RuleModuleObjectCondition | RuleModuleValueCondition): boolean {
     if (typeof condition.value === 'number' && typeof value === 'string') {
       value = parseFloat(value);
     } else if (condition.value instanceof Date && typeof value === 'string') {
