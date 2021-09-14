@@ -47,6 +47,11 @@ export class RuleModel extends Model implements ThreeFlow  {
     outputs: CheckerJsonOutput[]
   }[] = [];
 
+  @type.string
+  @io.all
+  @query.filterable()
+  public business: string = '';
+
   /** @deprecated */
   public async process(scene?: THREE.Scene): Promise<THREE.Scene> {
     // TODO rules migration: The scene should be process during reporting or theme views
