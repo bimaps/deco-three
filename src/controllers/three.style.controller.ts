@@ -25,10 +25,11 @@ function removeStyleFromAllThemes() {
         const themes = await ThreeThemeModel.getAll(new Query({ "rules.styles": styleId.toString() }));
         for (const theme of themes) {
           for (const rule of theme.rules) {
-            const styleIndex = rule.styles.indexOf(styleId.toString());
-            if (styleIndex !== -1) {
-              rule.styles.splice(styleIndex, 1);
-            }
+            // TODO Removed styles from rule. Styles will be managed from the property theme.ruleAssociations
+            // const styleIndex = rule.styles.indexOf(styleId.toString());
+            // if (styleIndex !== -1) {
+            //   rule.styles.splice(styleIndex, 1);
+            // }
           }
           await theme.update(['rules']);
         }
