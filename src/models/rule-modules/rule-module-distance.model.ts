@@ -1,6 +1,11 @@
-import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
-import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
-import { RuleModuleTypeOptions, RuleModuleDistance } from './checker-internals';
+import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType } from '../checkers/checker-internals';
+import {
+  RuleModuleBaseModel,
+  RuleModel,
+  RuleModuleIOType,
+  RuleModuleIOTypeOptions
+} from '../checkers/checker-internals';
+import { RuleModuleTypeOptions, RuleModuleDistance } from '../checkers/checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 
@@ -12,20 +17,20 @@ export class RuleModuleDistanceModel extends RuleModuleBaseModel implements Rule
   @type.id
   public _id: ObjectId;
 
-  @type.model({model: AppModel})
+  @type.model({ model: AppModel })
   @io.input
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
   @io.toDocument
   @io.output
   public allowedInputTypes: Array<RuleModuleIOType> = ['vector3s', 'vector3', 'vector2s', 'vector2'];
-  
-  @type.select({options: RuleModuleTypeOptions})
+
+  @type.select({ options: RuleModuleTypeOptions })
   @io.toDocument
   @io.output
   @validate.required
@@ -55,19 +60,19 @@ export class RuleModuleDistanceModel extends RuleModuleBaseModel implements Rule
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
   @io.toDocument
   @io.output
   public outputType: RuleModuleIOType;
 
-  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
+  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
   @type.string
   @io.toDocument
   @io.output
   public outputSummary: string;
 
-  @type.select({options: ['2d-2d', '3d-3d']})
+  @type.select({ options: ['2d-2d', '3d-3d'] })
   @io.all
   public distanceType: '2d-2d' | '3d-3d';
 
@@ -77,7 +82,7 @@ export class RuleModuleDistanceModel extends RuleModuleBaseModel implements Rule
 
 
     // distanceTo()
-    
+
   }
 
   public async summary(): Promise<void> {

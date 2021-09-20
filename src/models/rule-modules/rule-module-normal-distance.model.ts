@@ -1,6 +1,11 @@
-import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
-import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
-import { RuleModuleTypeOptions, RuleModuleNormalDistance, RuleModuleIORef } from './checker-internals';
+import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType } from '../checkers/checker-internals';
+import {
+  RuleModuleBaseModel,
+  RuleModel,
+  RuleModuleIOType,
+  RuleModuleIOTypeOptions
+} from '../checkers/checker-internals';
+import { RuleModuleTypeOptions, RuleModuleNormalDistance, RuleModuleIORef } from '../checkers/checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 import * as THREE from 'three';
@@ -13,20 +18,20 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
   @type.id
   public _id: ObjectId;
 
-  @type.model({model: AppModel})
+  @type.model({ model: AppModel })
   @io.input
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
   @io.toDocument
   @io.output
   public allowedInputTypes: Array<RuleModuleIOType> = ['triangle', 'triangles', 'line3', 'line3s', 'vector3', 'vector3s'];
-  
-  @type.select({options: RuleModuleTypeOptions})
+
+  @type.select({ options: RuleModuleTypeOptions })
   @io.toDocument
   @io.output
   @validate.required
@@ -55,19 +60,19 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
   @io.toDocument
   @io.output
   public outputType: RuleModuleIOType;
 
-  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
+  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
   @type.string
   @io.toDocument
   @io.output
   public outputSummary: string;
 
-  @type.select({options: ['min', 'max']})
+  @type.select({ options: ['min', 'max'] })
   @io.all
   public operation: 'min' | 'max' = 'min';
 
@@ -76,7 +81,7 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
   public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
     this.sameInputs = this.inputVarName === this.input2VarName;
-    const inputA = this.currentInput as THREE.Triangle | THREE.Triangle[] | THREE.Line3 | THREE.Line3[] | THREE.Vector3 | THREE.Vector3[];
+    const inputA = this.currentInput as THREE.Triangle | THREE.Triangle[] | THREE.Line3 | THREE.Line3[] | THREE.Vector3 | THREE.Vector3[];
     // const inputAType = this.currentInputType as 'triangle' | 'triangles' | 'line3' | 'line3s' | 'vector3' | 'vector3s';
     if (!this.input2VarName) {
       throw new Error('Missing input2VarName');
@@ -88,7 +93,7 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
     if (!this.allowedInputTypes?.includes(input2Value.type)) {
       throw new Error('Invalid input2 type');
     }
-    const inputB = input2Value.value as THREE.Triangle | THREE.Triangle[] | THREE.Line3 | THREE.Line3[] | THREE.Vector3 | THREE.Vector3[];
+    const inputB = input2Value.value as THREE.Triangle | THREE.Triangle[] | THREE.Line3 | THREE.Line3[] | THREE.Vector3 | THREE.Vector3[];
     // const inputBType = input2Value.type as 'triangle' | 'triangles' | 'line3' | 'line3s' | 'vector3' | 'vector3s';
 
 
@@ -104,15 +109,15 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
     if (iBs.length !== refB.length) {
       throw new Error('Invalid references for input B');
     }
-    const operation = this.operation || 'min';
-    
+    const operation = this.operation || 'min';
+
     type ProcessRef = {
       value?: number;
       refA: THREE.Object3D;
       refB: THREE.Object3D;
     };
 
-    const processRefs: {[key: string]: ProcessRef} = {};
+    const processRefs: { [key: string]: ProcessRef } = {};
 
     for (const indexA in iAs) {
       const iA = iAs[indexA];
@@ -248,7 +253,9 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
 
   public async summary(): Promise<void> {
     if (Array.isArray(this.outputValue)) {
-      this.outputSummary = `${this.outputValue.length} distances (${(this.outputValue as number[]).slice(0, 3).map(v => {return Math.round(v * 1000) / 1000}).join(', ')})`;
+      this.outputSummary = `${this.outputValue.length} distances (${(this.outputValue as number[]).slice(0, 3).map(v => {
+        return Math.round(v * 1000) / 1000
+      }).join(', ')})`;
     } else {
       this.outputSummary = '';
     }

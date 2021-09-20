@@ -1,7 +1,8 @@
 import { ReportOutput, RuleModel } from './../../models/checkers/checker-internals';
 import { ThreeCheckerReportModel } from '../../models/checker-report.model';
 import { PdfChecker } from '../../helpers/pdf.checker';
-import { Response } from 'express';
+import { Response } from 'express';
+
 let debug = require('debug')('app:actions:three:report');
 
 export class ThreeReportAction {
@@ -17,15 +18,15 @@ export class ThreeReportAction {
       debug('report not found');
       throw new Error('Three Report Action: Report not found');
     }
-    
-    let scene: THREE.Scene | undefined = undefined;
+
+    let scene: THREE.Scene | undefined = undefined;
     const reportOutput: ReportOutput = {
       name: report.name,
       description: report.description,
       flows: []
     };
-    debug('start processing', report.flows.length, 'flows');
-    for (const flowId of report.flows) {
+    debug('start processing', report.rules.length, 'flows');
+    for (const flowId of report.ruleIds) {
       debug('flowId', flowId);
       const flow = await RuleModel.getOneWithId(flowId);
       if (!flow) {
@@ -41,7 +42,7 @@ export class ThreeReportAction {
     }
     res.locals.actions.variables.threeReportOutput = reportOutput;
     debug('reportOutput', reportOutput);
-    
+
     // generate PDF
     const pdf = new PdfChecker();
     await pdf.create();

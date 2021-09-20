@@ -1,7 +1,23 @@
-import { RuleModuleIOStyle } from './checker-interfaces';
-import { RuleModuleShape, RuleModuleType, RuleModuleIOType, RuleModuleIOTypeValue, RuleModel } from './checker-internals';
-import { RuleModuleIORef, modelsByType } from './checker-internals';
-import { model, ObjectId, Model, InstanceFromDocumentOptions } from '@bim/deco-api';
+import { RuleModuleIOStyle, RuleModuleTypeOptions } from '../checkers/checker-interfaces';
+import {
+  RuleModuleShape,
+  RuleModuleType,
+  RuleModuleIOType,
+  RuleModuleIOTypeValue,
+  RuleModel
+} from '../checkers/checker-internals';
+import { RuleModuleIORef, modelsByType } from '../checkers/checker-internals';
+import {
+  model,
+  ObjectId,
+  Model,
+  InstanceFromDocumentOptions,
+  type,
+  AppModel,
+  io,
+  query,
+  validate, mongo
+} from '@bim/deco-api';
 import { Request, Response } from 'express';
 
 let debug = require('debug')('app:models:three:checker:module-base');
@@ -13,18 +29,54 @@ export const RULE_MODULE_MONGO_COLLECTION_NAME = 'rule_module';
 export class RuleModuleBaseModel extends Model implements RuleModuleShape {
 
 
+  @type.id
   public _id: ObjectId;
+
+  @type.model({ model: AppModel })
+  @io.input
+  @io.toDocument
+  @query.filterable()
+  @validate.required
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
+
+  @type.select({ options: RuleModuleTypeOptions })
+  @io.toDocument
+  @io.output
+  @validate.required
   public moduleType: RuleModuleType;
-  public name: string;
-  public description: string;
-  public allowedInputTypes?: Array<RuleModuleIOType>;
+
+  @type.string
+  @io.all
+  @validate.required
+  public name: string = '';
+
+  @type.string
+  @io.all
+  public description: string = '';
+
+  @type.string
+  @io.all
+  @validate.required
   public inputVarName?: string;
+
+  @type.string
+  @io.all
+  @validate.required
   public outputVarName: string;
+
+  @type.select({ options: RuleModuleTypeOptions, multiple: false })
+  @io.toDocument
+  @io.output
   public outputType: RuleModuleIOType;
-  public outputValue: RuleModuleIOTypeValue;
+
+  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
   public outputReference: RuleModuleIORef | RuleModuleIORef[];
   public outputStyle: RuleModuleIOStyle | RuleModuleIOStyle[] = 'default';
+
+  @type.string
+  @io.toDocument
+  @io.output
   public outputSummary: string;
 
   protected currentInput: RuleModuleIOTypeValue;
@@ -51,7 +103,7 @@ export class RuleModuleBaseModel extends Model implements RuleModuleShape {
     this.outputSummary = '';
   }
 
-  static async instanceFromDocument<T extends typeof Model>(this: T, document: any, options: InstanceFromDocumentOptions = {keepCopyOriginalValues: false}): Promise<InstanceType <T>> {
+  static async instanceFromDocument<T extends typeof Model>(this: T, document: any, options: InstanceFromDocumentOptions = { keepCopyOriginalValues: false }): Promise<InstanceType<T>> {
     if (document.__checkerModuleInstanceDefined) {
       return (await super.instanceFromDocument(document, options)) as unknown as InstanceType<T>;
     }
@@ -64,7 +116,7 @@ export class RuleModuleBaseModel extends Model implements RuleModuleShape {
     return instance as unknown as InstanceType<T>;
   }
 
-  static async instanceFromRequest<T extends typeof Model>(this: T, req: Request, res: Response): Promise<InstanceType <T>> {
+  static async instanceFromRequest<T extends typeof Model>(this: T, req: Request, res: Response): Promise<InstanceType<T>> {
     if (res.locals.__checkerModuleInstanceDefined) {
       return (await super.instanceFromRequest(req, res)) as unknown as InstanceType<T>;
     }
