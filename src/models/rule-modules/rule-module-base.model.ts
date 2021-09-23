@@ -70,7 +70,7 @@ export class RuleModuleBaseModel extends Model implements RuleModuleShape {
   @io.output
   public outputType: RuleModuleIOType;
 
-  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
+  public outputValue: RuleModuleIOTypeValue;
   public outputReference: RuleModuleIORef | RuleModuleIORef[];
   public outputStyle: RuleModuleIOStyle | RuleModuleIOStyle[] = 'default';
 
@@ -91,6 +91,7 @@ export class RuleModuleBaseModel extends Model implements RuleModuleShape {
     if (!inputValueType) {
       throw new Error('Input requested not found');
     }
+    // @ts-ignore TODO Property 'allowedInputTypes' does not exist on type 'RuleModuleBaseModel'.
     if (!this.allowedInputTypes?.includes(inputValueType.type)) {
       throw new Error('Invalid input type');
     }

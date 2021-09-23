@@ -1,8 +1,16 @@
-import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
-import { RuleModel } from './checkers';
+import { AppModel, io, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
+import { ThreeStyleModel } from './style.model';
 
 let debug = require('debug')('app:models:three:theme');
+
+class RuleAssociation {
+  public ruleId: ObjectId;
+  public styleAssociations: Array<{
+    property: string,
+    value: string,
+    style: ThreeStyleModel,
+  }>;
+}
 
 @model('three_theme')
 export class ThreeThemeModel extends Model {
@@ -18,25 +26,14 @@ export class ThreeThemeModel extends Model {
   @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
-  @type.model({ model: ThreeSiteModel })
-  @io.input
-  @io.toDocument
-  @query.filterable()
-  @validate.required
-  @mongo.index({ type: 'single' })
-  public siteId: ObjectId;
-
   @type.string
   @io.all
   @validate.required
   public name: string;
 
-  @type.models({ model: RuleModel })
+  @type.array
   @io.all
-  @query.filterable({ type: 'auto' })
-  public ruleIds: Array<ObjectId> = [];
-
-  public rules: Array<RuleModel> = [];
+  public ruleAssociations: RuleAssociation[];
 
   @type.float
   @io.all
