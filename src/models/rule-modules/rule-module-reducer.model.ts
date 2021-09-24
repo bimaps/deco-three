@@ -1,25 +1,22 @@
-import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType } from '../checkers/checker-internals';
 import {
-  RuleModuleBaseModel,
+  RULE_MODULE_MONGO_COLLECTION_NAME,
   RuleModel,
+  RuleModuleBaseModel,
+  RuleModuleIORef,
   RuleModuleIOType,
   RuleModuleIOTypeOptions,
-  RuleModuleIORef
-} from '../checkers/checker-internals';
-import {
   RuleModuleReducer,
-  RuleModuleTypeOptions,
   RuleModuleReducerOperation,
-  RuleModuleReducerOperationOptions
+  RuleModuleReducerOperationOptions,
+  RuleModuleType,
+  RuleModuleTypeOptions,
 } from '../checkers/checker-internals';
-import { ThreeSiteModel } from '../site.model';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
+import { AppModel, io, model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:checker:module-reducer');
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleModuleReducer {
-
   @type.id
   public _id: ObjectId;
 
@@ -89,7 +86,7 @@ export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleM
       if (this.currentInputType === 'numbers') {
         mathInput = this.currentInput as number[];
       } else if (this.currentInputType === 'strings') {
-        mathInput = (this.currentInput as string[]).map(s => parseFloat(s));
+        mathInput = (this.currentInput as string[]).map((s) => parseFloat(s));
       } else {
         throw new Error('Min, max, average and sum reducers modules only accepts number, numbers, string and strings as input');
       }
@@ -98,7 +95,7 @@ export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleM
         // this.outputValue = Math.min(...mathInput); // very bad perf with spread for large arrays
         // const min = mathInput.reduce((m, n) => Math.min(m, n)); // average perf with reduce for large arrays
         const min = Math.min.apply(null, mathInput); // best perf with min.apply for large arras
-        const refKeys = [...Object.keys(mathInput)].filter(i => mathInput[parseInt(i, 10)] === min);
+        const refKeys = [...Object.keys(mathInput)].filter((i) => mathInput[parseInt(i, 10)] === min);
         this.outputValue = min;
         const inputRefs = (this.currentInputRef as RuleModuleIORef[]) || [];
         this.outputReference = inputRefs.filter((v, i) => refKeys.includes(i.toString()));
@@ -106,7 +103,7 @@ export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleM
         // this.outputValue = Math.max(...mathInput);  // very bad perf with spread for large arrays
         // const max = mathInput.reduce((m, n) => Math.max(m, n)); // average perf with reduce for large arrays
         const max = Math.max.apply(null, mathInput); // best perf with max.apply for large arras
-        const refKeys = [...Object.keys(mathInput)].filter(i => mathInput[parseInt(i, 10)] === max);
+        const refKeys = [...Object.keys(mathInput)].filter((i) => mathInput[parseInt(i, 10)] === max);
         this.outputValue = max;
         const inputRefs = (this.currentInputRef as RuleModuleIORef[]) || [];
         this.outputReference = inputRefs.filter((v, i) => refKeys.includes(i.toString()));
@@ -132,5 +129,4 @@ export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleM
     this.outputSummary = out.toString();
     await this.update(['outputSummary']);
   }
-
 }

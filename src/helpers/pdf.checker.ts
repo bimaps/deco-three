@@ -1,15 +1,14 @@
 import { CheckerJsonOutput, ReportOutput, RuleOutput } from './../models/checkers/checker-internals';
-import { PDF, PDFTextBlock } from '@bim/deco-api';
+import { PDF, PDFTextBlock } from '@bim/deco-api';
 
 export class PdfChecker extends PDF {
-
-  public fontSizeHeader: {[key: number]: number} = {
+  public fontSizeHeader: { [key: number]: number } = {
     1: 32,
     2: 20,
     3: 14,
     4: 10,
     5: 10,
-    6: 10
+    6: 10,
   };
 
   public printReportHead(reportOutput: ReportOutput) {
@@ -17,15 +16,15 @@ export class PdfChecker extends PDF {
     block.fontSizeHeader = this.fontSizeHeader;
     block.fontSize = 10;
     block.text = `# ${reportOutput.name}`;
-    block.text += "\n ";
+    block.text += '\n ';
     if (reportOutput.description) {
-      block.text += "\n "
+      block.text += '\n ';
       block.text += `${reportOutput.description}`;
     }
     block.apply();
   }
 
-  public colors: {[key: string]: string} = {
+  public colors: { [key: string]: string } = {
     default: '',
     correct: '0.2,0.8,0',
     incorrect: '1,0,0',
@@ -38,9 +37,9 @@ export class PdfChecker extends PDF {
     block.fontSizeHeader = this.fontSizeHeader;
     block.fontSize = 10;
     block.text = `## ${flowOutput.name}`;
-    block.text += "\n ";
+    block.text += '\n ';
     if (flowOutput.description) {
-      block.text += "\n "
+      block.text += '\n ';
       block.text += `${flowOutput.description}`;
     }
     block.apply();
@@ -52,19 +51,19 @@ export class PdfChecker extends PDF {
     block.fontSize = 10;
     for (const out of flowOutput.outputs) {
       block.text = `### ${out.name}`;
-      block.text += "\n ";
+      block.text += '\n ';
       for (const output of out.outputs) {
-        block.text += "\n ";
+        block.text += '\n ';
         block.text += `${output.prefix}`;
         if (output.display === 'blocks') {
-          block.text += "\n ";
+          block.text += '\n ';
         }
-        this.printValue(block, output)
+        this.printValue(block, output);
         if (output.display === 'blocks') {
-          block.text += "\n ";
+          block.text += '\n ';
         }
         block.text += `${output.suffix}`;
-        block.text += "\n ";
+        block.text += '\n ';
       }
     }
     block.apply();
@@ -88,6 +87,4 @@ export class PdfChecker extends PDF {
     }
     block.text += `${value}`;
   }
-
-  
 }

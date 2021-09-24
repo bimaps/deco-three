@@ -1,28 +1,28 @@
 import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
+import { AppModel, io, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 import * as THREE from 'three';
+
 let debug = require('debug')('app:models:three:material');
 
 @model('three_material')
 export class ThreeMaterialModel extends Model {
-
   @type.id
   public _id: ObjectId;
 
-  @type.model({model: AppModel})
+  @type.model({ model: AppModel })
   @io.input
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
-  @type.model({model: ThreeSiteModel})
+  @type.model({ model: ThreeSiteModel })
   @io.output
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public siteId: ObjectId;
 
   @type.string
@@ -112,34 +112,29 @@ export class ThreeMaterialModel extends Model {
   @io.all
   public stencilFunc: number;
 
-
   @type.integer
   @io.all
   public stencilRef: number;
-
 
   @type.integer
   @io.all
   public stencilMask: number;
 
-
   @type.integer
   @io.all
   public stencilFail: number;
-
 
   @type.integer
   @io.all
   public stencilZFail: number;
 
-
   @type.integer
   @io.all
   public stencilZPass: number;
 
-  @type.object({allowOtherKeys: true})
+  @type.object({ allowOtherKeys: true })
   @io.all
-  public userData: {[key: string]: any;};
+  public userData: { [key: string]: any };
 
   static uniqueHashFromData(data: any, ignoreNameInMaterialId: boolean = false) {
     let values: Array<string> = [];
@@ -151,5 +146,4 @@ export class ThreeMaterialModel extends Model {
     }
     return values.join('-');
   }
-
 }

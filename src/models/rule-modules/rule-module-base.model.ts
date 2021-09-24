@@ -1,23 +1,14 @@
 import { RuleModuleIOStyle, RuleModuleTypeOptions } from '../checkers/checker-interfaces';
 import {
-  RuleModuleShape,
-  RuleModuleType,
+  modelsByType,
+  RuleModel,
+  RuleModuleIORef,
   RuleModuleIOType,
   RuleModuleIOTypeValue,
-  RuleModel
+  RuleModuleShape,
+  RuleModuleType,
 } from '../checkers/checker-internals';
-import { RuleModuleIORef, modelsByType } from '../checkers/checker-internals';
-import {
-  model,
-  ObjectId,
-  Model,
-  InstanceFromDocumentOptions,
-  type,
-  AppModel,
-  io,
-  query,
-  validate, mongo
-} from '@bim/deco-api';
+import { AppModel, InstanceFromDocumentOptions, io, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 import { Request, Response } from 'express';
 
 let debug = require('debug')('app:models:three:checker:module-base');
@@ -27,8 +18,6 @@ export const RULE_MODULE_MONGO_COLLECTION_NAME = 'rule_module';
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleBaseModel extends Model implements RuleModuleShape {
-
-
   @type.id
   public _id: ObjectId;
 
@@ -104,7 +93,11 @@ export class RuleModuleBaseModel extends Model implements RuleModuleShape {
     this.outputSummary = '';
   }
 
-  static async instanceFromDocument<T extends typeof Model>(this: T, document: any, options: InstanceFromDocumentOptions = { keepCopyOriginalValues: false }): Promise<InstanceType<T>> {
+  static async instanceFromDocument<T extends typeof Model>(
+    this: T,
+    document: any,
+    options: InstanceFromDocumentOptions = { keepCopyOriginalValues: false },
+  ): Promise<InstanceType<T>> {
     if (document.__checkerModuleInstanceDefined) {
       return (await super.instanceFromDocument(document, options)) as unknown as InstanceType<T>;
     }
@@ -129,5 +122,4 @@ export class RuleModuleBaseModel extends Model implements RuleModuleShape {
     const instance = await model.instanceFromRequest(req, res);
     return instance as unknown as InstanceType<T>;
   }
-
 }

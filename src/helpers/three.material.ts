@@ -1,20 +1,19 @@
 import { ThreeMaterialModel } from './../models/material.model';
 import { ThreeJsonData, ThreeJsonObject } from './three.importer';
+
 let debug = require('debug')('app:helpers:three:material');
 
 export interface ReduceMaterialsOptions {
-  ignoreNameInMaterialId?: boolean
+  ignoreNameInMaterialId?: boolean;
 }
 
 export class ThreeMaterialHelper {
-
-
   static reduceMaterials(json: ThreeJsonData, options: ReduceMaterialsOptions = {}) {
     let newMaterials: Array<any> = [];
-    let materialMap: {[key: string]: string} = {};
-    let materialHashes: {[key: string]: string} = {};
+    let materialMap: { [key: string]: string } = {};
+    let materialHashes: { [key: string]: string } = {};
     let stats: any = {
-      nbMaterialsOrigin: json.materials.length
+      nbMaterialsOrigin: json.materials.length,
     };
 
     for (let material of json.materials) {
@@ -65,7 +64,5 @@ export class ThreeMaterialHelper {
         ThreeMaterialHelper.mapChildrenWithMaterial(child, materialMap);
       }
     }
-    
   }
-
 }

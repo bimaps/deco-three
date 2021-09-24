@@ -20,18 +20,17 @@ import { RuleModuleIfModel } from '../rule-modules/rule-module-if.model';
 import { RuleModuleProjectionModel } from '../rule-modules/rule-module-projection.model';
 import { RuleModuleDistanceModel } from '../rule-modules/rule-module-distance.model';
 import { RuleModuleNormalDistanceModel } from '../rule-modules/rule-module-normal-distance.model';
-import { CheckerModuleOutputModel } from './checker-module-output.model';
 
 export const modelsByType: {
   [key: string]:
-      typeof RuleModuleFilterModel
-      | typeof RuleModuleExtractModel
-      | typeof RuleModuleMathModel
-      | typeof RuleModuleReducerModel
-      | typeof RuleModuleIfModel
-      | typeof RuleModuleProjectionModel
-      | typeof RuleModuleDistanceModel
-      | typeof RuleModuleNormalDistanceModel
+    | typeof RuleModuleFilterModel
+    | typeof RuleModuleExtractModel
+    | typeof RuleModuleMathModel
+    | typeof RuleModuleReducerModel
+    | typeof RuleModuleIfModel
+    | typeof RuleModuleProjectionModel
+    | typeof RuleModuleDistanceModel
+    | typeof RuleModuleNormalDistanceModel;
   //   | typeof CheckerModuleOutputModel
 } = {
   filter: RuleModuleFilterModel,
@@ -41,6 +40,6 @@ export const modelsByType: {
   if: RuleModuleIfModel,
   projection: RuleModuleProjectionModel,
   distance: RuleModuleDistanceModel,
-  "normal-distance": RuleModuleNormalDistanceModel,
+  'normal-distance': RuleModuleNormalDistanceModel,
   // output: CheckerModuleOutputModel,
 };

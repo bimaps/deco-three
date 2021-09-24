@@ -5,24 +5,21 @@ import { ThreeStoreyModel } from './../models/storey.model';
 import { ThreeBuildingModel } from './../models/building.model';
 import { IfcHelper, ThreeImporterHelper, ThreeJsonData } from './../helpers';
 import { ThreeSiteModel } from './../models/site.model';
-import { Request, Response, NextFunction } from 'express';
-import { PolicyController, Query, Operation, ActionsService } from '@bim/deco-api';
+import { NextFunction, Request, Response } from 'express';
+import { ActionsService, Operation, PolicyController, Query } from '@bim/deco-api';
 import resolvePath from 'object-resolve-path';
 import { ThreeReportAction } from './actions/three.report.action';
 import { ThreeSendReportAction } from './actions/three.send-report.action';
+
 let debug = require('debug')('app:models:three:controller:core');
 
 export class ThreeCoreControllerMiddleware extends PolicyController {
-
   public extendGetAllQuery(query: Query, req: Request, res: Response): Promise<void> {
-
     let appId = res.locals.app._id;
-    let readQuery: any = {appId: appId};
+    let readQuery: any = { appId: appId };
     query.addQuery(readQuery);
 
-    return super.extendGetAllQuery(query, req, res, {}).then(() => {
-
-    });
+    return super.extendGetAllQuery(query, req, res, {}).then(() => {});
   }
 
   public importJSON(req: Request, res: Response, next: NextFunction) {
@@ -45,20 +42,27 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
         return next(new Error('Invalid JSON'));
       }
     }
-    
+
     if (!json.metadata) return next(new Error('Missing metadata in json, are you sure you upload the right JSON format?'));
-    if (!json.metadata.version || parseFloat(json.metadata.version) !== 4.5) return next(new Error('Invalid or not supported version. We currently support version 4.5'));
-    
+    if (!json.metadata.version || parseFloat(json.metadata.version) !== 4.5)
+      return next(new Error('Invalid or not supported version. We currently support version 4.5'));
+
     let importId: string | undefined = typeof req.query.importId === 'string' ? req.query.importId : undefined;
 
     let importer = new ThreeImporterHelper();
     let saveLights = req.query.saveLights ? true : false;
-    importer.start(res.locals.element, json, {importId: importId, saveLights: saveLights}).then((response) => {
-      res.send(response);
-    }).catch((error) => {
-      console.error(error);
-      next(error);
-    });
+    importer
+      .start(res.locals.element, json, {
+        importId: importId,
+        saveLights: saveLights,
+      })
+      .then((response) => {
+        res.send(response);
+      })
+      .catch((error) => {
+        console.error(error);
+        next(error);
+      });
   }
 
   public importIFC(req: Request, res: Response, next: NextFunction) {
@@ -74,49 +78,63 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
 
     if (req.file && req.file.path) {
       next(); // pass to the next middleware => will send the currentOperation back to client
-      IfcHelper.convert2obj(req.file.path).then(({ifcPath, objPath, mtlPath}) => {
-        _ifcPath = ifcPath;
-        return importer.loadMTL(mtlPath).then(() => {
-          return importer.loadOBJ(objPath);
-        }).then((obj) => {
-          return importer.rotate90X(obj);
+      IfcHelper.convert2obj(req.file.path)
+        .then(({ ifcPath, objPath, mtlPath }) => {
+          _ifcPath = ifcPath;
+          return importer
+            .loadMTL(mtlPath)
+            .then(() => {
+              return importer.loadOBJ(objPath);
+            })
+            .then((obj) => {
+              return importer.rotate90X(obj);
+            });
         })
-      }).catch((error) => {
-        console.error(error);
-        if (error && error.message) throw error;
-        else throw new Error('Unexpected error while converting ifc to obj');
-      }).then((result) => {
-        if (!result) throw new Error('No result when converting and loading IFC in obj/mtl');
-        if (typeof result !== 'boolean' && result.type) {
-          let json: ThreeJsonData = result.toJSON();
-          let importId: string | undefined = typeof req.query.importId === 'string' ? req.query.importId : undefined;
-          let saveLights = req.query.saveLights ? true : false;
-          return importer.start(site, json, {importId: importId, saveLights: saveLights});
-        } else {
-          debug('Unexpected result');
-          debug('result', result);
-          throw new Error('Unexpected result from ifcConvert');
-        }
-      }).then(() => {
-        // now we can add the metadata from the IFC
-        return IfcHelper.parseIfcMetadata(_ifcPath, site, importer.importId);
-      }).then(() => {
-        Operation.completeCurrentOperation(res, 'completed', 'Successfully imported').catch((error) => {
-          debug('Error while setting the operation completed');
-          debug(' - Error: ', error.message);
+        .catch((error) => {
+          console.error(error);
+          if (error && error.message) throw error;
+          else throw new Error('Unexpected error while converting ifc to obj');
+        })
+        .then((result) => {
+          if (!result) throw new Error('No result when converting and loading IFC in obj/mtl');
+          if (typeof result !== 'boolean' && result.type) {
+            let json: ThreeJsonData = result.toJSON();
+            let importId: string | undefined = typeof req.query.importId === 'string' ? req.query.importId : undefined;
+            let saveLights = req.query.saveLights ? true : false;
+            return importer.start(site, json, {
+              importId: importId,
+              saveLights: saveLights,
+            });
+          } else {
+            debug('Unexpected result');
+            debug('result', result);
+            throw new Error('Unexpected result from ifcConvert');
+          }
+        })
+        .then(() => {
+          // now we can add the metadata from the IFC
+          return IfcHelper.parseIfcMetadata(_ifcPath, site, importer.importId);
+        })
+        .then(() => {
+          Operation.completeCurrentOperation(res, 'completed', 'Successfully imported').catch((error) => {
+            debug('Error while setting the operation completed');
+            debug(' - Error: ', error.message);
+          });
+          if (req.query.reportId && req.query.email) {
+            ActionsService.runActions(res, [[ThreeReportAction, ThreeSendReportAction, ThreeDeleteSiteAction]], {
+              siteId: site._id,
+              reportId: req.query.reportId,
+              ifcFilename: req.file.originalname,
+              email: req.query.email,
+            });
+          }
+        })
+        .catch((error) => {
+          Operation.completeCurrentOperation(res, 'errored', error.message).catch((error) => {
+            debug('Error while setting the operation completed');
+            debug(' - Error: ', error.message);
+          });
         });
-        if (req.query.reportId && req.query.email) {
-          ActionsService.runActions(res, [[
-            ThreeReportAction, 
-            ThreeSendReportAction,
-            ThreeDeleteSiteAction]], {siteId: site._id, reportId: req.query.reportId, ifcFilename: req.file.originalname, email: req.query.email});
-        }
-      }).catch((error) => {
-        Operation.completeCurrentOperation(res, 'errored', error.message).catch((error) => {
-          debug('Error while setting the operation completed');
-          debug(' - Error: ', error.message);
-        });
-      });
     } else {
       return next(new Error('IFC file not found'));
     }
@@ -129,15 +147,18 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
     if (!res.locals.app) return next(new Error('Missing res.locals.app'));
 
     let modelNames: Array<string> = req.body.models;
-    if (!Array.isArray(modelNames) || !modelNames.length) return next(new Error('Invalid models'));
+    if (!Array.isArray(modelNames) || !modelNames.length) return next(new Error('Invalid models'));
 
     let importer = new ThreeImporterHelper();
-    importer.removeData(res.locals.element._id, modelNames).then((response) => {
-      res.send(response);
-    }).catch((error) => {
-      console.error(error);
-      next(error);
-    });
+    importer
+      .removeData(res.locals.element._id, modelNames)
+      .then((response) => {
+        res.send(response);
+      })
+      .catch((error) => {
+        console.error(error);
+        next(error);
+      });
   }
 
   public clearImport(req: Request, res: Response, next: NextFunction) {
@@ -147,14 +168,17 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
     if (!res.locals.app) return next(new Error('Missing res.locals.app'));
 
     let importId = req.params.importId;
-    
+
     let importer = new ThreeImporterHelper();
-    importer.removeImport(res.locals.element._id, importId).then((response) => {
-      res.send(response);
-    }).catch((error) => {
-      console.error(error);
-      next(error);
-    });
+    importer
+      .removeImport(res.locals.element._id, importId)
+      .then((response) => {
+        res.send(response);
+      })
+      .catch((error) => {
+        console.error(error);
+        next(error);
+      });
   }
 
   public fetchBuildingsInfos() {
@@ -169,9 +193,19 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
       }
       new Promise(async (resolve, reject) => {
         try {
-          const buildings = await ThreeBuildingModel.getAll(new Query({siteId: site._id}));
-          const storeys = await ThreeStoreyModel.getAll(new Query({siteId: site._id, buildingId: {$in: buildings.map(i => i._id)}}));
-          const spaces = await ThreeSpaceModel.getAll(new Query({siteId: site._id, buildingId: {$in: buildings.map(i => i._id)}}));
+          const buildings = await ThreeBuildingModel.getAll(new Query({ siteId: site._id }));
+          const storeys = await ThreeStoreyModel.getAll(
+            new Query({
+              siteId: site._id,
+              buildingId: { $in: buildings.map((i) => i._id) },
+            }),
+          );
+          const spaces = await ThreeSpaceModel.getAll(
+            new Query({
+              siteId: site._id,
+              buildingId: { $in: buildings.map((i) => i._id) },
+            }),
+          );
           const output = await site.output();
           const buildingsOutput = await ThreeBuildingModel.outputList(buildings);
           const storeysOutput = await ThreeStoreyModel.outputList(storeys);
@@ -183,10 +217,12 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
         } catch (error) {
           reject(error);
         }
-      }).then((output) => {
-        res.send(output);
-      }).catch(next);
-    }
+      })
+        .then((output) => {
+          res.send(output);
+        })
+        .catch(next);
+    };
   }
 
   public fetchKeyValues() {
@@ -198,12 +234,25 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
       }
       new Promise(async (resolve, reject) => {
         try {
-          const objects = await ThreeObjectModel.getAll(new Query({siteId: site._id}));
-          const buildings = await ThreeBuildingModel.getAll(new Query({siteId: site._id}));
-          const storeys = await ThreeStoreyModel.getAll(new Query({siteId: site._id, buildingId: {$in: buildings.map(i => i._id)}}));
-          const spaces = await ThreeSpaceModel.getAll(new Query({siteId: site._id, buildingId: {$in: buildings.map(i => i._id)}}));
-          
-          const allObjects: Array<any> = (objects as Array<any>).concat(...buildings).concat(...storeys).concat(...spaces);
+          const objects = await ThreeObjectModel.getAll(new Query({ siteId: site._id }));
+          const buildings = await ThreeBuildingModel.getAll(new Query({ siteId: site._id }));
+          const storeys = await ThreeStoreyModel.getAll(
+            new Query({
+              siteId: site._id,
+              buildingId: { $in: buildings.map((i) => i._id) },
+            }),
+          );
+          const spaces = await ThreeSpaceModel.getAll(
+            new Query({
+              siteId: site._id,
+              buildingId: { $in: buildings.map((i) => i._id) },
+            }),
+          );
+
+          const allObjects: Array<any> = (objects as Array<any>)
+            .concat(...buildings)
+            .concat(...storeys)
+            .concat(...spaces);
 
           const preparePathKey = (key: string) => {
             const parts = key.split('.');
@@ -214,9 +263,9 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
               parts[i] = `["${parts[i]}"]`;
             }
             return parts.join('');
-          }
+          };
 
-          let keyValues: {[key: string]: Array<any>} = {};
+          let keyValues: { [key: string]: Array<any> } = {};
           const extractPaths = ['type', 'uuid', 'name', 'userData', 'userData.*'];
 
           for (let obj of allObjects) {
@@ -236,8 +285,8 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
               } else if (typeof value === 'object') {
                 ///////
                 const level2Keys = Object.keys(value);
-                const level2Paths = level2Keys.map(k => `${objKey}.${k}`)
-                
+                const level2Paths = level2Keys.map((k) => `${objKey}.${k}`);
+
                 for (let level2Path of level2Paths) {
                   if (!extractPaths.includes(level2Path) && !extractPaths.includes(`${objKey}.*`)) {
                     continue;
@@ -253,7 +302,7 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
                   } else if (typeof valueLevel2 === 'object') {
                     //////
                     const level3Keys = Object.keys(valueLevel2);
-                    const level3Paths = level3Keys.map(k => `${level2Path}.${k}`)
+                    const level3Paths = level3Keys.map((k) => `${level2Path}.${k}`);
 
                     for (let level3Path of level3Paths) {
                       const valueLevel3 = resolvePath(obj, preparePathKey(level3Path));
@@ -279,10 +328,11 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
         } catch (error) {
           reject(error);
         }
-      }).then((output) => {
-        res.send(output);
-      }).catch(next);
-    }
+      })
+        .then((output) => {
+          res.send(output);
+        })
+        .catch(next);
+    };
   }
-
 }

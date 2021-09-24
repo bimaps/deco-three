@@ -6,13 +6,15 @@ import { ThreeMaterialModel } from './material.model';
 import { ThreeObjectModel } from './object.model';
 import {
   RuleModuleBaseModel,
+  RuleModuleIORef,
+  RuleModuleIOType,
+  RuleModuleIOTypeValue,
+  RuleModuleObjectCondition,
   RuleModuleValueCondition,
   ThreeFlow,
-  RuleModuleIORef
 } from './checkers/checker-internals';
-import { RuleModuleIOTypeValue, RuleModuleIOType, RuleModuleObjectCondition } from './checkers/checker-internals';
 import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, mongo, Query, Parser, AppModel } from '@bim/deco-api';
+import { AppModel, io, model, Model, mongo, ObjectId, Parser, query, Query, type, validate } from '@bim/deco-api';
 import * as THREE from 'three';
 import moment from 'moment';
 import resolvePath from 'object-resolve-path';
@@ -21,7 +23,6 @@ let debug = require('debug')('app:models:three:checkers:flow');
 
 @model('rule')
 export class RuleModel extends Model implements ThreeFlow {
-
   @type.id
   public _id: ObjectId;
 
@@ -50,7 +51,7 @@ export class RuleModel extends Model implements ThreeFlow {
   public modules: Array<RuleModuleBaseModel> = [];
   public outputs: {
     name: string;
-    outputs: CheckerJsonOutput[]
+    outputs: CheckerJsonOutput[];
   }[] = [];
 
   @type.string
@@ -88,43 +89,26 @@ export class RuleModel extends Model implements ThreeFlow {
     if (!site) {
       throw new Error('Site not found');
     }
-    const objects = await ThreeObjectModel.getAll(new Query({ siteId: site._id })) || [];
-    const matIds = objects.map(o => o.material);
+    const objects = (await ThreeObjectModel.getAll(new Query({ siteId: site._id }))) || [];
+    const matIds = objects.map((o) => o.material);
     const materials = await ThreeMaterialModel.getAll(new Query({ uuid: { $in: matIds } }));
-    const geoIds = objects.map(o => o.geometry);
+    const geoIds = objects.map((o) => o.geometry);
     const geometries = await ThreeGeometryModel.getAll(new Query({ uuid: { $in: geoIds } }));
     const spaces = await ThreeSpaceModel.getAll(new Query({ siteId: site._id }));
     const sceneJson = {
       metadata: {
         version: 4.5,
         type: 'Object',
-        generator: 'swissdata'
+        generator: 'swissdata',
       },
       geometries: geometries,
       materials: materials,
       object: {
         children: objects,
         layers: 1,
-        matrix: [
-          1,
-          0,
-          0,
-          0,
-          0,
-          1,
-          0,
-          0,
-          0,
-          0,
-          1,
-          0,
-          0,
-          0,
-          0,
-          1
-        ],
-        type: 'Scene'
-      }
+        matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+        type: 'Scene',
+      },
     };
     const loader = new THREE.ObjectLoader();
     const scene: THREE.Object3D = await new Promise((resolve2, reject2) => {
@@ -144,13 +128,20 @@ export class RuleModel extends Model implements ThreeFlow {
     return this.scene;
   }
 
-  public fetchInput(varname: string): { value: RuleModuleIOTypeValue, type: RuleModuleIOType, ref: RuleModuleIORef | RuleModuleIORef[], style: RuleModuleIOStyle | RuleModuleIOStyle[] } | undefined {
+  public fetchInput(varname: string):
+    | {
+        value: RuleModuleIOTypeValue;
+        type: RuleModuleIOType;
+        ref: RuleModuleIORef | RuleModuleIORef[];
+        style: RuleModuleIOStyle | RuleModuleIOStyle[];
+      }
+    | undefined {
     if (varname === 'scene') {
       return {
         type: 'scene',
         value: this.scene,
         ref: undefined,
-        style: 'default'
+        style: 'default',
       };
     }
     for (const moduleInstance of this.modules) {
@@ -159,7 +150,7 @@ export class RuleModel extends Model implements ThreeFlow {
           value: moduleInstance.outputValue,
           type: moduleInstance.outputType,
           ref: moduleInstance.outputReference,
-          style: moduleInstance.outputStyle || 'default'
+          style: moduleInstance.outputStyle || 'default',
         };
       }
     }
@@ -168,7 +159,6 @@ export class RuleModel extends Model implements ThreeFlow {
   }
 
   public fetchProp(object: THREE.Object3D, propPath: string): any {
-
     if (propPath.indexOf('#{') !== -1 || propPath.indexOf('!#') !== -1) {
       propPath = propPath.replace(/(#{|!{)/gm, '$1object:');
       return Parser.parseTemplate(propPath, { object });
@@ -233,7 +223,7 @@ export class RuleModel extends Model implements ThreeFlow {
             for (const index in output2.ref) {
               const ref = output2.ref[index];
               if (ref instanceof THREE.Mesh && ref.userData?.ifcId) {
-                output2.ref[index] = { ifcId: ref.userData.ifcId }
+                output2.ref[index] = { ifcId: ref.userData.ifcId };
               } else {
                 output2.ref[index] = undefined;
               }
@@ -248,5 +238,4 @@ export class RuleModel extends Model implements ThreeFlow {
     }
     return outputs;
   }
-
 }

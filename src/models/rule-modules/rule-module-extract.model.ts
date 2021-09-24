@@ -1,30 +1,24 @@
 import { ThreeUtils } from '../../helpers/three-utils';
 import {
-  RuleModuleType,
-  RuleModuleExtractTypeOptions,
-  RULE_MODULE_MONGO_COLLECTION_NAME
-} from '../checkers/checker-internals';
-import {
-  RuleModuleBaseModel,
+  RULE_MODULE_MONGO_COLLECTION_NAME,
   RuleModel,
-  RuleModuleIOType,
-  RuleModuleIOTypeOptions
-} from '../checkers/checker-internals';
-import {
+  RuleModuleBaseModel,
   RuleModuleExtract,
+  RuleModuleExtractTypeOptions,
+  RuleModuleIORef,
+  RuleModuleIOType,
+  RuleModuleIOTypeOptions,
+  RuleModuleType,
   RuleModuleTypeOptions,
   ThreeExtractType,
-  RuleModuleIORef
 } from '../checkers/checker-internals';
-import { ThreeSiteModel } from '../site.model';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
+import { AppModel, io, model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 import * as THREE from 'three';
 
 let debug = require('debug')('app:models:three:checker:module-extract');
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleModuleExtract {
-
   @type.id
   public _id: ObjectId;
 
@@ -143,7 +137,7 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
         output.push(...vertices);
         const refForVertices: RuleModuleIORef[] = Array(vertices.length).fill(object);
         refs.push(...refForVertices);
-        this.outputType = 'vector3s'
+        this.outputType = 'vector3s';
       }
     }
 
@@ -177,20 +171,18 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
       const geometry = object.geometry;
       if (geometry instanceof THREE.Geometry) {
         for (let face of geometry.faces) {
-          triangles.push(new THREE.Triangle(
-              geometry.vertices[face.a],
-              geometry.vertices[face.b],
-              geometry.vertices[face.c]
-          ));
+          triangles.push(new THREE.Triangle(geometry.vertices[face.a], geometry.vertices[face.b], geometry.vertices[face.c]));
         }
       } else {
         var tempGeo = new THREE.Geometry().fromBufferGeometry(geometry);
         for (let face of tempGeo.faces) {
-          triangles.push(new THREE.Triangle(
-              tempGeo.vertices[face.a]/*.applyMatrix4(object.matrix)*/,
-              tempGeo.vertices[face.b]/*.applyMatrix4(object.matrix)*/,
-              tempGeo.vertices[face.c]/*.applyMatrix4(object.matrix)*/
-          ));
+          triangles.push(
+            new THREE.Triangle(
+              tempGeo.vertices[face.a] /*.applyMatrix4(object.matrix)*/,
+              tempGeo.vertices[face.b] /*.applyMatrix4(object.matrix)*/,
+              tempGeo.vertices[face.c] /*.applyMatrix4(object.matrix)*/,
+            ),
+          );
         }
       }
     }
@@ -222,7 +214,7 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
         }
       } else {
         var tempGeo = new THREE.Geometry().fromBufferGeometry(geometry);
-        const vertices = tempGeo.vertices.map(v => v/*.applyMatrix4(object.matrix)*/);
+        const vertices = tempGeo.vertices.map((v) => v /*.applyMatrix4(object.matrix)*/);
         for (let face of tempGeo.faces) {
           if (!edgeIndexPairs[`${face.a}-${face.b}`]) {
             edges.push(new THREE.Line3(vertices[face.a], vertices[face.b]));
@@ -257,15 +249,14 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
     if (object instanceof THREE.Mesh) {
       const geometry = object.geometry;
       if (geometry instanceof THREE.Geometry) {
-        vertices.push(...geometry.vertices.map(v => v.clone()));
+        vertices.push(...geometry.vertices.map((v) => v.clone()));
       } else {
         var tempGeo = new THREE.Geometry().fromBufferGeometry(geometry);
         for (var i = 0; i < tempGeo.vertices.length; i++) {
-          vertices.push(tempGeo.vertices[i]/*.applyMatrix4(object.matrix)*/);
+          vertices.push(tempGeo.vertices[i] /*.applyMatrix4(object.matrix)*/);
         }
       }
     }
     return vertices;
   }
-
 }

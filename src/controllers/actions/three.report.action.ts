@@ -6,7 +6,6 @@ import { Response } from 'express';
 let debug = require('debug')('app:actions:three:report');
 
 export class ThreeReportAction {
-
   public static async run(res: Response) {
     debug('run');
     if (!res.locals.actions?.variables?.reportId) {
@@ -23,7 +22,7 @@ export class ThreeReportAction {
     const reportOutput: ReportOutput = {
       name: report.name,
       description: report.description,
-      flows: []
+      flows: [],
     };
     debug('start processing', report.rules.length, 'flows');
     for (const flowId of report.ruleIds) {
@@ -36,9 +35,9 @@ export class ThreeReportAction {
       reportOutput.flows.push({
         name: flow.name,
         description: flow.description,
-        summaries: flow.modules.map(m => m.outputSummary),
-        outputs: flow.outputs
-      })
+        summaries: flow.modules.map((m) => m.outputSummary),
+        outputs: flow.outputs,
+      });
     }
     res.locals.actions.variables.threeReportOutput = reportOutput;
     debug('reportOutput', reportOutput);
@@ -55,5 +54,4 @@ export class ThreeReportAction {
     res.locals.actions.variables.threeReportFile = file;
     debug('file saved in res.locals.actions.variables.threeReportFile with length', file.length);
   }
-
 }

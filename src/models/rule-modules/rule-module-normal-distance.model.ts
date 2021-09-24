@@ -1,20 +1,21 @@
-import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType } from '../checkers/checker-internals';
 import {
-  RuleModuleBaseModel,
+  RULE_MODULE_MONGO_COLLECTION_NAME,
   RuleModel,
+  RuleModuleBaseModel,
+  RuleModuleIORef,
   RuleModuleIOType,
-  RuleModuleIOTypeOptions
+  RuleModuleIOTypeOptions,
+  RuleModuleNormalDistance,
+  RuleModuleType,
+  RuleModuleTypeOptions,
 } from '../checkers/checker-internals';
-import { RuleModuleTypeOptions, RuleModuleNormalDistance, RuleModuleIORef } from '../checkers/checker-internals';
-import { ThreeSiteModel } from '../site.model';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
+import { AppModel, io, model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 import * as THREE from 'three';
 
 let debug = require('debug')('app:models:three:checker:module-normal-distance');
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implements RuleModuleNormalDistance {
-
   @type.id
   public _id: ObjectId;
 
@@ -96,7 +97,6 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
     const inputB = input2Value.value as THREE.Triangle | THREE.Triangle[] | THREE.Line3 | THREE.Line3[] | THREE.Vector3 | THREE.Vector3[];
     // const inputBType = input2Value.type as 'triangle' | 'triangles' | 'line3' | 'line3s' | 'vector3' | 'vector3s';
 
-
     const distances: Array<number> = [];
     const refs: Array<RuleModuleIORef> = [];
     let iAs = Array.isArray(inputA) ? inputA : [inputA];
@@ -131,7 +131,7 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
         if (!processRefs[processRefKey]) {
           processRefs[processRefKey] = {
             refA: rA,
-            refB: rB
+            refB: rB,
           };
         }
         const iB = iBs[indexB];
@@ -189,19 +189,19 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
   }
 
   public pointLine(i1: THREE.Vector3, i2: THREE.Line3): number {
-    const p: THREE.Vector3 = new THREE.Vector3;
+    const p: THREE.Vector3 = new THREE.Vector3();
     i2.closestPointToPoint(i1, true, p);
     return i1.distanceTo(p);
   }
 
   public pointFace(i1: THREE.Vector3, i2: THREE.Triangle): number {
-    const p: THREE.Vector3 = new THREE.Vector3;
+    const p: THREE.Vector3 = new THREE.Vector3();
     i2.closestPointToPoint(i1, p);
     return i1.distanceTo(p);
   }
 
   public LineLine(i1: THREE.Line3, i2: THREE.Line3): number {
-    const p: THREE.Vector3 = new THREE.Vector3;
+    const p: THREE.Vector3 = new THREE.Vector3();
     const pp: Array<number> = [];
     i1.closestPointToPoint(i2.start, true, p);
     pp.push(i2.start.distanceTo(p));
@@ -215,7 +215,7 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
   }
 
   public LineFace(i1: THREE.Line3, i2: THREE.Triangle): number {
-    const p: THREE.Vector3 = new THREE.Vector3;
+    const p: THREE.Vector3 = new THREE.Vector3();
     const pp: Array<number> = [];
     // distance from line to each points of the face
     // TODO: Fix formula
@@ -234,7 +234,7 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
   }
 
   public FaceFace(i1: THREE.Triangle, i2: THREE.Triangle): number {
-    const p: THREE.Vector3 = new THREE.Vector3;
+    const p: THREE.Vector3 = new THREE.Vector3();
     const pp: Array<number> = [];
     i1.closestPointToPoint(i2.a, p);
     pp.push(i2.a.distanceTo(p));
@@ -253,13 +253,15 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
 
   public async summary(): Promise<void> {
     if (Array.isArray(this.outputValue)) {
-      this.outputSummary = `${this.outputValue.length} distances (${(this.outputValue as number[]).slice(0, 3).map(v => {
-        return Math.round(v * 1000) / 1000
-      }).join(', ')})`;
+      this.outputSummary = `${this.outputValue.length} distances (${(this.outputValue as number[])
+        .slice(0, 3)
+        .map((v) => {
+          return Math.round(v * 1000) / 1000;
+        })
+        .join(', ')})`;
     } else {
       this.outputSummary = '';
     }
     await this.update(['outputSummary']);
   }
-
 }

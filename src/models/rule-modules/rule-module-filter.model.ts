@@ -1,20 +1,21 @@
-import { RuleModuleType, RuleModuleFilter, RULE_MODULE_MONGO_COLLECTION_NAME } from '../checkers/checker-internals';
 import {
-  RuleModuleBaseModel,
+  RULE_MODULE_MONGO_COLLECTION_NAME,
   RuleModel,
+  RuleModuleBaseModel,
+  RuleModuleConditionOperator,
+  RuleModuleFilter,
   RuleModuleIOType,
-  RuleModuleIOTypeOptions
+  RuleModuleIOTypeOptions,
+  RuleModuleObjectCondition,
+  RuleModuleType,
+  RuleModuleTypeOptions,
 } from '../checkers/checker-internals';
-import { RuleModuleTypeOptions } from '../checkers/checker-internals';
-import { RuleModuleObjectCondition, RuleModuleConditionOperator } from '../checkers/checker-internals';
-import { ThreeSiteModel } from '../site.model';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
+import { AppModel, io, model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:checker:module-filter');
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleModuleFilter {
-
   @type.id
   public _id: ObjectId;
 
@@ -59,7 +60,7 @@ export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleMo
   @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
   @io.toDocument
   @io.output
-  public outputType: RuleModuleIOType = 'three-objects'
+  public outputType: RuleModuleIOType = 'three-objects';
 
   public outputValue: THREE.Object3D[];
 
@@ -74,9 +75,9 @@ export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleMo
       keys: {
         key: { type: 'string' },
         operation: { type: 'string' },
-        value: { type: 'string' }
-      }
-    }
+        value: { type: 'string' },
+      },
+    },
   })
   @io.all
   public conditions: Array<RuleModuleObjectCondition>;
@@ -130,5 +131,4 @@ export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleMo
     }
     await this.update(['outputSummary']);
   }
-
 }

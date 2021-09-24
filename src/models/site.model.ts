@@ -1,19 +1,19 @@
-import { model, Model, type, io, query, validate, ObjectId, Metadata, mongo, AppModel } from '@bim/deco-api';
+import { AppModel, io, Metadata, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 import * as THREE from 'three';
+
 let debug = require('debug')('app:models:three:site');
 
 @model('three_site')
 export class ThreeSiteModel extends Model {
-
   @type.id
   public _id: ObjectId;
 
-  @type.model({model: AppModel})
+  @type.model({ model: AppModel })
   @io.input
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
   @type.string
@@ -23,7 +23,7 @@ export class ThreeSiteModel extends Model {
   @type.string
   @io.all
   @validate.required
-  @query.filterable({type: 'auto'})
+  @query.filterable({ type: 'auto' })
   public name: string;
 
   @type.metadata
@@ -41,7 +41,7 @@ export class ThreeSiteModel extends Model {
   @type.float
   @io.all
   public originalCameraZoom: number = 10;
-  
+
   @type.any
   @io.all
   public originalCameraLookAt: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
@@ -51,15 +51,15 @@ export class ThreeSiteModel extends Model {
   @query.filterable()
   public bcfProjectId?: string;
 
-  @type.array({type: 'float'})
+  @type.array({ type: 'float' })
   @io.all
   public location?: Array<number>;
 
-  @type.array({type: 'float'})
+  @type.array({ type: 'float' })
   @io.all
   public refDirection?: Array<number>;
 
-  @type.array({type: 'float'})
+  @type.array({ type: 'float' })
   @io.all
   public axis?: Array<number>;
 
@@ -67,8 +67,8 @@ export class ThreeSiteModel extends Model {
   @io.all
   @query.filterable()
   public business: string;
-  
-  @type.array({type: 'string'})
+
+  @type.array({ type: 'string' })
   @io.all
   public authorizedBusinesses?: Array<string>;
 }

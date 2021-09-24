@@ -1,12 +1,11 @@
 import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, Metadata, AppModel, mongo } from '@bim/deco-api';
+import { AppModel, io, Metadata, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 import { RuleModel } from './checkers/checker-internals';
 
 let debug = require('debug')('app:models:three:checker-config');
 
 @model('checker_report')
 export class ThreeCheckerReportModel extends Model {
-
   @type.id
   public _id: ObjectId;
 
@@ -49,5 +48,4 @@ export class ThreeCheckerReportModel extends Model {
   @type.metadata
   @io.all
   public metadata: Array<Metadata> = [];
-
 }

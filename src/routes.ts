@@ -7,7 +7,7 @@ import { ThreeObjectController } from './controllers/three.object.controller';
 import { ThreeSiteController } from './controllers/three.site.controller';
 import { Router } from 'express';
 import { PolicyController } from '@bim/deco-api';
-import {ThreeModuleController} from './controllers';
+import { ThreeModuleController } from './controllers';
 
 const router: Router = Router();
 // Mount Three Controllers
@@ -20,10 +20,10 @@ router.use('/geometry', ThreeGeometryController);
 router.use('/theme', ThreeThemeController);
 router.use('/style', ThreeStyleController);
 router.use('/checker', ThreeCheckerController);
-router.use('/module', ThreeModuleController)
+router.use('/module', ThreeModuleController);
 
 router.get('/status', (req, res, next) => {
-  res.send({module: 'three', status: 'OK'});
+  res.send({ module: 'three', status: 'OK' });
 });
 
 export { router as ThreeRoutes };

@@ -6,15 +6,14 @@ let debug = require('debug')('app:models:three:theme');
 class RuleAssociation {
   public ruleId: ObjectId;
   public styleAssociations: Array<{
-    property: string,
-    value: string,
-    style: ThreeStyleModel,
+    property: string;
+    value: string;
+    style: ThreeStyleModel;
   }>;
 }
 
 @model('three_theme')
 export class ThreeThemeModel extends Model {
-
   @type.id
   public _id: ObjectId;
 
@@ -38,5 +37,4 @@ export class ThreeThemeModel extends Model {
   @type.float
   @io.all
   public spaceHeight: number = 0; // 0 => real height from data
-
 }

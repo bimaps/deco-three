@@ -1,19 +1,20 @@
-import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType } from '../checkers/checker-internals';
 import {
-  RuleModuleBaseModel,
+  RULE_MODULE_MONGO_COLLECTION_NAME,
   RuleModel,
+  RuleModuleBaseModel,
   RuleModuleIOType,
-  RuleModuleIOTypeOptions
+  RuleModuleIOTypeOptions,
+  RuleModuleMath,
+  RuleModuleType,
+  RuleModuleTypeOptions,
 } from '../checkers/checker-internals';
-import { RuleModuleMath, RuleModuleTypeOptions } from '../checkers/checker-internals';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
+import { AppModel, io, model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 import * as math from 'mathjs';
 
 let debug = require('debug')('app:models:three:checker:module-extract');
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModuleMath {
-
   @type.id
   public _id: ObjectId;
 
@@ -126,9 +127,7 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
       this.outputType = 'numbers';
       this.outputValue = results;
     }
-
   }
-
 
   public async summary(): Promise<void> {
     if (Array.isArray(this.outputValue)) {
@@ -138,5 +137,4 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
     }
     await this.update(['outputSummary']);
   }
-
 }

@@ -1,19 +1,18 @@
-import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType } from '../checkers/checker-internals';
 import {
-  RuleModuleBaseModel,
+  RULE_MODULE_MONGO_COLLECTION_NAME,
   RuleModel,
+  RuleModuleBaseModel,
   RuleModuleIOType,
-  RuleModuleIOTypeOptions
+  RuleModuleIOTypeOptions,
+  RuleModuleType,
+  RuleModuleTypeOptions,
 } from '../checkers/checker-internals';
-import { RuleModuleTypeOptions } from '../checkers/checker-internals';
-import { ThreeSiteModel } from '../site.model';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
+import { AppModel, io, model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:checker:module-extract');
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleBlueprintModel extends RuleModuleBaseModel /*implements CheckerModuleReducer (add here the interface implementation of the module) */ {
-
   @type.id
   public _id: ObjectId;
 
@@ -72,12 +71,10 @@ export class RuleModuleBlueprintModel extends RuleModuleBaseModel /*implements C
   public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
     /* Implement here the process */
-
   }
 
   public async summary(): Promise<void> {
     super.summary();
     /* Implement here the summary method that saves inside outputSummary */
   }
-
 }
