@@ -50,24 +50,25 @@ export class RuleModel extends Model implements ThreeFlow  {
   /** @deprecated */
   public async process(scene?: THREE.Scene): Promise<THREE.Scene> {
     // TODO rules migration: The scene should be process during reporting or theme views
-    // this.scene = scene || await this.prepareScene(this.siteId);
-    // for (const moduleId of this.modulesIds || []) {
-    //   const moduleElement = await CheckerModuleBaseModel.deco.db
-    //     .collection(CheckerModuleBaseModel.deco.collectionName)
-    //     .findOne({_id: moduleId});
-    //
-    //   const instance = await CheckerModuleBaseModel.instanceFromDocument(moduleElement);
-    //   if (instance) {
-    //     this.modules.push(instance);
-    //     await instance.process(this);
-    //     await instance.summary();
-    //   }
-    // }
+    // @ts-ignore this.siteId doesn't exist anymore since the rule logic has been refactored
+    this.scene = scene || await this.prepareScene(this.siteId);
+    for (const moduleId of this.modulesIds || []) {
+      const moduleElement = await RuleModuleBaseModel.deco.db
+        .collection(RuleModuleBaseModel.deco.collectionName)
+        .findOne({_id: moduleId});
+
+       const instance = await RuleModuleBaseModel.instanceFromDocument(moduleElement);
+      if (instance) {
+        this.modules.push(instance);
+        await instance.process(this);
+        await instance.summary();
+      }
+    }
     return this.scene;
   }
 
   /** @deprecated */
-  private async prepareScene(siteId: string | ObjectId): Promise<THREE.Scene> {
+  private async prepareScene(siteId: string | ObjectId): Promise<THREE.Scene> {
     const site = await ThreeSiteModel.getOneWithId(siteId);
     if (!site) {
       throw new Error('Site not found');
