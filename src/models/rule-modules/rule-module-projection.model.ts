@@ -1,35 +1,40 @@
-import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
-import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
-import { RuleModuleTypeOptions } from './checker-internals';
+import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType } from '../checkers/checker-internals';
+import {
+  RuleModuleBaseModel,
+  RuleModel,
+  RuleModuleIOType,
+  RuleModuleIOTypeOptions
+} from '../checkers/checker-internals';
+import { RuleModuleTypeOptions, RuleModuleProjection } from '../checkers/checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 
-let debug = require('debug')('app:models:three:checker:module-extract');
+let debug = require('debug')('app:models:three:checker:module-projection');
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
-export class RuleModuleBlueprintModel extends RuleModuleBaseModel /*implements CheckerModuleReducer (add here the interface implementation of the module) */ {
+export class RuleModuleProjectionModel extends RuleModuleBaseModel implements RuleModuleProjection {
 
   @type.id
   public _id: ObjectId;
 
-  @type.model({model: AppModel})
+  @type.model({ model: AppModel })
   @io.input
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
   @io.toDocument
   @io.output
   public allowedInputTypes: Array<RuleModuleIOType> = ['numbers', 'strings', 'number', 'string'];
-  
-  @type.select({options: RuleModuleTypeOptions})
+
+  @type.select({ options: RuleModuleTypeOptions })
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: RuleModuleType = 'math'; /* write here the correct module Type */
+  public moduleType: RuleModuleType = 'projection';
 
   @type.string
   @io.all
@@ -50,12 +55,12 @@ export class RuleModuleBlueprintModel extends RuleModuleBaseModel /*implements C
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
   @io.toDocument
   @io.output
   public outputType: RuleModuleIOType;
 
-  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
+  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
   @type.string
   @io.toDocument
@@ -64,10 +69,14 @@ export class RuleModuleBlueprintModel extends RuleModuleBaseModel /*implements C
 
   /* Add here properties for this module */
 
+  @type.select({ options: ['x', 'y', 'z'] })
+  @io.all
+  public projectionAxis: 'x' | 'y' | 'z';
+
   public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
     /* Implement here the process */
-    
+
   }
 
   public async summary(): Promise<void> {

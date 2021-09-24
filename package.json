@@ -1,6 +1,6 @@
 {
   "name": "@bim/deco-three",
-  "version": "1.3.5",
+  "version": "1.5.0",
   "description": "Three module for deco-api project.",
   "main": "build/index.js",
   "scripts": {
@@ -30,6 +30,7 @@
     "mv": "^2.1.1"
   },
   "devDependencies": {
+    "@bim/deco-api": "^1.2.2",
     "typedoc": "^0.20.34",
     "typescript": "^3.9.0"
   },

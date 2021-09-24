@@ -1,10 +1,15 @@
-import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
+import { AppModel, io, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
+import { ThreeStyleModel } from './style.model';
+
 let debug = require('debug')('app:models:three:theme');
 
-export interface ThreeThemeRule {
-  [key: string]: any;
-  styles: string[];
+class RuleAssociation {
+  public ruleId: ObjectId;
+  public styleAssociations: Array<{
+    property: string,
+    value: string,
+    style: ThreeStyleModel,
+  }>;
 }
 
 @model('three_theme')
@@ -13,33 +18,25 @@ export class ThreeThemeModel extends Model {
   @type.id
   public _id: ObjectId;
 
-  @type.model({model: AppModel})
+  @type.model({ model: AppModel })
   @io.input
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
-
-  @type.model({model: ThreeSiteModel})
-  @io.input
-  @io.toDocument
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
 
   @type.string
   @io.all
   @validate.required
   public name: string;
 
-  @type.array()
+  @type.array
   @io.all
-  public rules: Array<ThreeThemeRule> = [];
+  public ruleAssociations: RuleAssociation[];
 
   @type.float
   @io.all
   public spaceHeight: number = 0; // 0 => real height from data
-  
+
 }

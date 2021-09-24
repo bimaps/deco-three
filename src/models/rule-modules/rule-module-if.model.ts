@@ -1,7 +1,17 @@
-import { RuleModuleIOStyle, RuleModuleIOStyleOptions } from './checker-interfaces';
-import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
-import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
-import { RuleModuleTypeOptions, RuleModuleIf, RuleModuleIfOperations, RuleModuleValueCondition } from './checker-internals';
+import { RuleModuleIOStyle, RuleModuleIOStyleOptions } from '../checkers/checker-interfaces';
+import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType } from '../checkers/checker-internals';
+import {
+  RuleModuleBaseModel,
+  RuleModel,
+  RuleModuleIOType,
+  RuleModuleIOTypeOptions
+} from '../checkers/checker-internals';
+import {
+  RuleModuleTypeOptions,
+  RuleModuleIf,
+  RuleModuleIfOperations,
+  RuleModuleValueCondition
+} from '../checkers/checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
 
@@ -13,20 +23,20 @@ export class RuleModuleIfModel extends RuleModuleBaseModel implements RuleModule
   @type.id
   public _id: ObjectId;
 
-  @type.model({model: AppModel})
+  @type.model({ model: AppModel })
   @io.input
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
   @io.toDocument
   @io.output
   public allowedInputTypes: Array<RuleModuleIOType> = ['numbers', 'strings', 'number', 'string'];
-  
-  @type.select({options: RuleModuleTypeOptions})
+
+  @type.select({ options: RuleModuleTypeOptions })
   @io.toDocument
   @io.output
   @validate.required
@@ -51,12 +61,12 @@ export class RuleModuleIfModel extends RuleModuleBaseModel implements RuleModule
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: RuleModuleTypeOptions, multiple: false})
+  @type.select({ options: RuleModuleTypeOptions, multiple: false })
   @io.toDocument
   @io.output
   public outputType: RuleModuleIOType;
 
-  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
+  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
   @type.string
   @io.toDocument
@@ -67,31 +77,37 @@ export class RuleModuleIfModel extends RuleModuleBaseModel implements RuleModule
   @io.all
   public defaultOutputValue: number | string | boolean;
 
-  @type.select({options: RuleModuleIOStyleOptions})
+  @type.select({ options: RuleModuleIOStyleOptions })
   @io.all
   public defaultOutputStyle: RuleModuleIOStyle;
-  
-  @type.array({type: 'object', options: {
-    keys: {
-      conditions: {type: 'array', options: {type: 'object', options: {
-        keys: {
-          operation: {type: 'string'},
-          value: {type: 'any'},
-        }
-      }}},
-      conditionsOperator: {type: 'select', options: ['and', 'or']},
-      outputValue: {type: 'any'},
-      outputStyle: {type: 'select', options: RuleModuleIOStyleOptions}
+
+  @type.array({
+    type: 'object', options: {
+      keys: {
+        conditions: {
+          type: 'array', options: {
+            type: 'object', options: {
+              keys: {
+                operation: { type: 'string' },
+                value: { type: 'any' },
+              }
+            }
+          }
+        },
+        conditionsOperator: { type: 'select', options: ['and', 'or'] },
+        outputValue: { type: 'any' },
+        outputStyle: { type: 'select', options: RuleModuleIOStyleOptions }
+      }
     }
-  }})
+  })
   @io.all
   public operations: RuleModuleIfOperations;
 
-  private flow: RuleModel;
+  private rule: RuleModel;
 
-  public async process(flow: RuleModel): Promise<void> {
-    this.flow = flow;
-    super.process(flow);
+  public async process(rule: RuleModel): Promise<void> {
+    this.rule = rule;
+    super.process(rule);
 
     if (this.defaultOutputValue && typeof this.defaultOutputValue !== 'string' && typeof this.defaultOutputValue !== 'number' && typeof this.defaultOutputValue !== 'boolean') {
       throw new Error('If output value type must be string, number or boolean');
@@ -103,22 +119,22 @@ export class RuleModuleIfModel extends RuleModuleBaseModel implements RuleModule
       }
     }
 
-    if (this.currentInputType === 'numbers' || this.currentInputType === 'strings' || this.currentInputType === 'booleans') {
+    if (this.currentInputType === 'numbers' || this.currentInputType === 'strings' || this.currentInputType === 'booleans') {
       const inputs = this.currentInput as number[] | string[] | boolean[];
       const outputs: number[] | string[] | boolean[] = []
       const styles: RuleModuleIOStyle[] = [];
       for (const key in inputs) {
         const input = inputs[key];
         const out = this.processOperationsForInput(input, this.operations);
-        outputs[key] = out.value || '';
+        outputs[key] = out.value || '';
         styles[key] = out.style;
       }
       this.outputValue = outputs;
       this.outputStyle = styles;
-    } else if (this.currentInputType === 'number' || this.currentInputType === 'string' || this.currentInput === 'boolean') {
+    } else if (this.currentInputType === 'number' || this.currentInputType === 'string' || this.currentInput === 'boolean') {
       const input = this.currentInput as string | number | boolean;
       const out = this.processOperationsForInput(input, this.operations);
-      this.outputValue = out.value || '';
+      this.outputValue = out.value || '';
       this.outputStyle = out.style;
     }
 
@@ -129,11 +145,11 @@ export class RuleModuleIfModel extends RuleModuleBaseModel implements RuleModule
     }
   }
 
-  public processOperationsForInput(input: boolean | number | string, operations: RuleModuleIfOperations): {value: boolean | number | string | undefined, style: RuleModuleIOStyle} {
+  public processOperationsForInput(input: boolean | number | string, operations: RuleModuleIfOperations): { value: boolean | number | string | undefined, style: RuleModuleIOStyle } {
     for (const operation of operations) {
       let valid = false;
       for (let condition of operation.conditions) {
-        valid = this.flow.compareValue(input, condition);
+        valid = this.rule.compareValue(input, condition);
         if (valid && operation.conditionsOperator === 'or') {
           break;
         }
@@ -142,10 +158,10 @@ export class RuleModuleIfModel extends RuleModuleBaseModel implements RuleModule
         }
       }
       if (valid) {
-        return {value: operation.outputValue || input, style: operation.outputStyle};
+        return { value: operation.outputValue || input, style: operation.outputStyle };
       }
     }
-    return {value: this.defaultOutputValue || input, style: this.defaultOutputStyle};
+    return { value: this.defaultOutputValue || input, style: this.defaultOutputStyle };
   }
 
   public isConditionTrue(input: boolean | number | string, condition: RuleModuleValueCondition): boolean {
@@ -156,7 +172,7 @@ export class RuleModuleIfModel extends RuleModuleBaseModel implements RuleModule
     if (Array.isArray(this.outputValue)) {
       this.outputSummary = this.outputValue.slice(0, 3).join(', ');
     } else {
-      const out = this.outputValue || '';
+      const out = this.outputValue || '';
       this.outputSummary = out.toString();
     }
   }

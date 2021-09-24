@@ -1,38 +1,37 @@
 export * from './checker-interfaces';
-export * from './rule-module-base.model';
-export * from './rule-module-filter.model';
-export * from './rule-module-extract.model';
-export * from './rule-module-math.model';
-export * from './rule-module-reducer.model';
-export * from './rule-module-if.model';
-export * from './rule-module-projection.model';
-export * from './rule-module-distance.model';
-export * from './rule-module-normal-distance.model';
+export * from '../rule-modules/rule-module-base.model';
+export * from '../rule-modules/rule-module-filter.model';
+export * from '../rule-modules/rule-module-extract.model';
+export * from '../rule-modules/rule-module-math.model';
+export * from '../rule-modules/rule-module-reducer.model';
+export * from '../rule-modules/rule-module-if.model';
+export * from '../rule-modules/rule-module-projection.model';
+export * from '../rule-modules/rule-module-distance.model';
+export * from '../rule-modules/rule-module-normal-distance.model';
 export * from './checker-module-output.model';
-export * from './rule.model';
+export * from '../rule.model';
 
 // import { CheckerModuleBaseModel } from './checker-module-base.model';
-import { RuleModuleFilterModel } from './rule-module-filter.model';
-import { RuleModuleExtractModel } from './rule-module-extract.model';
-import { RuleModuleMathModel } from './rule-module-math.model';
-import { RuleModuleReducerModel } from './rule-module-reducer.model';
-import { RuleModuleIfModel } from './rule-module-if.model';
-import { RuleModuleProjectionModel } from './rule-module-projection.model';
-import { RuleModuleDistanceModel } from './rule-module-distance.model';
-import { RuleModuleNormalDistanceModel } from './rule-module-normal-distance.model';
-import { CheckerModuleOutputModel } from './checker-module-output.model';
+import { RuleModuleFilterModel } from '../rule-modules/rule-module-filter.model';
+import { RuleModuleExtractModel } from '../rule-modules/rule-module-extract.model';
+import { RuleModuleMathModel } from '../rule-modules/rule-module-math.model';
+import { RuleModuleReducerModel } from '../rule-modules/rule-module-reducer.model';
+import { RuleModuleIfModel } from '../rule-modules/rule-module-if.model';
+import { RuleModuleProjectionModel } from '../rule-modules/rule-module-projection.model';
+import { RuleModuleDistanceModel } from '../rule-modules/rule-module-distance.model';
+import { RuleModuleNormalDistanceModel } from '../rule-modules/rule-module-normal-distance.model';
 
 export const modelsByType: {
-  [key: string]: 
-    typeof RuleModuleFilterModel
-    | typeof RuleModuleExtractModel
-    | typeof RuleModuleMathModel
-    | typeof RuleModuleReducerModel
-    | typeof RuleModuleIfModel
-    | typeof RuleModuleProjectionModel
-    | typeof RuleModuleDistanceModel
-    | typeof RuleModuleNormalDistanceModel
- //   | typeof CheckerModuleOutputModel
+  [key: string]:
+      typeof RuleModuleFilterModel
+      | typeof RuleModuleExtractModel
+      | typeof RuleModuleMathModel
+      | typeof RuleModuleReducerModel
+      | typeof RuleModuleIfModel
+      | typeof RuleModuleProjectionModel
+      | typeof RuleModuleDistanceModel
+      | typeof RuleModuleNormalDistanceModel
+  //   | typeof CheckerModuleOutputModel
 } = {
   filter: RuleModuleFilterModel,
   extract: RuleModuleExtractModel,
@@ -42,5 +41,5 @@ export const modelsByType: {
   projection: RuleModuleProjectionModel,
   distance: RuleModuleDistanceModel,
   "normal-distance": RuleModuleNormalDistanceModel,
- // output: CheckerModuleOutputModel,
+  // output: CheckerModuleOutputModel,
 };

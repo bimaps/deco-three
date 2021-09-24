@@ -1,8 +1,14 @@
-import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
-import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
-import { RuleModuleMath, RuleModuleTypeOptions } from './checker-internals';
+import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType } from '../checkers/checker-internals';
+import {
+  RuleModuleBaseModel,
+  RuleModel,
+  RuleModuleIOType,
+  RuleModuleIOTypeOptions
+} from '../checkers/checker-internals';
+import { RuleModuleMath, RuleModuleTypeOptions } from '../checkers/checker-internals';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
-import * as math from 'mathjs';
+import * as math from 'mathjs';
+
 let debug = require('debug')('app:models:three:checker:module-extract');
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
@@ -11,20 +17,20 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
   @type.id
   public _id: ObjectId;
 
-  @type.model({model: AppModel})
+  @type.model({ model: AppModel })
   @io.input
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
   @io.toDocument
   @io.output
   public allowedInputTypes: Array<RuleModuleIOType> = ['numbers', 'strings', 'number', 'string'];
-  
-  @type.select({options: RuleModuleTypeOptions})
+
+  @type.select({ options: RuleModuleTypeOptions })
   @io.toDocument
   @io.output
   @validate.required
@@ -49,12 +55,12 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
   @io.toDocument
   @io.output
   public outputType: RuleModuleIOType;
 
-  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
+  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
   @type.string
   @io.toDocument
@@ -70,10 +76,10 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
 
   public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
-    
+
     let arrayLength = 0;
 
-    const inputs: {[key: string]: any} = {};
+    const inputs: { [key: string]: any } = {};
     // detect all required inputs
     for (let mod of flow.modules) {
       if (this.expression.indexOf(mod.outputVarName) !== -1) {
@@ -106,7 +112,7 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
     } else {
       const results: number[] = [];
       for (let k = 0; k < arrayLength; k++) {
-        const scope: {[key: string]: any} = {};
+        const scope: { [key: string]: any } = {};
         for (const key in inputs) {
           const valueOrValues = inputs[key];
           if (Array.isArray(valueOrValues)) {
@@ -123,7 +129,6 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
 
   }
 
-  
 
   public async summary(): Promise<void> {
     if (Array.isArray(this.outputValue)) {

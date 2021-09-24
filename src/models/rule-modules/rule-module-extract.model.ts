@@ -1,10 +1,20 @@
-import { ThreeUtils } from './../../helpers/three-utils';
-import {RuleModuleType, RuleModuleExtractTypeOptions, RULE_MODULE_MONGO_COLLECTION_NAME} from './checker-internals';
-import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions } from './checker-internals';
-import { RuleModuleExtract, RuleModuleTypeOptions, ThreeExtractType, RuleModuleIORef } from './checker-internals';
-import { ThreeSiteModel } from '../site.model';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
+import {ThreeUtils} from '../../helpers/three-utils';
+import {
+  RULE_MODULE_MONGO_COLLECTION_NAME,
+  RuleModel,
+  RuleModuleBaseModel,
+  RuleModuleExtract,
+  RuleModuleExtractTypeOptions,
+  RuleModuleIORef,
+  RuleModuleIOType,
+  RuleModuleIOTypeOptions,
+  RuleModuleType,
+  RuleModuleTypeOptions,
+  ThreeExtractType
+} from '../checkers/checker-internals';
+import {AppModel, io, model, mongo, ObjectId, query, type, validate} from '@bim/deco-api';
 import * as THREE from 'three';
+
 let debug = require('debug')('app:models:three:checker:module-extract');
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
@@ -13,20 +23,20 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
   @type.id
   public _id: ObjectId;
 
-  @type.model({model: AppModel})
+  @type.model({ model: AppModel })
   @io.input
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
   @io.toDocument
   @io.output
   public allowedInputTypes: Array<RuleModuleIOType> = ['three-objects', 'scene', 'three-object'];
-  
-  @type.select({options: RuleModuleTypeOptions})
+
+  @type.select({ options: RuleModuleTypeOptions })
   @io.toDocument
   @io.output
   @validate.required
@@ -51,7 +61,7 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
   @io.toDocument
   @io.output
   public outputType: RuleModuleIOType;
@@ -63,7 +73,7 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
   @io.output
   public outputSummary: string;
 
-  @type.select({options: RuleModuleExtractTypeOptions})
+  @type.select({ options: RuleModuleExtractTypeOptions })
   @io.all
   public extractType: ThreeExtractType;
 
@@ -148,7 +158,7 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
     if (this.extractType !== 'property' && Array.isArray(this.outputValue)) {
       this.outputSummary = `${this.outputValue.length} ${this.extractType}`;
     } else if (Array.isArray(this.outputValue)) {
-      const firstValues = (this.outputValue as boolean[] | number[] | string[]).slice(0, 3);
+      const firstValues = (this.outputValue as boolean[] | number[] | string[]).slice(0, 3);
       this.outputSummary = firstValues.join(', ');
     } else {
       this.outputSummary = '';
@@ -163,18 +173,18 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
       if (geometry instanceof THREE.Geometry) {
         for (let face of geometry.faces) {
           triangles.push(new THREE.Triangle(
-            geometry.vertices[face.a],
-            geometry.vertices[face.b],
-            geometry.vertices[face.c]
+              geometry.vertices[face.a],
+              geometry.vertices[face.b],
+              geometry.vertices[face.c]
           ));
         }
       } else {
         var tempGeo = new THREE.Geometry().fromBufferGeometry(geometry);
         for (let face of tempGeo.faces) {
           triangles.push(new THREE.Triangle(
-            tempGeo.vertices[face.a]/*.applyMatrix4(object.matrix)*/,
-            tempGeo.vertices[face.b]/*.applyMatrix4(object.matrix)*/,
-            tempGeo.vertices[face.c]/*.applyMatrix4(object.matrix)*/
+              tempGeo.vertices[face.a]/*.applyMatrix4(object.matrix)*/,
+              tempGeo.vertices[face.b]/*.applyMatrix4(object.matrix)*/,
+              tempGeo.vertices[face.c]/*.applyMatrix4(object.matrix)*/
           ));
         }
       }
@@ -183,7 +193,7 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
   }
 
   private extractWireframe(object: THREE.Object3D): THREE.Line3[] {
-    const edgeIndexPairs: {[key: string]: boolean} = {};
+    const edgeIndexPairs: { [key: string]: boolean } = {};
     const edges: THREE.Line3[] = [];
     if (object instanceof THREE.Mesh) {
       const geometry = object.geometry;
@@ -245,7 +255,7 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
         vertices.push(...geometry.vertices.map(v => v.clone()));
       } else {
         var tempGeo = new THREE.Geometry().fromBufferGeometry(geometry);
-        for (var i= 0; i< tempGeo.vertices.length; i++) {
+        for (var i = 0; i < tempGeo.vertices.length; i++) {
           vertices.push(tempGeo.vertices[i]/*.applyMatrix4(object.matrix)*/);
         }
       }

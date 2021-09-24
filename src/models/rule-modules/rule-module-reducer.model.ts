@@ -1,8 +1,20 @@
-import {RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType} from './checker-internals';
-import { RuleModuleBaseModel, RuleModel, RuleModuleIOType, RuleModuleIOTypeOptions, RuleModuleIORef } from './checker-internals';
-import { RuleModuleReducer, RuleModuleTypeOptions, RuleModuleReducerOperation, RuleModuleReducerOperationOptions } from './checker-internals';
+import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType } from '../checkers/checker-internals';
+import {
+  RuleModuleBaseModel,
+  RuleModel,
+  RuleModuleIOType,
+  RuleModuleIOTypeOptions,
+  RuleModuleIORef
+} from '../checkers/checker-internals';
+import {
+  RuleModuleReducer,
+  RuleModuleTypeOptions,
+  RuleModuleReducerOperation,
+  RuleModuleReducerOperationOptions
+} from '../checkers/checker-internals';
 import { ThreeSiteModel } from '../site.model';
 import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
+
 let debug = require('debug')('app:models:three:checker:module-reducer');
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
@@ -11,20 +23,20 @@ export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleM
   @type.id
   public _id: ObjectId;
 
-  @type.model({model: AppModel})
+  @type.model({ model: AppModel })
   @io.input
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: true})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
   @io.toDocument
   @io.output
   public allowedInputTypes: Array<RuleModuleIOType> = ['three-objects', 'numbers', 'strings'];
-  
-  @type.select({options: RuleModuleTypeOptions})
+
+  @type.select({ options: RuleModuleTypeOptions })
   @io.toDocument
   @io.output
   @validate.required
@@ -49,19 +61,19 @@ export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleM
   @validate.required
   public outputVarName: string;
 
-  @type.select({options: RuleModuleIOTypeOptions, multiple: false})
+  @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
   @io.toDocument
   @io.output
   public outputType: RuleModuleIOType;
 
-  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
+  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
   @type.string
   @io.toDocument
   @io.output
   public outputSummary: string;
 
-  @type.select({options: RuleModuleReducerOperationOptions})
+  @type.select({ options: RuleModuleReducerOperationOptions })
   @io.all
   public operation: RuleModuleReducerOperation;
 
@@ -73,7 +85,7 @@ export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleM
     }
 
     let mathInput: number[];
-    if (this.operation === 'min' || this.operation === 'max' || this.operation === 'average' || this.operation === 'sum') {
+    if (this.operation === 'min' || this.operation === 'max' || this.operation === 'average' || this.operation === 'sum') {
       if (this.currentInputType === 'numbers') {
         mathInput = this.currentInput as number[];
       } else if (this.currentInputType === 'strings') {
@@ -88,7 +100,7 @@ export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleM
         const min = Math.min.apply(null, mathInput); // best perf with min.apply for large arras
         const refKeys = [...Object.keys(mathInput)].filter(i => mathInput[parseInt(i, 10)] === min);
         this.outputValue = min;
-        const inputRefs = (this.currentInputRef as RuleModuleIORef[]) || [];
+        const inputRefs = (this.currentInputRef as RuleModuleIORef[]) || [];
         this.outputReference = inputRefs.filter((v, i) => refKeys.includes(i.toString()));
       } else if (this.operation === 'max') {
         // this.outputValue = Math.max(...mathInput);  // very bad perf with spread for large arrays
@@ -96,7 +108,7 @@ export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleM
         const max = Math.max.apply(null, mathInput); // best perf with max.apply for large arras
         const refKeys = [...Object.keys(mathInput)].filter(i => mathInput[parseInt(i, 10)] === max);
         this.outputValue = max;
-        const inputRefs = (this.currentInputRef as RuleModuleIORef[]) || [];
+        const inputRefs = (this.currentInputRef as RuleModuleIORef[]) || [];
         this.outputReference = inputRefs.filter((v, i) => refKeys.includes(i.toString()));
       } else if (this.operation === 'sum') {
         this.outputReference = this.currentInputRef;
@@ -113,7 +125,7 @@ export class RuleModuleReducerModel extends RuleModuleBaseModel implements RuleM
   }
 
   public async summary(): Promise<void> {
-    let out = this.outputValue !== undefined ? this.outputValue : '';
+    let out = this.outputValue !== undefined ? this.outputValue : '';
     if (typeof out === 'number') {
       out = Math.round(out * 1000) / 1000;
     }
