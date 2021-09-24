@@ -1,10 +1,10 @@
-import * as THREE from "three";
+import * as THREE from 'three';
 // import geojsonArea from '@mapbox/geojson-area';
 
-let FRONT = "front";
-let BACK = "back";
-let STRADDLE = "straddle";
-let ON = "on";
+let FRONT = 'front';
+let BACK = 'back';
+let STRADDLE = 'straddle';
+let ON = 'on';
 
 export class ThreeUtils {
   public static bboxFromObject(object: THREE.Object3D): THREE.Box3 {
@@ -13,9 +13,7 @@ export class ThreeUtils {
     return bbox.geometry.boundingBox;
   }
 
-  public static bboxFromObjects(
-    objects: Array<THREE.Object3D>
-  ): THREE.Box3 | null {
+  public static bboxFromObjects(objects: Array<THREE.Object3D>): THREE.Box3 | null {
     if (!objects || !objects.length) return null;
     let bbox: THREE.Box3 | null = null;
     for (let obj of objects) {
@@ -30,22 +28,11 @@ export class ThreeUtils {
   }
 
   public static isBbox000(bbox: THREE.Box3): boolean {
-    return (
-      bbox.min.x === 0 &&
-      bbox.min.y === 0 &&
-      bbox.min.z === 0 &&
-      bbox.max.x === 0 &&
-      bbox.max.y === 0 &&
-      bbox.max.z === 0
-    );
+    return bbox.min.x === 0 && bbox.min.y === 0 && bbox.min.z === 0 && bbox.max.x === 0 && bbox.max.y === 0 && bbox.max.z === 0;
   }
 
   public static centroidFromBbox(bbox: THREE.Box3): THREE.Vector3 {
-    let centroid = new THREE.Vector3(
-      0.5 * (bbox.max.x + bbox.min.x),
-      0.5 * (bbox.max.y + bbox.min.y),
-      0.5 * (bbox.max.z + bbox.min.z)
-    );
+    let centroid = new THREE.Vector3(0.5 * (bbox.max.x + bbox.min.x), 0.5 * (bbox.max.y + bbox.min.y), 0.5 * (bbox.max.z + bbox.min.z));
     return centroid;
   }
 
@@ -54,9 +41,7 @@ export class ThreeUtils {
     return ThreeUtils.centroidFromBbox(bbox);
   }
 
-  public static centroidFromObjects(
-    objects: Array<THREE.Object3D>
-  ): THREE.Vector3 | null {
+  public static centroidFromObjects(objects: Array<THREE.Object3D>): THREE.Vector3 | null {
     if (objects.length === 0) return null;
     let bbox = ThreeUtils.bboxFromObjects(objects);
     if (bbox === null) {
@@ -84,7 +69,7 @@ export class ThreeUtils {
   static PlaneHelper(plane: THREE.Plane, size = 10000) {
     let geom = new THREE.PlaneGeometry(size, size, 10, 10);
     let material = new THREE.MeshBasicMaterial({
-      color: "#BBBBBB",
+      color: '#BBBBBB',
       side: THREE.DoubleSide,
       wireframe: false,
       opacity: 0.5,
@@ -105,11 +90,7 @@ export class ThreeUtils {
   // based on https://github.com/tdhooper/threejs-slice-geometry
   // latest commit before integration here: https://github.com/tdhooper/threejs-slice-geometry/commit/8f8298d0a0e4d8257151144a704e69e336f5f852
   // added DIRECTION
-  static sliceGeometry(
-    geometry: THREE.Geometry,
-    plane: THREE.Plane,
-    DIRECTION = "front"
-  ) {
+  static sliceGeometry(geometry: THREE.Geometry, plane: THREE.Plane, DIRECTION = 'front') {
     let sliced = new THREE.Geometry();
     let points;
     let position;
@@ -125,12 +106,7 @@ export class ThreeUtils {
     return sliced;
   }
 
-  static sliceFace(
-    plane: THREE.Plane,
-    geom: THREE.Geometry,
-    points: any,
-    DIRECTION: any
-  ) {
+  static sliceFace(plane: THREE.Plane, geom: THREE.Geometry, points: any, DIRECTION: any) {
     let i;
     let len = points.length;
     let p1;
@@ -158,16 +134,8 @@ export class ThreeUtils {
     }
 
     if (slicePoints.length > 3) {
-      ThreeUtils.addFace(geom, [
-        slicePoints[0],
-        slicePoints[1],
-        slicePoints[2],
-      ]);
-      ThreeUtils.addFace(geom, [
-        slicePoints[2],
-        slicePoints[3],
-        slicePoints[0],
-      ]);
+      ThreeUtils.addFace(geom, [slicePoints[0], slicePoints[1], slicePoints[2]]);
+      ThreeUtils.addFace(geom, [slicePoints[2], slicePoints[3], slicePoints[0]]);
     } else {
       ThreeUtils.addFace(geom, slicePoints);
     }
@@ -199,25 +167,16 @@ export class ThreeUtils {
       return !exists;
     });
 
-    let face = new THREE.Face3(
-      vertexIndices[0],
-      vertexIndices[1],
-      vertexIndices[2],
-      normals
-    );
+    let face = new THREE.Face3(vertexIndices[0], vertexIndices[1], vertexIndices[2], normals);
     geom.faces.push(face);
     if (uvs.length) {
       geom.faceVertexUvs[0].push(uvs);
     }
   }
 
-  static facePoints(
-    geom: THREE.Geometry,
-    face: THREE.Face3,
-    faceIndex: number
-  ) {
+  static facePoints(geom: THREE.Geometry, face: THREE.Face3, faceIndex: number) {
     let uvs = geom.faceVertexUvs[0];
-    return ["a", "b", "c"].map(function (key, i) {
+    return ['a', 'b', 'c'].map(function (key, i) {
       return {
         vertex: geom.vertices[(face as any)[key]],
         normal: face.vertexNormals[i],
@@ -271,15 +230,11 @@ export class ThreeUtils {
     return ON;
   }
 
-  static objectToAxisPolygon(
-    object: THREE.Mesh,
-    positionOnAxis: any,
-    planeNormalAxis = "y"
-  ) {
+  static objectToAxisPolygon(object: THREE.Mesh, positionOnAxis: any, planeNormalAxis = 'y') {
     let normal;
-    if (planeNormalAxis === "x") normal = new THREE.Vector3(1, 0, 0);
-    if (planeNormalAxis === "y") normal = new THREE.Vector3(0, 1, 0);
-    if (planeNormalAxis === "z") normal = new THREE.Vector3(0, 0, 1);
+    if (planeNormalAxis === 'x') normal = new THREE.Vector3(1, 0, 0);
+    if (planeNormalAxis === 'y') normal = new THREE.Vector3(0, 1, 0);
+    if (planeNormalAxis === 'z') normal = new THREE.Vector3(0, 0, 1);
 
     let plane = new THREE.Plane(normal, positionOnAxis * -1);
     return ThreeUtils.objectToPolygon(object, plane);
@@ -303,10 +258,7 @@ export class ThreeUtils {
       line.end.x = Math.round(line.end.x * 10000) / 10000;
       line.end.y = Math.round(line.end.y * 10000) / 10000;
       line.end.z = Math.round(line.end.z * 10000) / 10000;
-      if (
-        `${line.start.x},${line.start.y},${line.start.z}` ===
-        `${line.end.x},${line.end.y},${line.end.z}`
-      ) {
+      if (`${line.start.x},${line.start.y},${line.start.z}` === `${line.end.x},${line.end.y},${line.end.z}`) {
         // start and end are same, continue without keeping the line
         continue;
       }
@@ -343,12 +295,7 @@ export class ThreeUtils {
       currentPolygon.push(point);
 
       // check if the end point of the currentLine is the origin of polygon
-      if (
-        currentPolygon &&
-        currentPolygon[0][0] === line.end.x &&
-        currentPolygon[0][1] === line.end.y &&
-        currentPolygon[0][2] === line.end.z
-      ) {
+      if (currentPolygon && currentPolygon[0][0] === line.end.x && currentPolygon[0][1] === line.end.y && currentPolygon[0][2] === line.end.z) {
         // close the polygon
         currentPolygon.push(currentPolygon[0]);
         // clear the current polygon in order to start a new one
@@ -360,21 +307,13 @@ export class ThreeUtils {
         let found = false;
         for (let searchKey in linesByKey) {
           let searchLine = linesByKey[searchKey];
-          if (
-            line.end.x === searchLine.start.x &&
-            line.end.y === searchLine.start.y &&
-            line.end.z === searchLine.start.z
-          ) {
+          if (line.end.x === searchLine.start.x && line.end.y === searchLine.start.y && line.end.z === searchLine.start.z) {
             // found a line where the start equals the end of the current line
             currentKey = searchKey;
             found = true;
             break;
           }
-          if (
-            line.end.x === searchLine.end.x &&
-            line.end.y === searchLine.end.y &&
-            line.end.z === searchLine.end.z
-          ) {
+          if (line.end.x === searchLine.end.x && line.end.y === searchLine.end.y && line.end.z === searchLine.end.z) {
             // found a line where the end equals the end of the current line
             // we should revert it before to use it as next line
             searchLine.set(searchLine.end.clone(), searchLine.start.clone());
@@ -384,9 +323,7 @@ export class ThreeUtils {
           }
         }
         if (!found) {
-          throw new Error(
-            "Cannot compute the polygon, could not find the next line after"
-          );
+          throw new Error('Cannot compute the polygon, could not find the next line after');
         }
       }
     }
@@ -447,27 +384,22 @@ export class ThreeUtils {
       if (object.children && object.children.length) {
         let objectsWithGeometry = [];
         for (let child of object.children) {
-          if (child instanceof THREE.Mesh && child.geometry)
-            objectsWithGeometry.push(child);
+          if (child instanceof THREE.Mesh && child.geometry) objectsWithGeometry.push(child);
         }
         if (objectsWithGeometry.length === 1) {
           object = objectsWithGeometry[0];
         } else if (objectsWithGeometry.length === 0) {
-          throw new Error("No geometry found in the object or its children");
+          throw new Error('No geometry found in the object or its children');
         } else {
-          throw new Error(
-            "The object has several geometries, this use case is not allowed"
-          );
+          throw new Error('The object has several geometries, this use case is not allowed');
         }
       } else {
-        throw new Error("Object must have a geometry");
+        throw new Error('Object must have a geometry');
       }
     }
 
     if (object.geometry instanceof THREE.BufferGeometry) {
-      throw new Error(
-        "Cannot use intersectingLines with an object containing a BufferGeometry"
-      );
+      throw new Error('Cannot use intersectingLines with an object containing a BufferGeometry');
     }
 
     let a = new THREE.Vector3();
@@ -487,17 +419,10 @@ export class ThreeUtils {
     // make sure we have the plane in World Coordinates
     let planeObject = ThreeUtils.PlaneHelper(plane, 100);
     let mathPlane = new THREE.Plane();
-    const planeGeometry: THREE.Geometry =
-      planeObject.geometry as THREE.Geometry;
-    planeObject.localToWorld(
-      planePointA.copy(planeGeometry.vertices[planeGeometry.faces[0].a])
-    );
-    planeObject.localToWorld(
-      planePointB.copy(planeGeometry.vertices[planeGeometry.faces[0].b])
-    );
-    planeObject.localToWorld(
-      planePointC.copy(planeGeometry.vertices[planeGeometry.faces[0].c])
-    );
+    const planeGeometry: THREE.Geometry = planeObject.geometry as THREE.Geometry;
+    planeObject.localToWorld(planePointA.copy(planeGeometry.vertices[planeGeometry.faces[0].a]));
+    planeObject.localToWorld(planePointB.copy(planeGeometry.vertices[planeGeometry.faces[0].b]));
+    planeObject.localToWorld(planePointC.copy(planeGeometry.vertices[planeGeometry.faces[0].c]));
     mathPlane.setFromCoplanarPoints(planePointA, planePointB, planePointC);
 
     const objectGeometry: THREE.Geometry = object.geometry as THREE.Geometry;
@@ -519,11 +444,7 @@ export class ThreeUtils {
         intersectingLines.push(lineBC.clone());
         intersectingLines.push(lineCA.clone());
         return;
-      } else if (
-        (distanceA === 0 && distanceB === 0) ||
-        (distanceA === 0 && distanceC === 0) ||
-        (distanceB === 0 && distanceC === 0)
-      ) {
+      } else if ((distanceA === 0 && distanceB === 0) || (distanceA === 0 && distanceC === 0) || (distanceB === 0 && distanceC === 0)) {
         // partial coplanar
         return;
       }
@@ -538,41 +459,31 @@ export class ThreeUtils {
 
       // TODO: FIX SCENERIO WHEN FACE IS COPLANAR WITH THE PLAN
       let intersectingLine;
-      if (intersectAB && intersectBC)
-        intersectingLine = new THREE.Line3(intersectAB, intersectBC);
-      if (intersectAB && intersectCA)
-        intersectingLine = new THREE.Line3(intersectAB, intersectCA);
-      if (intersectBC && intersectCA)
-        intersectingLine = new THREE.Line3(intersectBC, intersectCA);
+      if (intersectAB && intersectBC) intersectingLine = new THREE.Line3(intersectAB, intersectBC);
+      if (intersectAB && intersectCA) intersectingLine = new THREE.Line3(intersectAB, intersectCA);
+      if (intersectBC && intersectCA) intersectingLine = new THREE.Line3(intersectBC, intersectCA);
       if (intersectingLine) intersectingLines.push(intersectingLine);
     });
 
     return intersectingLines;
   }
 
-  static intersectingGeometry(
-    object: THREE.Mesh,
-    plane: THREE.Plane,
-    scene: any
-  ) {
+  static intersectingGeometry(object: THREE.Mesh, plane: THREE.Plane, scene: any) {
     if (!object.geometry) {
       if (object.children && object.children.length) {
         let objectsWithGeometry = [];
         for (let child of object.children) {
-          if (child instanceof THREE.Mesh && child.geometry)
-            objectsWithGeometry.push(child);
+          if (child instanceof THREE.Mesh && child.geometry) objectsWithGeometry.push(child);
         }
         if (objectsWithGeometry.length === 1) {
           object = objectsWithGeometry[0];
         } else if (objectsWithGeometry.length === 0) {
-          throw new Error("No geometry found in the object or its children");
+          throw new Error('No geometry found in the object or its children');
         } else {
-          throw new Error(
-            "The object has several geometries, this use case is not allowed"
-          );
+          throw new Error('The object has several geometries, this use case is not allowed');
         }
       } else {
-        throw new Error("Object must have a geometry");
+        throw new Error('Object must have a geometry');
       }
     }
 
@@ -587,17 +498,14 @@ export class ThreeUtils {
     if (scene) {
       let pointsMaterial = new THREE.PointsMaterial({
         size: 5,
-        color: "blue",
+        color: 'blue',
         sizeAttenuation: false,
       });
       let pointsObject = new THREE.Points(pointsOfIntersection, pointsMaterial);
       scene.add(pointsObject);
 
       let lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
-      let lineObject = new THREE.LineSegments(
-        pointsOfIntersection,
-        lineMaterial
-      );
+      let lineObject = new THREE.LineSegments(pointsOfIntersection, lineMaterial);
       scene.add(lineObject);
     }
 
@@ -625,10 +533,7 @@ export class ThreeUtils {
       cyTimes6SignedArea += (y(i) + y(i + 1)) * twoSA;
     }
     let sixSignedArea = 3 * twoTimesSignedArea;
-    return [
-      cxTimes6SignedArea / sixSignedArea,
-      cyTimes6SignedArea / sixSignedArea,
-    ];
+    return [cxTimes6SignedArea / sixSignedArea, cyTimes6SignedArea / sixSignedArea];
   }
 
   static isPointInsidePolygon(point: any, polygon: any) {
@@ -645,8 +550,7 @@ export class ThreeUtils {
       let xj = polygon[j][0],
         yj = polygon[j][1];
 
-      let intersect =
-        yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+      let intersect = yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
       if (intersect) inside = !inside;
     }
 

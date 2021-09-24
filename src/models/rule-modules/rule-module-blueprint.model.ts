@@ -6,19 +6,10 @@ import {
   RuleModuleIOTypeOptions,
   RuleModuleType,
   RuleModuleTypeOptions,
-} from "../checkers/checker-internals";
-import {
-  AppModel,
-  io,
-  model,
-  mongo,
-  ObjectId,
-  query,
-  type,
-  validate,
-} from "@bim/deco-api";
+} from '../checkers/checker-internals';
+import { AppModel, io, model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 
-let debug = require("debug")("app:models:three:checker:module-extract");
+let debug = require('debug')('app:models:three:checker:module-extract');
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleBlueprintModel extends RuleModuleBaseModel /*implements CheckerModuleReducer (add here the interface implementation of the module) */ {
@@ -30,34 +21,28 @@ export class RuleModuleBlueprintModel extends RuleModuleBaseModel /*implements C
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({ type: "single" })
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<RuleModuleIOType> = [
-    "numbers",
-    "strings",
-    "number",
-    "string",
-  ];
+  public allowedInputTypes: Array<RuleModuleIOType> = ['numbers', 'strings', 'number', 'string'];
 
   @type.select({ options: RuleModuleTypeOptions })
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: RuleModuleType =
-    "math"; /* write here the correct module Type */
+  public moduleType: RuleModuleType = 'math'; /* write here the correct module Type */
 
   @type.string
   @io.all
   @validate.required
-  public name: string = "";
+  public name: string = '';
 
   @type.string
   @io.all
-  public description: string = "";
+  public description: string = '';
 
   @type.string
   @io.all
@@ -74,13 +59,7 @@ export class RuleModuleBlueprintModel extends RuleModuleBaseModel /*implements C
   @io.output
   public outputType: RuleModuleIOType;
 
-  public outputValue:
-    | string[]
-    | string
-    | number[]
-    | number
-    | boolean[]
-    | boolean;
+  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
   @type.string
   @io.toDocument

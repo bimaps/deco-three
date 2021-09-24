@@ -1,17 +1,14 @@
-import { ThreeMaterialModel } from "./../models/material.model";
-import { ThreeJsonData, ThreeJsonObject } from "./three.importer";
+import { ThreeMaterialModel } from './../models/material.model';
+import { ThreeJsonData, ThreeJsonObject } from './three.importer';
 
-let debug = require("debug")("app:helpers:three:material");
+let debug = require('debug')('app:helpers:three:material');
 
 export interface ReduceMaterialsOptions {
   ignoreNameInMaterialId?: boolean;
 }
 
 export class ThreeMaterialHelper {
-  static reduceMaterials(
-    json: ThreeJsonData,
-    options: ReduceMaterialsOptions = {}
-  ) {
+  static reduceMaterials(json: ThreeJsonData, options: ReduceMaterialsOptions = {}) {
     let newMaterials: Array<any> = [];
     let materialMap: { [key: string]: string } = {};
     let materialHashes: { [key: string]: string } = {};
@@ -20,10 +17,7 @@ export class ThreeMaterialHelper {
     };
 
     for (let material of json.materials) {
-      let materialHash = ThreeMaterialModel.uniqueHashFromData(
-        material,
-        options.ignoreNameInMaterialId
-      );
+      let materialHash = ThreeMaterialModel.uniqueHashFromData(material, options.ignoreNameInMaterialId);
       if (materialHashes[materialHash]) {
         // we have already one instance of this material
         // then we map it to this instance
@@ -42,10 +36,7 @@ export class ThreeMaterialHelper {
     return stats;
   }
 
-  private static mapChildrenWithMaterial(
-    object: ThreeJsonObject,
-    materialMap: any
-  ) {
+  private static mapChildrenWithMaterial(object: ThreeJsonObject, materialMap: any) {
     if (!object.children) return;
     for (let child of object.children) {
       if (child.material) {
@@ -66,8 +57,7 @@ export class ThreeMaterialHelper {
             }
           }
         } else {
-          if (materialMap[child.material])
-            child.material = materialMap[child.material];
+          if (materialMap[child.material]) child.material = materialMap[child.material];
         }
       }
       if (child.children) {

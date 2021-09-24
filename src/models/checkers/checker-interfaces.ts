@@ -1,39 +1,30 @@
-import * as THREE from "three";
-import { ObjectId } from "@bim/deco-api";
+import * as THREE from 'three';
+import { ObjectId } from '@bim/deco-api';
 
-export const RuleModuleTypeOptions = [
-  "filter",
-  "extract",
-  "math",
-  "reducer",
-  "if",
-  "projection",
-  "distance",
-  "normal-distance",
-] as const;
+export const RuleModuleTypeOptions = ['filter', 'extract', 'math', 'reducer', 'if', 'projection', 'distance', 'normal-distance'] as const;
 export type RuleModuleType = typeof RuleModuleTypeOptions[number];
 
 export const RuleModuleIOTypeOptions = [
-  "scene",
-  "three-objects",
-  "three-object",
-  "triangles",
-  "triangle",
-  "line3s",
-  "line3",
-  "vector3s",
-  "vector3",
-  "vector2s",
-  "vector2",
-  "box3s",
-  "box3",
-  "strings",
-  "string",
-  "numbers",
-  "number",
-  "booleans",
-  "boolean",
-  "json",
+  'scene',
+  'three-objects',
+  'three-object',
+  'triangles',
+  'triangle',
+  'line3s',
+  'line3',
+  'vector3s',
+  'vector3',
+  'vector2s',
+  'vector2',
+  'box3s',
+  'box3',
+  'strings',
+  'string',
+  'numbers',
+  'number',
+  'booleans',
+  'boolean',
+  'json',
 ] as const;
 export type RuleModuleIOType = typeof RuleModuleIOTypeOptions[number];
 export type RuleModuleIOTypeValue =
@@ -58,31 +49,16 @@ export type RuleModuleIOTypeValue =
   | boolean
   | CheckerJsonOutput[];
 
-export type RuleModuleIOStyle =
-  | "default"
-  | "correct"
-  | "incorrect"
-  | "danger"
-  | "info";
-export const RuleModuleIOStyleOptions = [
-  "default",
-  "correct",
-  "incorrect",
-  "danger",
-  "info",
-];
+export type RuleModuleIOStyle = 'default' | 'correct' | 'incorrect' | 'danger' | 'info';
+export const RuleModuleIOStyleOptions = ['default', 'correct', 'incorrect', 'danger', 'info'];
 export interface CheckerJsonOutput {
   prefix: string;
   value: any;
   type: RuleModuleIOType;
-  ref:
-    | RuleModuleIORef
-    | RuleModuleIORef[]
-    | { ifcId: string }
-    | { ifcId: string }[];
+  ref: RuleModuleIORef | RuleModuleIORef[] | { ifcId: string } | { ifcId: string }[];
   style?: RuleModuleIOStyle | RuleModuleIOStyle[];
   suffix: string;
-  display: "paragraph" | "blocks";
+  display: 'paragraph' | 'blocks';
 }
 
 export type ReportOutput = {
@@ -98,21 +74,10 @@ export type RuleOutput = {
   outputs: { name: string; outputs: CheckerJsonOutput[] }[];
 };
 
-export type RuleModuleConditionOperator = "or" | "and";
+export type RuleModuleConditionOperator = 'or' | 'and';
 
-export type ThreeExtractType =
-  | "faces"
-  | "edges"
-  | "vertices"
-  | "wireframe"
-  | "property";
-export const RuleModuleExtractTypeOptions = [
-  "faces",
-  "edges",
-  "vertices",
-  "wireframe",
-  "property",
-];
+export type ThreeExtractType = 'faces' | 'edges' | 'vertices' | 'wireframe' | 'property';
+export const RuleModuleExtractTypeOptions = ['faces', 'edges', 'vertices', 'wireframe', 'property'];
 
 export interface RuleModuleObjectCondition {
   key: string;
@@ -164,19 +129,8 @@ export interface RuleModuleMath extends RuleModuleShape {
   // outputType = 'numbers' | 'number';
 }
 
-export type RuleModuleReducerOperation =
-  | "min"
-  | "max"
-  | "average"
-  | "count"
-  | "sum";
-export const RuleModuleReducerOperationOptions = [
-  "min",
-  "max",
-  "average",
-  "count",
-  "sum",
-];
+export type RuleModuleReducerOperation = 'min' | 'max' | 'average' | 'count' | 'sum';
+export const RuleModuleReducerOperationOptions = ['min', 'max', 'average', 'count', 'sum'];
 export interface RuleModuleReducer extends RuleModuleShape {
   // allowedInputType = ['numbers', 'number'];
   operation: RuleModuleReducerOperation;
@@ -201,22 +155,22 @@ export interface RuleModuleIf extends RuleModuleShape {
 export interface RuleModuleBbbox extends RuleModuleShape {}
 
 export interface RuleModuleProjection extends RuleModuleShape {
-  projectionAxis: "x" | "y" | "z";
+  projectionAxis: 'x' | 'y' | 'z';
 }
 
 export interface RuleModuleDistance extends RuleModuleShape {
-  distanceType: "2d-2d" | "3d-3d";
+  distanceType: '2d-2d' | '3d-3d';
 }
 
 export interface RuleModuleNormalDistance extends RuleModuleShape {
-  operation: "min" | "max";
+  operation: 'min' | 'max';
 }
 
 export interface CheckerOutput {
   prefix: string;
   varName: string;
   suffix: string;
-  display: "paragraph" | "blocks";
+  display: 'paragraph' | 'blocks';
 }
 
 export interface RuleModuleOutput extends RuleModuleShape {

@@ -8,26 +8,14 @@ import {
   RuleModuleNormalDistance,
   RuleModuleType,
   RuleModuleTypeOptions,
-} from "../checkers/checker-internals";
-import {
-  AppModel,
-  io,
-  model,
-  mongo,
-  ObjectId,
-  query,
-  type,
-  validate,
-} from "@bim/deco-api";
-import * as THREE from "three";
+} from '../checkers/checker-internals';
+import { AppModel, io, model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
+import * as THREE from 'three';
 
-let debug = require("debug")("app:models:three:checker:module-normal-distance");
+let debug = require('debug')('app:models:three:checker:module-normal-distance');
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
-export class RuleModuleNormalDistanceModel
-  extends RuleModuleBaseModel
-  implements RuleModuleNormalDistance
-{
+export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implements RuleModuleNormalDistance {
   @type.id
   public _id: ObjectId;
 
@@ -36,35 +24,28 @@ export class RuleModuleNormalDistanceModel
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({ type: "single" })
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<RuleModuleIOType> = [
-    "triangle",
-    "triangles",
-    "line3",
-    "line3s",
-    "vector3",
-    "vector3s",
-  ];
+  public allowedInputTypes: Array<RuleModuleIOType> = ['triangle', 'triangles', 'line3', 'line3s', 'vector3', 'vector3s'];
 
   @type.select({ options: RuleModuleTypeOptions })
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: RuleModuleType = "normal-distance";
+  public moduleType: RuleModuleType = 'normal-distance';
 
   @type.string
   @io.all
   @validate.required
-  public name: string = "";
+  public name: string = '';
 
   @type.string
   @io.all
-  public description: string = "";
+  public description: string = '';
 
   @type.string
   @io.all
@@ -85,72 +66,50 @@ export class RuleModuleNormalDistanceModel
   @io.output
   public outputType: RuleModuleIOType;
 
-  public outputValue:
-    | string[]
-    | string
-    | number[]
-    | number
-    | boolean[]
-    | boolean;
+  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
   @type.string
   @io.toDocument
   @io.output
   public outputSummary: string;
 
-  @type.select({ options: ["min", "max"] })
+  @type.select({ options: ['min', 'max'] })
   @io.all
-  public operation: "min" | "max" = "min";
+  public operation: 'min' | 'max' = 'min';
 
   private sameInputs = false;
 
   public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
     this.sameInputs = this.inputVarName === this.input2VarName;
-    const inputA = this.currentInput as
-      | THREE.Triangle
-      | THREE.Triangle[]
-      | THREE.Line3
-      | THREE.Line3[]
-      | THREE.Vector3
-      | THREE.Vector3[];
+    const inputA = this.currentInput as THREE.Triangle | THREE.Triangle[] | THREE.Line3 | THREE.Line3[] | THREE.Vector3 | THREE.Vector3[];
     // const inputAType = this.currentInputType as 'triangle' | 'triangles' | 'line3' | 'line3s' | 'vector3' | 'vector3s';
     if (!this.input2VarName) {
-      throw new Error("Missing input2VarName");
+      throw new Error('Missing input2VarName');
     }
     const input2Value = flow.fetchInput(this.input2VarName);
     if (!input2Value) {
-      throw new Error("Input requested not found");
+      throw new Error('Input requested not found');
     }
     if (!this.allowedInputTypes?.includes(input2Value.type)) {
-      throw new Error("Invalid input2 type");
+      throw new Error('Invalid input2 type');
     }
-    const inputB = input2Value.value as
-      | THREE.Triangle
-      | THREE.Triangle[]
-      | THREE.Line3
-      | THREE.Line3[]
-      | THREE.Vector3
-      | THREE.Vector3[];
+    const inputB = input2Value.value as THREE.Triangle | THREE.Triangle[] | THREE.Line3 | THREE.Line3[] | THREE.Vector3 | THREE.Vector3[];
     // const inputBType = input2Value.type as 'triangle' | 'triangles' | 'line3' | 'line3s' | 'vector3' | 'vector3s';
 
     const distances: Array<number> = [];
     const refs: Array<RuleModuleIORef> = [];
     let iAs = Array.isArray(inputA) ? inputA : [inputA];
     let iBs = Array.isArray(inputB) ? inputB : [inputB];
-    let refA = Array.isArray(this.currentInputRef)
-      ? this.currentInputRef
-      : [this.currentInputRef];
-    let refB = Array.isArray(input2Value.ref)
-      ? input2Value.ref
-      : [input2Value.ref];
+    let refA = Array.isArray(this.currentInputRef) ? this.currentInputRef : [this.currentInputRef];
+    let refB = Array.isArray(input2Value.ref) ? input2Value.ref : [input2Value.ref];
     if (iAs.length !== refA.length) {
-      throw new Error("Invalid references for input A");
+      throw new Error('Invalid references for input A');
     }
     if (iBs.length !== refB.length) {
-      throw new Error("Invalid references for input B");
+      throw new Error('Invalid references for input B');
     }
-    const operation = this.operation || "min";
+    const operation = this.operation || 'min';
 
     type ProcessRef = {
       value?: number;
@@ -168,9 +127,7 @@ export class RuleModuleNormalDistanceModel
         if (this.sameInputs && rA === rB) {
           continue; // we ignore the same objects if we compare twich the same input
         }
-        const processRefKey = processRefs[`${rB.uuid}:${rA.uuid}`]
-          ? `${rB.uuid}:${rA.uuid}`
-          : `${rA.uuid}:${rB.uuid}`;
+        const processRefKey = processRefs[`${rB.uuid}:${rA.uuid}`] ? `${rB.uuid}:${rA.uuid}` : `${rA.uuid}:${rB.uuid}`;
         if (!processRefs[processRefKey]) {
           processRefs[processRefKey] = {
             refA: rA,
@@ -185,15 +142,9 @@ export class RuleModuleNormalDistanceModel
           distance = this.pointLine(iA, iB);
         } else if (iA instanceof THREE.Line3 && iB instanceof THREE.Vector3) {
           distance = this.pointLine(iB, iA);
-        } else if (
-          iA instanceof THREE.Vector3 &&
-          iB instanceof THREE.Triangle
-        ) {
+        } else if (iA instanceof THREE.Vector3 && iB instanceof THREE.Triangle) {
           distance = this.pointFace(iA, iB);
-        } else if (
-          iA instanceof THREE.Triangle &&
-          iB instanceof THREE.Vector3
-        ) {
+        } else if (iA instanceof THREE.Triangle && iB instanceof THREE.Vector3) {
           distance = this.pointFace(iB, iA);
         } else if (iA instanceof THREE.Line3 && iB instanceof THREE.Line3) {
           distance = this.LineLine(iA, iB);
@@ -201,23 +152,16 @@ export class RuleModuleNormalDistanceModel
           distance = this.LineFace(iA, iB);
         } else if (iA instanceof THREE.Triangle && iB instanceof THREE.Line3) {
           distance = this.LineFace(iB, iA);
-        } else if (
-          iA instanceof THREE.Triangle &&
-          iB instanceof THREE.Triangle
-        ) {
+        } else if (iA instanceof THREE.Triangle && iB instanceof THREE.Triangle) {
           distance = this.FaceFace(iA, iB);
         } else {
-          throw new Error("Invalid normal distance requested");
+          throw new Error('Invalid normal distance requested');
         }
         if (distance !== undefined) {
-          if (operation === "max") {
-            processRefs[processRefKey].value = processRefs[processRefKey].value
-              ? Math.max(processRefs[processRefKey].value as number, distance)
-              : distance;
+          if (operation === 'max') {
+            processRefs[processRefKey].value = processRefs[processRefKey].value ? Math.max(processRefs[processRefKey].value as number, distance) : distance;
           } else {
-            processRefs[processRefKey].value = processRefs[processRefKey].value
-              ? Math.min(processRefs[processRefKey].value as number, distance)
-              : distance;
+            processRefs[processRefKey].value = processRefs[processRefKey].value ? Math.min(processRefs[processRefKey].value as number, distance) : distance;
           }
         }
       }
@@ -235,7 +179,7 @@ export class RuleModuleNormalDistanceModel
       refs.push([processRef.refA, processRef.refB]);
     }
 
-    this.outputType = "numbers";
+    this.outputType = 'numbers';
     this.outputValue = distances;
     this.outputReference = refs;
   }
@@ -309,17 +253,15 @@ export class RuleModuleNormalDistanceModel
 
   public async summary(): Promise<void> {
     if (Array.isArray(this.outputValue)) {
-      this.outputSummary = `${this.outputValue.length} distances (${(
-        this.outputValue as number[]
-      )
+      this.outputSummary = `${this.outputValue.length} distances (${(this.outputValue as number[])
         .slice(0, 3)
         .map((v) => {
           return Math.round(v * 1000) / 1000;
         })
-        .join(", ")})`;
+        .join(', ')})`;
     } else {
-      this.outputSummary = "";
+      this.outputSummary = '';
     }
-    await this.update(["outputSummary"]);
+    await this.update(['outputSummary']);
   }
 }

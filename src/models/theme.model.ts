@@ -1,17 +1,7 @@
-import {
-  AppModel,
-  io,
-  model,
-  Model,
-  mongo,
-  ObjectId,
-  query,
-  type,
-  validate,
-} from "@bim/deco-api";
-import { ThreeStyleModel } from "./style.model";
+import { AppModel, io, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
+import { ThreeStyleModel } from './style.model';
 
-let debug = require("debug")("app:models:three:theme");
+let debug = require('debug')('app:models:three:theme');
 
 class RuleAssociation {
   public ruleId: ObjectId;
@@ -22,7 +12,7 @@ class RuleAssociation {
   }>;
 }
 
-@model("three_theme")
+@model('three_theme')
 export class ThreeThemeModel extends Model {
   @type.id
   public _id: ObjectId;
@@ -32,7 +22,7 @@ export class ThreeThemeModel extends Model {
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({ type: "single" })
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
   @type.string

@@ -1,1 +1,1 @@
-export * from "./checker-internals";
+export * from './checker-internals';

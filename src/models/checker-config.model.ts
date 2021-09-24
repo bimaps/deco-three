@@ -1,20 +1,9 @@
-import { ThreeSiteModel } from "./site.model";
-import {
-  AppModel,
-  io,
-  Metadata,
-  model,
-  Model,
-  mongo,
-  ObjectId,
-  query,
-  type,
-  validate,
-} from "@bim/deco-api";
+import { ThreeSiteModel } from './site.model';
+import { AppModel, io, Metadata, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 
-let debug = require("debug")("app:models:three:checker-config");
+let debug = require('debug')('app:models:three:checker-config');
 
-@model("checker_config")
+@model('checker_config')
 export class ThreeCheckerConfigModel extends Model {
   @type.id
   public _id: ObjectId;
@@ -24,19 +13,19 @@ export class ThreeCheckerConfigModel extends Model {
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({ type: "single" })
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
   @type.model({ model: ThreeSiteModel })
   @io.all
   @query.filterable()
   @validate.required
-  @mongo.index({ type: "single" })
+  @mongo.index({ type: 'single' })
   public siteId: ObjectId;
 
   @type.string
   @io.all
-  @query.filterable({ type: "text" })
+  @query.filterable({ type: 'text' })
   @validate.required
   public name: string;
 
@@ -45,19 +34,19 @@ export class ThreeCheckerConfigModel extends Model {
   public description: string;
 
   @type.array({
-    type: "object",
+    type: 'object',
     options: {
       keys: {
-        key: { type: "string" },
-        operator: { type: "select", options: ["=", "<", ">", "!=", "*"] },
-        value: { type: "any" },
+        key: { type: 'string' },
+        operator: { type: 'select', options: ['=', '<', '>', '!=', '*'] },
+        value: { type: 'any' },
       },
     },
   })
   @io.all
   public conditions: Array<Condition> = [];
 
-  @type.select({ options: ["count", "compare-key-value", "add-key-value"] })
+  @type.select({ options: ['count', 'compare-key-value', 'add-key-value'] })
   @io.all
   public operation: CheckerOperation;
 
@@ -72,8 +61,8 @@ export class ThreeCheckerConfigModel extends Model {
 
 export interface Condition {
   key: string;
-  operator: "=" | "<" | ">" | "!=" | "*";
+  operator: '=' | '<' | '>' | '!=' | '*';
   value: string | number | Date;
 }
 
-export type CheckerOperation = "count" | "compare-key-value" | "add-key-value";
+export type CheckerOperation = 'count' | 'compare-key-value' | 'add-key-value';

@@ -8,12 +8,7 @@
  *    - http://www.melax.com/polychop/
  */
 
-import {
-  BufferGeometry,
-  Float32BufferAttribute,
-  Geometry,
-  Vector3,
-} from "three";
+import { BufferGeometry, Float32BufferAttribute, Geometry, Vector3 } from 'three';
 
 export class SimplifyModifier {
   constructor() {}
@@ -54,14 +49,7 @@ export class SimplifyModifier {
       var b = face.b;
       var c = face.c;
 
-      var triangle = new Triangle(
-        vertices[a],
-        vertices[b],
-        vertices[c],
-        a,
-        b,
-        c
-      );
+      var triangle = new Triangle(vertices[a], vertices[b], vertices[c], a, b, c);
       faces.push(triangle);
     }
 
@@ -79,7 +67,7 @@ export class SimplifyModifier {
       nextVertex = minimumCostEdge(vertices);
 
       if (!nextVertex) {
-        console.log("THREE.SimplifyModifier: No next vertex");
+        console.log('THREE.SimplifyModifier: No next vertex');
         break;
       }
 
@@ -113,10 +101,7 @@ export class SimplifyModifier {
 
     //
 
-    simplifiedGeometry.setAttribute(
-      "position",
-      new Float32BufferAttribute(position, 3)
-    );
+    simplifiedGeometry.setAttribute('position', new Float32BufferAttribute(position, 3));
     simplifiedGeometry.setIndex(index);
 
     return simplifiedGeometry;
@@ -175,14 +160,7 @@ export class Triangle {
   v3: Vertex;
   normal: Vector3;
 
-  constructor(
-    v1: Vertex,
-    v2: Vertex,
-    v3: Vertex,
-    a: number,
-    b: number,
-    c: number
-  ) {
+  constructor(v1: Vertex, v2: Vertex, v3: Vertex, a: number, b: number, c: number) {
     this.a = a;
     this.b = b;
     this.c = c;

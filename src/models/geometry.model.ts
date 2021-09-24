@@ -1,20 +1,10 @@
-import { ThreeSiteModel } from "./site.model";
-import {
-  AppModel,
-  io,
-  model,
-  Model,
-  mongo,
-  ObjectId,
-  query,
-  type,
-  validate,
-} from "@bim/deco-api";
-import * as THREE from "three";
+import { ThreeSiteModel } from './site.model';
+import { AppModel, io, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
+import * as THREE from 'three';
 
-let debug = require("debug")("app:models:three:geometry");
+let debug = require('debug')('app:models:three:geometry');
 
-@model("three_geometry")
+@model('three_geometry')
 export class ThreeGeometryModel extends Model {
   @type.id
   public _id: ObjectId;
@@ -24,7 +14,7 @@ export class ThreeGeometryModel extends Model {
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({ type: "single" })
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
   @type.model({ model: ThreeSiteModel })
@@ -32,7 +22,7 @@ export class ThreeGeometryModel extends Model {
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({ type: "single" })
+  @mongo.index({ type: 'single' })
   public siteId: ObjectId;
 
   @type.string
@@ -46,7 +36,7 @@ export class ThreeGeometryModel extends Model {
 
   @type.string
   @io.all
-  @query.filterable("text")
+  @query.filterable('text')
   public uuid: string;
 
   @type.string
@@ -54,12 +44,12 @@ export class ThreeGeometryModel extends Model {
   public type: string;
 
   @type.array({
-    type: "object",
+    type: 'object',
     options: {
       keys: {
-        x: { type: "float", required: true },
-        y: { type: "float", required: true },
-        z: { type: "float", required: true },
+        x: { type: 'float', required: true },
+        y: { type: 'float', required: true },
+        z: { type: 'float', required: true },
       },
     },
     allowOtherKeys: true,
@@ -67,11 +57,11 @@ export class ThreeGeometryModel extends Model {
   @io.all
   public vertices: Array<THREE.Vector3>;
 
-  @type.array({ type: "any" })
+  @type.array({ type: 'any' })
   @io.all
   public colors: Array<any>;
 
-  @type.array({ type: "any" })
+  @type.array({ type: 'any' })
   @io.all
   public faces: Array<THREE.Face3>;
 
@@ -120,10 +110,7 @@ export class ThreeGeometryModel extends Model {
   @type.any
   @io.all
   public morphAttributes: {
-    [name: string]: (
-      | THREE.BufferAttribute
-      | THREE.InterleavedBufferAttribute
-    )[];
+    [name: string]: (THREE.BufferAttribute | THREE.InterleavedBufferAttribute)[];
   };
 
   @type.any

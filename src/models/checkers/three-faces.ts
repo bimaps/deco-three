@@ -1,7 +1,7 @@
 // Start converting functions from
 // three/exemples/jsm/math/ConvexHull
 // but not necessary anymore
-import { Triangle, Vector3 } from "three";
+import { Triangle, Vector3 } from 'three';
 
 const Visible = 0;
 const Deleted = 1;
