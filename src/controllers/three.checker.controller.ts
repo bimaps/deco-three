@@ -1,44 +1,53 @@
-import { ThreeCheckerConfigModel } from './../models/checker-config.model';
-import { ThreeCheckerReportModel } from './../models/checker-report.model';
-import { ThreeCoreControllerMiddleware } from './three.core.controller';
-import { Router } from 'express';
-import { ControllerMiddleware, AppMiddleware, CacheLastModified } from '@bim/deco-api';
-let debug = require('debug')('app:controller:three:geometry');
+import { ThreeCheckerConfigModel } from "./../models/checker-config.model";
+import { ThreeCheckerReportModel } from "./../models/checker-report.model";
+import { ThreeCoreControllerMiddleware } from "./three.core.controller";
+import { Router } from "express";
+import {
+  AppMiddleware,
+  CacheLastModified,
+  ControllerMiddleware,
+} from "@bim/deco-api";
+
+let debug = require("debug")("app:controller:three:geometry");
 
 const router: Router = Router();
 
-let configController = new ThreeCoreControllerMiddleware(ThreeCheckerConfigModel);
-let reportController = new ThreeCoreControllerMiddleware(ThreeCheckerReportModel);
+let configController = new ThreeCoreControllerMiddleware(
+  ThreeCheckerConfigModel
+);
+let reportController = new ThreeCoreControllerMiddleware(
+  ThreeCheckerReportModel
+);
 
 router.get(
-  '/report' + ControllerMiddleware.getAllRoute(),
+  "/report" + ControllerMiddleware.getAllRoute(),
   CacheLastModified.init(),
   AppMiddleware.fetchWithPublicKey,
   reportController.prepareQueryFromReq(),
-  reportController.getAll(null, {enableLastModifiedCaching: true}),
+  reportController.getAll(null, { enableLastModifiedCaching: true })
   // CacheLastModified.send()
 );
 
 router.get(
-  '/report' + ControllerMiddleware.getOneRoute(),
+  "/report" + ControllerMiddleware.getOneRoute(),
   AppMiddleware.fetchWithPublicKey,
   reportController.getOne()
 );
 
 router.post(
-  '/report' + ControllerMiddleware.postRoute(),
+  "/report" + ControllerMiddleware.postRoute(),
   AppMiddleware.fetchWithPublicKey,
   reportController.post()
 );
 
 router.put(
-  '/report' + ControllerMiddleware.putRoute(),
+  "/report" + ControllerMiddleware.putRoute(),
   AppMiddleware.fetchWithPublicKey,
   reportController.put()
 );
 
 router.delete(
-  '/report' + ControllerMiddleware.deleteRoute(),
+  "/report" + ControllerMiddleware.deleteRoute(),
   AppMiddleware.fetchWithPublicKey,
   reportController.delete()
 );
@@ -48,7 +57,7 @@ router.get(
   CacheLastModified.init(),
   AppMiddleware.fetchWithPublicKey,
   configController.prepareQueryFromReq(),
-  configController.getAll(null, {enableLastModifiedCaching: true}),
+  configController.getAll(null, { enableLastModifiedCaching: true })
   // CacheLastModified.send()
 );
 
@@ -77,7 +86,5 @@ router.delete(
   AppMiddleware.fetchWithPublicKey,
   configController.delete()
 );
-
-
 
 export const ThreeCheckerController: Router = router;

@@ -5,6 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "build": "tsc",
+    "format": "prettier --write \"./src/**/*.{ts,json}\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@bim/deco-api": "^1.2.2",
+    "prettier": "^2.4.1",
     "typedoc": "^0.20.34",
     "typescript": "^3.9.0"
   },

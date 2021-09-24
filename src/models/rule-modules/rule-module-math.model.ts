@@ -1,19 +1,32 @@
-import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType } from '../checkers/checker-internals';
 import {
-  RuleModuleBaseModel,
+  RULE_MODULE_MONGO_COLLECTION_NAME,
   RuleModel,
+  RuleModuleBaseModel,
   RuleModuleIOType,
-  RuleModuleIOTypeOptions
-} from '../checkers/checker-internals';
-import { RuleModuleMath, RuleModuleTypeOptions } from '../checkers/checker-internals';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
-import * as math from 'mathjs';
+  RuleModuleIOTypeOptions,
+  RuleModuleMath,
+  RuleModuleType,
+  RuleModuleTypeOptions,
+} from "../checkers/checker-internals";
+import {
+  AppModel,
+  io,
+  model,
+  mongo,
+  ObjectId,
+  query,
+  type,
+  validate,
+} from "@bim/deco-api";
+import * as math from "mathjs";
 
-let debug = require('debug')('app:models:three:checker:module-extract');
+let debug = require("debug")("app:models:three:checker:module-extract");
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
-export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModuleMath {
-
+export class RuleModuleMathModel
+  extends RuleModuleBaseModel
+  implements RuleModuleMath
+{
   @type.id
   public _id: ObjectId;
 
@@ -22,28 +35,33 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({ type: 'single' })
+  @mongo.index({ type: "single" })
   public appId: ObjectId;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<RuleModuleIOType> = ['numbers', 'strings', 'number', 'string'];
+  public allowedInputTypes: Array<RuleModuleIOType> = [
+    "numbers",
+    "strings",
+    "number",
+    "string",
+  ];
 
   @type.select({ options: RuleModuleTypeOptions })
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: RuleModuleType = 'math';
+  public moduleType: RuleModuleType = "math";
 
   @type.string
   @io.all
   @validate.required
-  public name: string = '';
+  public name: string = "";
 
   @type.string
   @io.all
-  public description: string = '';
+  public description: string = "";
 
   @type.string
   @io.all
@@ -60,7 +78,13 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
   @io.output
   public outputType: RuleModuleIOType;
 
-  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
+  public outputValue:
+    | string[]
+    | string
+    | number[]
+    | number
+    | boolean[]
+    | boolean;
 
   @type.string
   @io.toDocument
@@ -83,8 +107,10 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
     // detect all required inputs
     for (let mod of flow.modules) {
       if (this.expression.indexOf(mod.outputVarName) !== -1) {
-        if (mod.outputVarName.indexOf(' ') !== -1) {
-          throw new Error('Variable names used in Mathematical expression must not contain space');
+        if (mod.outputVarName.indexOf(" ") !== -1) {
+          throw new Error(
+            "Variable names used in Mathematical expression must not contain space"
+          );
         }
         const value = mod.outputValue;
         if (Array.isArray(value)) {
@@ -94,7 +120,9 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
           } else if (arrayLength === length) {
             // good
           } else {
-            throw new Error('All array variables used in Mathematical expression must have the same length');
+            throw new Error(
+              "All array variables used in Mathematical expression must have the same length"
+            );
           }
         }
         inputs[mod.outputVarName] = mod.outputValue;
@@ -107,7 +135,7 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
 
     if (!this.multiple) {
       const result = fct.evaluate(inputs);
-      this.outputType = 'number';
+      this.outputType = "number";
       this.outputValue = result;
     } else {
       const results: number[] = [];
@@ -123,20 +151,17 @@ export class RuleModuleMathModel extends RuleModuleBaseModel implements RuleModu
         }
         results.push(fct.evaluate(scope));
       }
-      this.outputType = 'numbers';
+      this.outputType = "numbers";
       this.outputValue = results;
     }
-
   }
-
 
   public async summary(): Promise<void> {
     if (Array.isArray(this.outputValue)) {
-      this.outputSummary = this.outputValue.slice(0, 3).join(', ');
+      this.outputSummary = this.outputValue.slice(0, 3).join(", ");
     } else {
       this.outputSummary = this.outputValue.toString();
     }
-    await this.update(['outputSummary']);
+    await this.update(["outputSummary"]);
   }
-
 }

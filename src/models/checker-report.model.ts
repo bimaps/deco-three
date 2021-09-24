@@ -1,11 +1,22 @@
-import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, Metadata, AppModel, mongo } from '@bim/deco-api';
-import { RuleModel } from './checkers/checker-internals';
-let debug = require('debug')('app:models:three:checker-config');
+import { ThreeSiteModel } from "./site.model";
+import {
+  AppModel,
+  io,
+  Metadata,
+  model,
+  Model,
+  mongo,
+  ObjectId,
+  query,
+  type,
+  validate,
+} from "@bim/deco-api";
+import { RuleModel } from "./checkers/checker-internals";
 
-@model('checker_report')
+let debug = require("debug")("app:models:three:checker-config");
+
+@model("checker_report")
 export class ThreeCheckerReportModel extends Model {
-
   @type.id
   public _id: ObjectId;
 
@@ -14,19 +25,19 @@ export class ThreeCheckerReportModel extends Model {
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({ type: 'single' })
+  @mongo.index({ type: "single" })
   public appId: ObjectId;
 
   @type.model({ model: ThreeSiteModel })
   @io.all
   @query.filterable()
   @validate.required
-  @mongo.index({ type: 'single' })
+  @mongo.index({ type: "single" })
   public siteId: ObjectId;
 
   @type.string
   @io.all
-  @query.filterable({ type: 'text' })
+  @query.filterable({ type: "text" })
   @validate.required
   public name: string;
 
@@ -40,7 +51,7 @@ export class ThreeCheckerReportModel extends Model {
 
   @type.models({ model: RuleModel })
   @io.all
-  @query.filterable({ type: 'auto' })
+  @query.filterable({ type: "auto" })
   public ruleIds: Array<ObjectId> = [];
 
   public rules: Array<RuleModel> = [];
@@ -48,5 +59,4 @@ export class ThreeCheckerReportModel extends Model {
   @type.metadata
   @io.all
   public metadata: Array<Metadata> = [];
-
 }

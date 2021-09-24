@@ -1,27 +1,43 @@
-import { CheckerJsonOutput, RuleModuleIOStyle } from './checkers/checker-interfaces';
-import { ThreeSpaceModel } from './space.model';
-import { ThreeGenerator } from '../helpers/three.generator';
-import { ThreeGeometryModel } from './geometry.model';
-import { ThreeMaterialModel } from './material.model';
-import { ThreeObjectModel } from './object.model';
+import {
+  CheckerJsonOutput,
+  RuleModuleIOStyle,
+} from "./checkers/checker-interfaces";
+import { ThreeSpaceModel } from "./space.model";
+import { ThreeGenerator } from "../helpers/three.generator";
+import { ThreeGeometryModel } from "./geometry.model";
+import { ThreeMaterialModel } from "./material.model";
+import { ThreeObjectModel } from "./object.model";
 import {
   RuleModuleBaseModel,
+  RuleModuleIORef,
+  RuleModuleIOType,
+  RuleModuleIOTypeValue,
+  RuleModuleObjectCondition,
   RuleModuleValueCondition,
   ThreeFlow,
-  RuleModuleIORef
-} from './checkers/checker-internals';
-import { RuleModuleIOTypeValue, RuleModuleIOType, RuleModuleObjectCondition } from './checkers/checker-internals';
-import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, mongo, Query, Parser, AppModel } from '@bim/deco-api';
-import * as THREE from 'three';
-import moment from 'moment';
-import resolvePath from 'object-resolve-path';
+} from "./checkers/checker-internals";
+import { ThreeSiteModel } from "./site.model";
+import {
+  AppModel,
+  io,
+  model,
+  Model,
+  mongo,
+  ObjectId,
+  Parser,
+  query,
+  Query,
+  type,
+  validate,
+} from "@bim/deco-api";
+import * as THREE from "three";
+import moment from "moment";
+import resolvePath from "object-resolve-path";
 
-let debug = require('debug')('app:models:three:checkers:flow');
+let debug = require("debug")("app:models:three:checkers:flow");
 
-@model('rule')
+@model("rule")
 export class RuleModel extends Model implements ThreeFlow {
-
   @type.id
   public _id: ObjectId;
 
@@ -30,17 +46,17 @@ export class RuleModel extends Model implements ThreeFlow {
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({ type: 'single' })
+  @mongo.index({ type: "single" })
   public appId: ObjectId;
 
   @type.string
   @io.all
   @validate.required
-  public name: string = '';
+  public name: string = "";
 
   @type.string
   @io.all
-  public description: string = '';
+  public description: string = "";
 
   @type.models({ model: RuleModuleBaseModel })
   @io.all
@@ -50,18 +66,18 @@ export class RuleModel extends Model implements ThreeFlow {
   public modules: Array<RuleModuleBaseModel> = [];
   public outputs: {
     name: string;
-    outputs: CheckerJsonOutput[]
+    outputs: CheckerJsonOutput[];
   }[] = [];
 
   @type.string
   @io.all
   @query.filterable()
-  public business: string = '';
+  public business: string = "";
 
   @type.string
   @io.all
   @query.filterable()
-  public businessId: string = '';
+  public businessId: string = "";
 
   /** @deprecated */
   public async process(scene?: THREE.Scene): Promise<THREE.Scene> {
@@ -86,45 +102,35 @@ export class RuleModel extends Model implements ThreeFlow {
   private async prepareScene(siteId: string | ObjectId): Promise<THREE.Scene> {
     const site = await ThreeSiteModel.getOneWithId(siteId);
     if (!site) {
-      throw new Error('Site not found');
+      throw new Error("Site not found");
     }
-    const objects = await ThreeObjectModel.getAll(new Query({ siteId: site._id })) || [];
-    const matIds = objects.map(o => o.material);
-    const materials = await ThreeMaterialModel.getAll(new Query({ uuid: { $in: matIds } }));
-    const geoIds = objects.map(o => o.geometry);
-    const geometries = await ThreeGeometryModel.getAll(new Query({ uuid: { $in: geoIds } }));
-    const spaces = await ThreeSpaceModel.getAll(new Query({ siteId: site._id }));
+    const objects =
+      (await ThreeObjectModel.getAll(new Query({ siteId: site._id }))) || [];
+    const matIds = objects.map((o) => o.material);
+    const materials = await ThreeMaterialModel.getAll(
+      new Query({ uuid: { $in: matIds } })
+    );
+    const geoIds = objects.map((o) => o.geometry);
+    const geometries = await ThreeGeometryModel.getAll(
+      new Query({ uuid: { $in: geoIds } })
+    );
+    const spaces = await ThreeSpaceModel.getAll(
+      new Query({ siteId: site._id })
+    );
     const sceneJson = {
       metadata: {
         version: 4.5,
-        type: 'Object',
-        generator: 'swissdata'
+        type: "Object",
+        generator: "swissdata",
       },
       geometries: geometries,
       materials: materials,
       object: {
         children: objects,
         layers: 1,
-        matrix: [
-          1,
-          0,
-          0,
-          0,
-          0,
-          1,
-          0,
-          0,
-          0,
-          0,
-          1,
-          0,
-          0,
-          0,
-          0,
-          1
-        ],
-        type: 'Scene'
-      }
+        matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+        type: "Scene",
+      },
     };
     const loader = new THREE.ObjectLoader();
     const scene: THREE.Object3D = await new Promise((resolve2, reject2) => {
@@ -144,13 +150,20 @@ export class RuleModel extends Model implements ThreeFlow {
     return this.scene;
   }
 
-  public fetchInput(varname: string): { value: RuleModuleIOTypeValue, type: RuleModuleIOType, ref: RuleModuleIORef | RuleModuleIORef[], style: RuleModuleIOStyle | RuleModuleIOStyle[] } | undefined {
-    if (varname === 'scene') {
+  public fetchInput(varname: string):
+    | {
+        value: RuleModuleIOTypeValue;
+        type: RuleModuleIOType;
+        ref: RuleModuleIORef | RuleModuleIORef[];
+        style: RuleModuleIOStyle | RuleModuleIOStyle[];
+      }
+    | undefined {
+    if (varname === "scene") {
       return {
-        type: 'scene',
+        type: "scene",
         value: this.scene,
         ref: undefined,
-        style: 'default'
+        style: "default",
       };
     }
     for (const moduleInstance of this.modules) {
@@ -159,7 +172,7 @@ export class RuleModel extends Model implements ThreeFlow {
           value: moduleInstance.outputValue,
           type: moduleInstance.outputType,
           ref: moduleInstance.outputReference,
-          style: moduleInstance.outputStyle || 'default'
+          style: moduleInstance.outputStyle || "default",
         };
       }
     }
@@ -168,63 +181,89 @@ export class RuleModel extends Model implements ThreeFlow {
   }
 
   public fetchProp(object: THREE.Object3D, propPath: string): any {
-
-    if (propPath.indexOf('#{') !== -1 || propPath.indexOf('!#') !== -1) {
-      propPath = propPath.replace(/(#{|!{)/gm, '$1object:');
+    if (propPath.indexOf("#{") !== -1 || propPath.indexOf("!#") !== -1) {
+      propPath = propPath.replace(/(#{|!{)/gm, "$1object:");
       return Parser.parseTemplate(propPath, { object });
     }
 
-    const parts = propPath.split('.');
+    const parts = propPath.split(".");
     for (let i = 0; i < parts.length; i++) {
       if (i === 0) {
         continue;
       }
       parts[i] = `["${parts[i]}"]`;
     }
-    const key = parts.join('');
+    const key = parts.join("");
     return resolvePath(object, key);
   }
 
-  public compareObject(object: THREE.Object3D, condition: RuleModuleObjectCondition): boolean {
+  public compareObject(
+    object: THREE.Object3D,
+    condition: RuleModuleObjectCondition
+  ): boolean {
     const value = this.fetchProp(object, condition.key);
     return this.compareValue(value, condition);
   }
 
-  public compareValue(value: string | boolean | number | Date, condition: RuleModuleObjectCondition | RuleModuleValueCondition): boolean {
-    if (typeof condition.value === 'number' && typeof value === 'string') {
+  public compareValue(
+    value: string | boolean | number | Date,
+    condition: RuleModuleObjectCondition | RuleModuleValueCondition
+  ): boolean {
+    if (typeof condition.value === "number" && typeof value === "string") {
       value = parseFloat(value);
-    } else if (condition.value instanceof Date && typeof value === 'string') {
+    } else if (condition.value instanceof Date && typeof value === "string") {
       value = moment(value).toDate();
     }
-    if (condition.operation === '=') {
-      if (this.makeNumberIfPossible(value) != this.makeNumberIfPossible(condition.value)) return false;
-    } else if (condition.operation === '!=') {
-      if (this.makeNumberIfPossible(value) == this.makeNumberIfPossible(condition.value)) return false;
-    } else if (condition.operation === '<') {
-      if (this.makeNumberIfPossible(value) > this.makeNumberIfPossible(condition.value)) return false;
-    } else if (condition.operation === '>') {
-      if (this.makeNumberIfPossible(value) < this.makeNumberIfPossible(condition.value)) return false;
-    } else if (condition.operation === '*') {
-      if (typeof condition.value !== 'string' && condition.value.toString) condition.value = condition.value.toString();
-      if (value && typeof value !== 'string' && value.toString) value = value.toString();
-      if (typeof value !== 'string' || typeof condition.value !== 'string') {
+    if (condition.operation === "=") {
+      if (
+        this.makeNumberIfPossible(value) !=
+        this.makeNumberIfPossible(condition.value)
+      )
+        return false;
+    } else if (condition.operation === "!=") {
+      if (
+        this.makeNumberIfPossible(value) ==
+        this.makeNumberIfPossible(condition.value)
+      )
+        return false;
+    } else if (condition.operation === "<") {
+      if (
+        this.makeNumberIfPossible(value) >
+        this.makeNumberIfPossible(condition.value)
+      )
+        return false;
+    } else if (condition.operation === ">") {
+      if (
+        this.makeNumberIfPossible(value) <
+        this.makeNumberIfPossible(condition.value)
+      )
+        return false;
+    } else if (condition.operation === "*") {
+      if (typeof condition.value !== "string" && condition.value.toString)
+        condition.value = condition.value.toString();
+      if (value && typeof value !== "string" && value.toString)
+        value = value.toString();
+      if (typeof value !== "string" || typeof condition.value !== "string") {
         // could not convert values to string
         return false;
       }
-      if (value.toLowerCase().indexOf(condition.value.toLowerCase()) === -1) return false;
+      if (value.toLowerCase().indexOf(condition.value.toLowerCase()) === -1)
+        return false;
     }
     return true;
   }
 
   private makeNumberIfPossible(input: string | any): number | any {
-    if (typeof input !== 'string') {
+    if (typeof input !== "string") {
       return input;
     }
     const num = parseFloat(input.trim());
     return `${num}` === input.trim() ? num : input;
   }
 
-  public getOutputs(convertObjectToIfcId = true): { name: string; outputs: CheckerJsonOutput[] }[] {
+  public getOutputs(
+    convertObjectToIfcId = true
+  ): { name: string; outputs: CheckerJsonOutput[] }[] {
     const outputs = this.outputs;
     for (const output of outputs || []) {
       for (const output2 of output.outputs || []) {
@@ -233,12 +272,15 @@ export class RuleModel extends Model implements ThreeFlow {
             for (const index in output2.ref) {
               const ref = output2.ref[index];
               if (ref instanceof THREE.Mesh && ref.userData?.ifcId) {
-                output2.ref[index] = { ifcId: ref.userData.ifcId }
+                output2.ref[index] = { ifcId: ref.userData.ifcId };
               } else {
                 output2.ref[index] = undefined;
               }
             }
-          } else if (output2.ref instanceof THREE.Mesh && output2.ref.userData?.ifcId) {
+          } else if (
+            output2.ref instanceof THREE.Mesh &&
+            output2.ref.userData?.ifcId
+          ) {
             output2.ref = { ifcId: output2.ref.userData?.ifcId };
           } else {
             output2.ref = undefined;
@@ -248,5 +290,4 @@ export class RuleModel extends Model implements ThreeFlow {
     }
     return outputs;
   }
-
 }

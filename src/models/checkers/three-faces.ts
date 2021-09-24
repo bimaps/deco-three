@@ -1,13 +1,7 @@
 // Start converting functions from
 // three/exemples/jsm/math/ConvexHull
 // but not necessary anymore
-import {
-	Line3,
-	Plane,
-	Triangle,
-	Vector3
-} from "three";
-
+import { Triangle, Vector3 } from "three";
 
 const Visible = 0;
 const Deleted = 1;
@@ -20,15 +14,16 @@ export class Face {
   public constant = 0; // signed distance from face to the origin
   public outside = null; // reference to a vertex in a vertex list this face can see
   public mark = Visible;
-  public edge: HalfEdge | null = null;
+  public edge: HalfEdge | null = null;
 
-  public static create( a: VertexNode, b: VertexNode, c: VertexNode ) { // todo: any ===>> VertexNode
+  public static create(a: VertexNode, b: VertexNode, c: VertexNode) {
+    // todo: any ===>> VertexNode
 
     var face = new Face();
 
-    var e0 = new HalfEdge( a, face );
-    var e1 = new HalfEdge( b, face );
-    var e2 = new HalfEdge( c, face );
+    var e0 = new HalfEdge(a, face);
+    var e1 = new HalfEdge(b, face);
+    var e2 = new HalfEdge(c, face);
 
     // join edges
 
@@ -41,66 +36,52 @@ export class Face {
     face.edge = e0;
 
     return face.compute();
-
   }
 
-  public getEdge( i: number ) {
-
+  public getEdge(i: number) {
     var edge = this.edge;
 
-    while ( i > 0 ) {
-
+    while (i > 0) {
       edge = (edge as HalfEdge).next;
-      i --;
-
+      i--;
     }
 
-    while ( i < 0 ) {
-
+    while (i < 0) {
       edge = (edge as HalfEdge).prev;
-      i ++;
-
+      i++;
     }
 
     return edge;
-
   }
 
-  public compute () {
-
+  public compute() {
     var triangle: Triangle | undefined;
 
-    return function compute(this: any) {
-
-      if ( triangle === undefined ) triangle = new Triangle();
+    return (function compute(this: any) {
+      if (triangle === undefined) triangle = new Triangle();
 
       var a = this.edge.tail();
       var b = this.edge.head();
       var c = this.edge.next.head();
 
-      triangle.set( a.point, b.point, c.point );
+      triangle.set(a.point, b.point, c.point);
 
-      triangle.getNormal( this.normal );
-      triangle.getMidpoint( this.midpoint );
+      triangle.getNormal(this.normal);
+      triangle.getMidpoint(this.midpoint);
       this.area = triangle.getArea();
 
-      this.constant = this.normal.dot( this.midpoint );
+      this.constant = this.normal.dot(this.midpoint);
 
       return this;
-
-    }();
-
+    })();
   }
 
-  public distanceToPoint ( point: any ) {
-
-    return this.normal.dot( point ) - this.constant;
-
+  public distanceToPoint(point: any) {
+    return this.normal.dot(point) - this.constant;
   }
 }
 
 export class HalfEdge {
-
   public vertex: any; // VertexNode
   public prev: HalfEdge | null = null;
   public next: HalfEdge | null = null;
@@ -109,49 +90,37 @@ export class HalfEdge {
 
   constructor(vertex: any, face: Face) {
     this.vertex = vertex;
-    this.face = face;  
+    this.face = face;
   }
 
-  public head () {
-
+  public head() {
     return this.vertex;
-
   }
 
-  public tail () {
-
+  public tail() {
     return this.prev ? this.prev.vertex : null;
-
-  };
-
-  public length () {
-
-    var head = this.head();
-    var tail = this.tail();
-
-    if ( tail !== null ) {
-
-      return tail.point.distanceTo( head.point );
-
-    }
-
-    return - 1;
-
   }
 
-  public lengthSquared () {
-
+  public length() {
     var head = this.head();
     var tail = this.tail();
 
-    if ( tail !== null ) {
-
-      return tail.point.distanceToSquared( head.point );
-
+    if (tail !== null) {
+      return tail.point.distanceTo(head.point);
     }
 
-    return - 1;
+    return -1;
+  }
 
+  public lengthSquared() {
+    var head = this.head();
+    var tail = this.tail();
+
+    if (tail !== null) {
+      return tail.point.distanceToSquared(head.point);
+    }
+
+    return -1;
   }
 
   // public setTwin ( edge: { twin: any; } ) {
@@ -162,11 +131,9 @@ export class HalfEdge {
   //   return this;
 
   // }
-
 }
 
 export class VertexNode {
-
   public point: Vector3;
   public prev = null;
   public next = null;
@@ -175,5 +142,4 @@ export class VertexNode {
   constructor(point: Vector3) {
     this.point = point;
   }
-
 }

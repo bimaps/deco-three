@@ -1,19 +1,31 @@
-import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleType } from '../checkers/checker-internals';
 import {
-  RuleModuleBaseModel,
+  RULE_MODULE_MONGO_COLLECTION_NAME,
   RuleModel,
+  RuleModuleBaseModel,
+  RuleModuleDistance,
   RuleModuleIOType,
-  RuleModuleIOTypeOptions
-} from '../checkers/checker-internals';
-import { RuleModuleTypeOptions, RuleModuleDistance } from '../checkers/checker-internals';
-import { ThreeSiteModel } from '../site.model';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
+  RuleModuleIOTypeOptions,
+  RuleModuleType,
+  RuleModuleTypeOptions,
+} from "../checkers/checker-internals";
+import {
+  AppModel,
+  io,
+  model,
+  mongo,
+  ObjectId,
+  query,
+  type,
+  validate,
+} from "@bim/deco-api";
 
-let debug = require('debug')('app:models:three:checker:module-distance');
+let debug = require("debug")("app:models:three:checker:module-distance");
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
-export class RuleModuleDistanceModel extends RuleModuleBaseModel implements RuleModuleDistance {
-
+export class RuleModuleDistanceModel
+  extends RuleModuleBaseModel
+  implements RuleModuleDistance
+{
   @type.id
   public _id: ObjectId;
 
@@ -22,28 +34,33 @@ export class RuleModuleDistanceModel extends RuleModuleBaseModel implements Rule
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({ type: 'single' })
+  @mongo.index({ type: "single" })
   public appId: ObjectId;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<RuleModuleIOType> = ['vector3s', 'vector3', 'vector2s', 'vector2'];
+  public allowedInputTypes: Array<RuleModuleIOType> = [
+    "vector3s",
+    "vector3",
+    "vector2s",
+    "vector2",
+  ];
 
   @type.select({ options: RuleModuleTypeOptions })
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: RuleModuleType = 'distance';
+  public moduleType: RuleModuleType = "distance";
 
   @type.string
   @io.all
   @validate.required
-  public name: string = '';
+  public name: string = "";
 
   @type.string
   @io.all
-  public description: string = '';
+  public description: string = "";
 
   @type.string
   @io.all
@@ -65,29 +82,32 @@ export class RuleModuleDistanceModel extends RuleModuleBaseModel implements Rule
   @io.output
   public outputType: RuleModuleIOType;
 
-  public outputValue: string[] | string | number[] | number | boolean[] | boolean;
+  public outputValue:
+    | string[]
+    | string
+    | number[]
+    | number
+    | boolean[]
+    | boolean;
 
   @type.string
   @io.toDocument
   @io.output
   public outputSummary: string;
 
-  @type.select({ options: ['2d-2d', '3d-3d'] })
+  @type.select({ options: ["2d-2d", "3d-3d"] })
   @io.all
-  public distanceType: '2d-2d' | '3d-3d';
+  public distanceType: "2d-2d" | "3d-3d";
 
   public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
     /* Implement here the process */
 
-
     // distanceTo()
-
   }
 
   public async summary(): Promise<void> {
     super.summary();
     /* Implement here the summary method that saves inside outputSummary */
   }
-
 }

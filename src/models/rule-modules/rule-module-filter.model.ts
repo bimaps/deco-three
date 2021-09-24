@@ -1,20 +1,33 @@
-import { RuleModuleType, RuleModuleFilter, RULE_MODULE_MONGO_COLLECTION_NAME } from '../checkers/checker-internals';
 import {
-  RuleModuleBaseModel,
+  RULE_MODULE_MONGO_COLLECTION_NAME,
   RuleModel,
+  RuleModuleBaseModel,
+  RuleModuleConditionOperator,
+  RuleModuleFilter,
   RuleModuleIOType,
-  RuleModuleIOTypeOptions
-} from '../checkers/checker-internals';
-import { RuleModuleTypeOptions } from '../checkers/checker-internals';
-import { RuleModuleObjectCondition, RuleModuleConditionOperator } from '../checkers/checker-internals';
-import { ThreeSiteModel } from '../site.model';
-import { model, type, io, query, validate, ObjectId, mongo, AppModel } from '@bim/deco-api';
+  RuleModuleIOTypeOptions,
+  RuleModuleObjectCondition,
+  RuleModuleType,
+  RuleModuleTypeOptions,
+} from "../checkers/checker-internals";
+import {
+  AppModel,
+  io,
+  model,
+  mongo,
+  ObjectId,
+  query,
+  type,
+  validate,
+} from "@bim/deco-api";
 
-let debug = require('debug')('app:models:three:checker:module-filter');
+let debug = require("debug")("app:models:three:checker:module-filter");
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
-export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleModuleFilter {
-
+export class RuleModuleFilterModel
+  extends RuleModuleBaseModel
+  implements RuleModuleFilter
+{
   @type.id
   public _id: ObjectId;
 
@@ -23,28 +36,31 @@ export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleMo
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({ type: 'single' })
+  @mongo.index({ type: "single" })
   public appId: ObjectId;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
   @io.toDocument
   @io.output
-  public allowedInputTypes: Array<RuleModuleIOType> = ['three-objects', 'scene'];
+  public allowedInputTypes: Array<RuleModuleIOType> = [
+    "three-objects",
+    "scene",
+  ];
 
   @type.select({ options: RuleModuleTypeOptions })
   @io.toDocument
   @io.output
   @validate.required
-  public moduleType: RuleModuleType = 'filter';
+  public moduleType: RuleModuleType = "filter";
 
   @type.string
   @io.all
   @validate.required
-  public name: string = '';
+  public name: string = "";
 
   @type.string
   @io.all
-  public description: string = '';
+  public description: string = "";
 
   @type.string
   @io.all
@@ -59,7 +75,7 @@ export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleMo
   @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
   @io.toDocument
   @io.output
-  public outputType: RuleModuleIOType = 'three-objects'
+  public outputType: RuleModuleIOType = "three-objects";
 
   public outputValue: THREE.Object3D[];
 
@@ -69,36 +85,36 @@ export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleMo
   public outputSummary: string;
 
   @type.array({
-    type: 'object',
+    type: "object",
     options: {
       keys: {
-        key: { type: 'string' },
-        operation: { type: 'string' },
-        value: { type: 'string' }
-      }
-    }
+        key: { type: "string" },
+        operation: { type: "string" },
+        value: { type: "string" },
+      },
+    },
   })
   @io.all
   public conditions: Array<RuleModuleObjectCondition>;
 
-  @type.select({ options: ['or', 'and'] })
+  @type.select({ options: ["or", "and"] })
   @io.all
-  public conditionsOperator: RuleModuleConditionOperator = 'and';
+  public conditionsOperator: RuleModuleConditionOperator = "and";
 
   private inputObjects: Array<THREE.Object3D> = [];
 
   public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
-    if (this.currentInput && this.currentInputType === 'three-objects') {
+    if (this.currentInput && this.currentInputType === "three-objects") {
       this.inputObjects = this.currentInput as THREE.Object3D[];
       // process filtering
-    } else if (this.currentInput && this.currentInputType === 'scene') {
+    } else if (this.currentInput && this.currentInputType === "scene") {
       this.inputObjects = [];
       flow.scene.traverse((obj) => {
         this.inputObjects.push(obj);
       });
     } else {
-      throw new Error('Invalid filter input');
+      throw new Error("Invalid filter input");
     }
 
     const output: THREE.Object3D[] = [];
@@ -106,10 +122,10 @@ export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleMo
       let keep = false;
       for (let condition of this.conditions) {
         keep = flow.compareObject(object, condition);
-        if (keep && this.conditionsOperator === 'or') {
+        if (keep && this.conditionsOperator === "or") {
           break;
         }
-        if (!keep && this.conditionsOperator === 'and') {
+        if (!keep && this.conditionsOperator === "and") {
           break;
         }
       }
@@ -118,7 +134,7 @@ export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleMo
       }
     }
 
-    this.outputType = 'three-objects';
+    this.outputType = "three-objects";
     this.outputValue = output;
   }
 
@@ -126,9 +142,8 @@ export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleMo
     if (Array.isArray(this.outputValue)) {
       this.outputSummary = `${this.outputValue.length} elements`;
     } else {
-      this.outputSummary = '';
+      this.outputSummary = "";
     }
-    await this.update(['outputSummary']);
+    await this.update(["outputSummary"]);
   }
-
 }
