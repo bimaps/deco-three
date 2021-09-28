@@ -4,7 +4,7 @@ import { RuleModel } from './rule.model';
 
 let debug = require('debug')('app:models:three:theme');
 
-class RuleAssociation {
+export class RuleAssociation {
   public ruleId: ObjectId;
   public _rule: RuleModel;
   public styleAssociations: Array<{
