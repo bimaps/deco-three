@@ -22,18 +22,14 @@ export class ThreeStyleModel extends Model {
   @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
-  @type.model({ model: ThreeSiteModel })
-  @io.input
-  @io.toDocument
-  @query.filterable()
-  @validate.required
-  @mongo.index({ type: 'single' })
-  public siteId: ObjectId;
-
   @type.string
   @io.all
   @validate.required
   public name: string;
+
+  @type.string
+  @io.all
+  public description: string;
 
   @type.boolean
   @io.all
