@@ -47,6 +47,8 @@ export class RuleModel extends Model implements ThreeFlow {
   @io.all
   public modulesIds: Array<ObjectId> = [];
 
+  public _lastModule: RuleModuleBaseModel;
+
   public scene: THREE.Scene;
   public modules: Array<RuleModuleBaseModel> = [];
   public outputs: {
@@ -129,13 +131,13 @@ export class RuleModel extends Model implements ThreeFlow {
   }
 
   public fetchInput(varname: string):
-    | {
-        value: RuleModuleIOTypeValue;
-        type: RuleModuleIOType;
-        ref: RuleModuleIORef | RuleModuleIORef[];
-        style: RuleModuleIOStyle | RuleModuleIOStyle[];
-      }
-    | undefined {
+      | {
+    value: RuleModuleIOTypeValue;
+    type: RuleModuleIOType;
+    ref: RuleModuleIORef | RuleModuleIORef[];
+    style: RuleModuleIOStyle | RuleModuleIOStyle[];
+  }
+      | undefined {
     if (varname === 'scene') {
       return {
         type: 'scene',
