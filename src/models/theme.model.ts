@@ -1,10 +1,12 @@
 import { AppModel, io, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 import { ThreeStyleModel } from './style.model';
+import { RuleModel } from './rule.model';
 
 let debug = require('debug')('app:models:three:theme');
 
 class RuleAssociation {
   public ruleId: ObjectId;
+  public _rule: RuleModel;
   public styleAssociations: Array<{
     property: string;
     value: string;
