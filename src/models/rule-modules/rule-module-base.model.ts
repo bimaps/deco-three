@@ -1,4 +1,4 @@
-import { RuleModuleIOStyle, RuleModuleTypeOptions } from '../checkers/checker-interfaces';
+import {RuleModuleIOStyle} from '../checkers/checker-interfaces';
 import {
   modelsByType,
   RuleModel,
@@ -8,8 +8,8 @@ import {
   RuleModuleShape,
   RuleModuleType,
 } from '../checkers/checker-internals';
-import { AppModel, InstanceFromDocumentOptions, io, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
-import { Request, Response } from 'express';
+import {InstanceFromDocumentOptions, model, Model, ObjectId} from '@bim/deco-api';
+import {Request, Response} from 'express';
 
 let debug = require('debug')('app:models:three:checker:module-base');
 
@@ -18,54 +18,18 @@ export const RULE_MODULE_MONGO_COLLECTION_NAME = 'rule_module';
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleBaseModel extends Model implements RuleModuleShape {
-  @type.id
+
   public _id: ObjectId;
-
-  @type.model({ model: AppModel })
-  @io.input
-  @io.toDocument
-  @query.filterable()
-  @validate.required
-  @mongo.index({ type: 'single' })
   public appId: ObjectId;
-
-  @type.select({ options: RuleModuleTypeOptions })
-  @io.toDocument
-  @io.output
-  @validate.required
   public moduleType: RuleModuleType;
-
-  @type.string
-  @io.all
-  @validate.required
   public name: string = '';
-
-  @type.string
-  @io.all
   public description: string = '';
-
-  @type.string
-  @io.all
-  @validate.required
   public inputVarName?: string;
-
-  @type.string
-  @io.all
-  @validate.required
   public outputVarName: string;
-
-  @type.select({ options: RuleModuleTypeOptions, multiple: false })
-  @io.toDocument
-  @io.output
   public outputType: RuleModuleIOType;
-
   public outputValue: RuleModuleIOTypeValue;
   public outputReference: RuleModuleIORef | RuleModuleIORef[];
   public outputStyle: RuleModuleIOStyle | RuleModuleIOStyle[] = 'default';
-
-  @type.string
-  @io.toDocument
-  @io.output
   public outputSummary: string;
 
   protected currentInput: RuleModuleIOTypeValue;
