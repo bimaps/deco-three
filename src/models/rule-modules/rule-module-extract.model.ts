@@ -23,21 +23,18 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
   public _id: ObjectId;
 
   @type.model({ model: AppModel })
-  @io.input
-  @io.toDocument
+  @io.all
   @query.filterable()
   @validate.required
   @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
-  @io.toDocument
-  @io.output
+  @io.all
   public allowedInputTypes: Array<RuleModuleIOType> = ['three-objects', 'scene', 'three-object'];
 
   @type.select({ options: RuleModuleTypeOptions })
-  @io.toDocument
-  @io.output
+  @io.all
   @validate.required
   public moduleType: RuleModuleType = 'extract';
 
@@ -61,15 +58,13 @@ export class RuleModuleExtractModel extends RuleModuleBaseModel implements RuleM
   public outputVarName: string;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
-  @io.toDocument
-  @io.output
+  @io.all
   public outputType: RuleModuleIOType;
 
   public outputValue: RuleModuleIOType;
 
   @type.string
-  @io.toDocument
-  @io.output
+  @io.all
   public outputSummary: string;
 
   @type.select({ options: RuleModuleExtractTypeOptions })

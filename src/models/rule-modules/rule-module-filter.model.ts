@@ -20,21 +20,18 @@ export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleMo
   public _id: ObjectId;
 
   @type.model({ model: AppModel })
-  @io.input
-  @io.toDocument
+  @io.all
   @query.filterable()
   @validate.required
   @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
-  @io.toDocument
-  @io.output
+  @io.all
   public allowedInputTypes: Array<RuleModuleIOType> = ['three-objects', 'scene'];
 
   @type.select({ options: RuleModuleTypeOptions })
-  @io.toDocument
-  @io.output
+  @io.all
   @validate.required
   public moduleType: RuleModuleType = 'filter';
 
@@ -58,15 +55,13 @@ export class RuleModuleFilterModel extends RuleModuleBaseModel implements RuleMo
   public outputVarName: string;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
-  @io.toDocument
-  @io.output
+  @io.all
   public outputType: RuleModuleIOType = 'three-objects';
 
   public outputValue: THREE.Object3D[];
 
   @type.string
-  @io.toDocument
-  @io.output
+  @io.all
   public outputSummary: string;
 
   @type.array({

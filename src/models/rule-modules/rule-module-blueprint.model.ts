@@ -25,13 +25,11 @@ export class RuleModuleBlueprintModel extends RuleModuleBaseModel /*implements C
   public appId: ObjectId;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
-  @io.toDocument
-  @io.output
+  @io.all
   public allowedInputTypes: Array<RuleModuleIOType> = ['numbers', 'strings', 'number', 'string'];
 
   @type.select({ options: RuleModuleTypeOptions })
-  @io.toDocument
-  @io.output
+  @io.all
   @validate.required
   public moduleType: RuleModuleType = 'math'; /* write here the correct module Type */
 
@@ -55,15 +53,13 @@ export class RuleModuleBlueprintModel extends RuleModuleBaseModel /*implements C
   public outputVarName: string;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
-  @io.toDocument
-  @io.output
+  @io.all
   public outputType: RuleModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
   @type.string
-  @io.toDocument
-  @io.output
+  @io.all
   public outputSummary: string;
 
   /* Add here properties for this module */

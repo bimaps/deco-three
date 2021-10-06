@@ -18,8 +18,7 @@ export class RuleModuleDistanceModel extends RuleModuleBaseModel implements Rule
   public _id: ObjectId;
 
   @type.model({ model: AppModel })
-  @io.input
-  @io.toDocument
+  @io.all
   @query.filterable()
   @validate.required
   @mongo.index({ type: 'single' })
@@ -31,8 +30,7 @@ export class RuleModuleDistanceModel extends RuleModuleBaseModel implements Rule
   public allowedInputTypes: Array<RuleModuleIOType> = ['vector3s', 'vector3', 'vector2s', 'vector2'];
 
   @type.select({ options: RuleModuleTypeOptions })
-  @io.toDocument
-  @io.output
+  @io.all
   @validate.required
   public moduleType: RuleModuleType = 'distance';
 
@@ -61,15 +59,13 @@ export class RuleModuleDistanceModel extends RuleModuleBaseModel implements Rule
   public outputVarName: string;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
-  @io.toDocument
-  @io.output
+  @io.all
   public outputType: RuleModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
   @type.string
-  @io.toDocument
-  @io.output
+  @io.all
   public outputSummary: string;
 
   @type.select({ options: ['2d-2d', '3d-3d'] })

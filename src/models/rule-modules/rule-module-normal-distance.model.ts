@@ -20,21 +20,18 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
   public _id: ObjectId;
 
   @type.model({ model: AppModel })
-  @io.input
-  @io.toDocument
+  @io.all
   @query.filterable()
   @validate.required
   @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
-  @io.toDocument
-  @io.output
+  @io.all
   public allowedInputTypes: Array<RuleModuleIOType> = ['triangle', 'triangles', 'line3', 'line3s', 'vector3', 'vector3s'];
 
   @type.select({ options: RuleModuleTypeOptions })
-  @io.toDocument
-  @io.output
+  @io.all
   @validate.required
   public moduleType: RuleModuleType = 'normal-distance';
 
@@ -62,15 +59,13 @@ export class RuleModuleNormalDistanceModel extends RuleModuleBaseModel implement
   public outputVarName: string;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
-  @io.toDocument
-  @io.output
+  @io.all
   public outputType: RuleModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
   @type.string
-  @io.toDocument
-  @io.output
+  @io.all
   public outputSummary: string;
 
   @type.select({ options: ['min', 'max'] })

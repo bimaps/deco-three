@@ -18,21 +18,18 @@ export class RuleModuleProjectionModel extends RuleModuleBaseModel implements Ru
   public _id: ObjectId;
 
   @type.model({ model: AppModel })
-  @io.input
-  @io.toDocument
+  @io.all
   @query.filterable()
   @validate.required
   @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: true })
-  @io.toDocument
-  @io.output
+  @io.all
   public allowedInputTypes: Array<RuleModuleIOType> = ['numbers', 'strings', 'number', 'string'];
 
   @type.select({ options: RuleModuleTypeOptions })
-  @io.toDocument
-  @io.output
+  @io.all
   @validate.required
   public moduleType: RuleModuleType = 'projection';
 
@@ -56,15 +53,13 @@ export class RuleModuleProjectionModel extends RuleModuleBaseModel implements Ru
   public outputVarName: string;
 
   @type.select({ options: RuleModuleIOTypeOptions, multiple: false })
-  @io.toDocument
-  @io.output
+  @io.all
   public outputType: RuleModuleIOType;
 
   public outputValue: string[] | string | number[] | number | boolean[] | boolean;
 
   @type.string
-  @io.toDocument
-  @io.output
+  @io.all
   public outputSummary: string;
 
   /* Add here properties for this module */
