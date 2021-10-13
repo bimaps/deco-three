@@ -13,3 +13,4 @@ export * from './space.model';
 export * from './storey.model';
 export * from './style.model';
 export * from './theme.model';
+export * from './theme-group.model';
