@@ -130,33 +130,15 @@ export class RuleModel extends Model implements ThreeFlow {
     return this.scene;
   }
 
+  /** @deprecated */
   public fetchInput(varname: string):
-      | {
-    value: RuleModuleIOTypeValue;
-    type: RuleModuleIOType;
-    ref: RuleModuleIORef | RuleModuleIORef[];
-    style: RuleModuleIOStyle | RuleModuleIOStyle[];
-  }
-      | undefined {
-    if (varname === 'scene') {
-      return {
-        type: 'scene',
-        value: this.scene,
-        ref: undefined,
-        style: 'default',
-      };
-    }
-    for (const moduleInstance of this.modules) {
-      if (moduleInstance.outputVarName === varname) {
-        return {
-          value: moduleInstance.outputValue,
-          type: moduleInstance.outputType,
-          ref: moduleInstance.outputReference,
-          style: moduleInstance.outputStyle || 'default',
-        };
+    | {
+        value: RuleModuleIOTypeValue;
+        type: RuleModuleIOType;
+        ref: RuleModuleIORef | RuleModuleIORef[];
+        style: RuleModuleIOStyle | RuleModuleIOStyle[];
       }
-    }
-
+    | undefined {
     return undefined;
   }
 
