@@ -38,7 +38,6 @@ export class RuleModuleMathArrayModel extends RuleModuleBaseModel {
   /** @inheritDoc */
   @type.any // TODO Math array selector
   @io.all
-  @validate.required
   public selector?: string;
 
   /** @inheritDoc */
