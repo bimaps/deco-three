@@ -60,18 +60,24 @@ export class ThreeThemeModel extends Model {
   public businessId?: string;
 
   // TODO For now, it is the theme which holds the relationship themeGroup-themes. Store this relationship in themeGroup
+  @type.any
+  @io.all
   public themeGroupId?: ObjectId;
 
   /**
    * Application roles which give access to this theme
    */
+  @type.any
+  @io.all
   public applicationRoleIds?: ObjectId[];
 
-  /**
-   * Read-only properties, to be used by front-end applications
-   */
+  /** Read-only properties, to be used by front-end applications */
+  @io.output
   public _themeGroup?: ThemeGroupModel;
+  @io.output
   public _preApproverGroup?: ThemeGroupModel;
+  @io.output
   public _topicGroup?: ThemeGroupModel;
+  @io.output
   public _applicationRoles?: ApplicationRole[];
 }

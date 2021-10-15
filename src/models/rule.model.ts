@@ -47,20 +47,28 @@ export class RuleModel extends Model implements ThreeFlow {
   @io.all
   public modulesIds: Array<ObjectId> = [];
 
+  @io.output
   public _lastModule?: RuleModuleBaseModel;
 
+  /** Projection of the module ids */
+  @io.output
+  public _modules: Array<RuleModuleBaseModel> = [];
+
   public scene: THREE.Scene;
-  public modules: Array<RuleModuleBaseModel> = [];
+
+  @io.output
   public outputs: {
     name: string;
     outputs: CheckerJsonOutput[];
   }[] = [];
 
+  /** The business the rule is attached to */
   @type.string
   @io.all
   @query.filterable()
   public business: string = '';
 
+  /** The business identifier of the current rule (used by business users) */
   @type.string
   @io.all
   @query.filterable()
