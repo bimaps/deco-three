@@ -2,8 +2,6 @@ import { RuleModuleMathArrayModel } from '../rule-modules/rule-module-math-array
 import { RuleModuleBaseModel } from '../rule-modules/rule-module-base.model';
 
 export * from './checker-interfaces';
-export * from '../rule-modules/rule-module-base.model';
-export * from '../rule.model';
 
 export const modelsByType: {
   [key: string]: typeof RuleModuleBaseModel;
