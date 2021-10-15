@@ -1,15 +1,7 @@
-import {RuleModuleIOStyle} from '../checkers/checker-interfaces';
-import {
-  modelsByType,
-  RuleModel,
-  RuleModuleIORef,
-  RuleModuleIOType,
-  RuleModuleIOTypeValue,
-  RuleModuleShape,
-  RuleModuleType,
-} from '../checkers/checker-internals';
-import {InstanceFromDocumentOptions, model, Model, ObjectId} from '@bim/deco-api';
-import {Request, Response} from 'express';
+import { modelsByType, RuleModuleType } from '../checkers/checker-internals';
+import { InstanceFromDocumentOptions, model, Model, ObjectId } from '@bim/deco-api';
+import { Request, Response } from 'express';
+import { RuleModel } from '../rule.model';
 
 let debug = require('debug')('app:models:three:checker:module-base');
 
@@ -17,44 +9,32 @@ let debug = require('debug')('app:models:three:checker:module-base');
 export const RULE_MODULE_MONGO_COLLECTION_NAME = 'rule_module';
 
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
-export class RuleModuleBaseModel extends Model implements RuleModuleShape {
-
-  public _id: ObjectId;
+export class RuleModuleBaseModel extends Model {
+  /** The application id */
   public appId: ObjectId;
+  /** The model discriminator (see mongoose inheritance) for inheritance handling */
   public moduleType: RuleModuleType;
+  /** The name of the module instance */
   public name: string = '';
+  /** The description of the module instance */
   public description: string = '';
-  public inputVarName?: string;
-  public outputVarName: string;
-  public outputType: RuleModuleIOType;
-  public outputValue: RuleModuleIOTypeValue;
-  public outputReference: RuleModuleIORef | RuleModuleIORef[];
-  public outputStyle: RuleModuleIOStyle | RuleModuleIOStyle[] = 'default';
+  /** The selector determining on which element the module is being executed */
+  public selector?: any; // TODO Math array selector
+  /** The output namespace the results will be plugged to */
+  public prefix: string;
+  /** Status */
   public outputSummary: string;
-
-  protected currentInput: RuleModuleIOTypeValue;
-  protected currentInputType: RuleModuleIOType;
-  protected currentInputRef: RuleModuleIORef | RuleModuleIORef[];
-
+  /**
+   * Processes the current module instance in the context of the specified rule
+   * @param flow The rule
+   */
   public async process(flow: RuleModel): Promise<void> {
-    if (!this.inputVarName) {
-      throw new Error('Missing inputVarName');
-    }
-    const inputValueType = flow.fetchInput(this.inputVarName);
-    if (!inputValueType) {
-      throw new Error('Input requested not found');
-    }
-    // @ts-ignore TODO Property 'allowedInputTypes' does not exist on type 'RuleModuleBaseModel'.
-    if (!this.allowedInputTypes?.includes(inputValueType.type)) {
-      throw new Error('Invalid input type');
-    }
-    this.currentInput = inputValueType.value;
-    this.currentInputType = inputValueType.type;
-    this.currentInputRef = inputValueType.ref;
+    // TODO
   }
 
-  public async summary(): Promise<void> {
-    this.outputSummary = '';
+  /** Is called when a status is requested */
+  public async summary(): Promise<string> {
+    return Promise.resolve('');
   }
 
   static async instanceFromDocument<T extends typeof Model>(

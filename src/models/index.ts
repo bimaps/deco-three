@@ -14,3 +14,5 @@ export * from './storey.model';
 export * from './style.model';
 export * from './theme.model';
 export * from './theme-group.model';
+export * from './rule-modules';
+export * from './rule.model';

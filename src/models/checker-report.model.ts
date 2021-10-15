@@ -1,6 +1,6 @@
 import { ThreeSiteModel } from './site.model';
 import { AppModel, io, Metadata, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
-import { RuleModel } from './checkers/checker-internals';
+import { RuleModel } from './rule.model';
 
 let debug = require('debug')('app:models:three:checker-config');
 

@@ -1,9 +1,10 @@
 import { PdfChecker } from '../helpers/pdf.checker';
 import { ThreeCheckerReportModel } from './../models/checker-report.model';
-import { modelsByType, ReportOutput, RuleModel, RuleModuleBaseModel, RuleOutput } from './../models/checkers/checker-internals';
+import { modelsByType, ReportOutput, RuleOutput } from './../models/checkers/checker-internals';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { NextFunction, Request, Response, Router } from 'express';
 import { AppMiddleware, CacheLastModified, ControllerMiddleware, Model, ObjectId, PolicyController, PolicyFactory } from '@bim/deco-api';
+import { RuleModel, RuleModuleBaseModel } from '../models';
 
 let debug = require('debug')('app:controller:three:geometry');
 
@@ -318,7 +319,7 @@ function runFlow() {
         const flowOutput: RuleOutput = {
           name: flow.name,
           description: flow.description,
-          summaries: flow.modules.map((m) => m.outputSummary),
+          summaries: flow._modules.map((m) => m.outputSummary),
           outputs: flow.getOutputs(),
         };
         res.locals.output = flowOutput;
@@ -371,7 +372,7 @@ function runReport() {
           reportOutput.flows.push({
             name: flow.name,
             description: flow.description,
-            summaries: flow.modules.map((m) => m.outputSummary),
+            summaries: flow._modules.map((m) => m.outputSummary),
             outputs: flow.getOutputs(),
           });
         }

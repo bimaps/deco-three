@@ -1,7 +1,8 @@
-import { ReportOutput, RuleModel } from './../../models/checkers/checker-internals';
+import { ReportOutput } from './../../models/checkers/checker-internals';
 import { ThreeCheckerReportModel } from '../../models/checker-report.model';
 import { PdfChecker } from '../../helpers/pdf.checker';
 import { Response } from 'express';
+import { RuleModel } from '../../models';
 
 let debug = require('debug')('app:actions:three:report');
 
@@ -35,7 +36,7 @@ export class ThreeReportAction {
       reportOutput.flows.push({
         name: flow.name,
         description: flow.description,
-        summaries: flow.modules.map((m) => m.outputSummary),
+        summaries: flow._modules.map((m) => m.outputSummary),
         outputs: flow.outputs,
       });
     }

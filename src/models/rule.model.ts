@@ -5,7 +5,6 @@ import { ThreeGeometryModel } from './geometry.model';
 import { ThreeMaterialModel } from './material.model';
 import { ThreeObjectModel } from './object.model';
 import {
-  RuleModuleBaseModel,
   RuleModuleIORef,
   RuleModuleIOType,
   RuleModuleIOTypeValue,
@@ -18,6 +17,7 @@ import { AppModel, io, model, Model, mongo, ObjectId, Parser, query, Query, type
 import * as THREE from 'three';
 import moment from 'moment';
 import resolvePath from 'object-resolve-path';
+import { RuleModuleBaseModel } from './rule-modules';
 
 let debug = require('debug')('app:models:three:checkers:flow');
 
@@ -47,20 +47,28 @@ export class RuleModel extends Model implements ThreeFlow {
   @io.all
   public modulesIds: Array<ObjectId> = [];
 
+  @io.output
   public _lastModule?: RuleModuleBaseModel;
 
+  /** Projection of the module ids */
+  @io.output
+  public _modules: Array<RuleModuleBaseModel> = [];
+
   public scene: THREE.Scene;
-  public modules: Array<RuleModuleBaseModel> = [];
+
+  @io.output
   public outputs: {
     name: string;
     outputs: CheckerJsonOutput[];
   }[] = [];
 
+  /** The business the rule is attached to */
   @type.string
   @io.all
   @query.filterable()
   public business: string = '';
 
+  /** The business identifier of the current rule (used by business users) */
   @type.string
   @io.all
   @query.filterable()
@@ -130,33 +138,15 @@ export class RuleModel extends Model implements ThreeFlow {
     return this.scene;
   }
 
+  /** @deprecated */
   public fetchInput(varname: string):
-      | {
-    value: RuleModuleIOTypeValue;
-    type: RuleModuleIOType;
-    ref: RuleModuleIORef | RuleModuleIORef[];
-    style: RuleModuleIOStyle | RuleModuleIOStyle[];
-  }
-      | undefined {
-    if (varname === 'scene') {
-      return {
-        type: 'scene',
-        value: this.scene,
-        ref: undefined,
-        style: 'default',
-      };
-    }
-    for (const moduleInstance of this.modules) {
-      if (moduleInstance.outputVarName === varname) {
-        return {
-          value: moduleInstance.outputValue,
-          type: moduleInstance.outputType,
-          ref: moduleInstance.outputReference,
-          style: moduleInstance.outputStyle || 'default',
-        };
+    | {
+        value: RuleModuleIOTypeValue;
+        type: RuleModuleIOType;
+        ref: RuleModuleIORef | RuleModuleIORef[];
+        style: RuleModuleIOStyle | RuleModuleIOStyle[];
       }
-    }
-
+    | undefined {
     return undefined;
   }
 
