@@ -1,7 +1,7 @@
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { ThreeObjectModel } from './../models/object.model';
 import { Router } from 'express';
-import { ControllerMiddleware, AppMiddleware } from 'deco-api';
+import { ControllerMiddleware, AppMiddleware, MultipartMiddleware } from 'deco-api';
 let debug = require('debug')('app:controller:three:object');
 
 const router: Router = Router();
@@ -29,6 +29,7 @@ router.post(
   ControllerMiddleware.postRoute(),
   AppMiddleware.fetchWithPublicKey,
   mdController.registerPolicyMountingPoint(['three.object.write', 'three.object.post']),
+  MultipartMiddleware.parseDeco(<any>ThreeObjectModel.deco),
   mdController.post()
 );
 
@@ -36,6 +37,7 @@ router.put(
   ControllerMiddleware.putRoute(),
   AppMiddleware.fetchWithPublicKey,
   mdController.registerPolicyMountingPoint(['three.object.write', 'three.object.put']),
+  MultipartMiddleware.parseDeco(<any>ThreeObjectModel.deco),
   mdController.put()
 );
 
