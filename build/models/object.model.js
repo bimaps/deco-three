@@ -14,6 +14,10 @@ const site_model_1 = require("./site.model");
 const deco_api_1 = require("deco-api");
 let debug = require('debug')('app:models:three:object');
 let ThreeObjectModel = class ThreeObjectModel extends deco_api_1.Model {
+    constructor() {
+        super(...arguments);
+        this.documents = [];
+    }
 };
 __decorate([
     deco_api_1.type.id
@@ -142,6 +146,10 @@ __decorate([
     deco_api_1.io.output,
     deco_api_1.query.filterable()
 ], ThreeObjectModel.prototype, "_max", void 0);
+__decorate([
+    deco_api_1.type.files({ accepted: 'image/*,application/pdf' }),
+    deco_api_1.io.all
+], ThreeObjectModel.prototype, "documents", void 0);
 ThreeObjectModel = __decorate([
     deco_api_1.mongo.collectionIndex({ type: 'text', properties: ['uuid', 'material'] }),
     deco_api_1.model('three_object')

@@ -76,12 +76,12 @@ export class ThreeObjectModel extends Model {
   @type.any()
   @io.all
   @query.filterable({type: 'text'})
-  public material: string | Array<string>;
+  public material: string | Array<string>;
 
   @type.any()
   @io.all
   @query.filterable({type: 'text'})
-  public geometry: string | Array<string>;
+  public geometry: string | Array<string>;
 
   @type.integer
   @io.all
@@ -136,5 +136,10 @@ export class ThreeObjectModel extends Model {
   @io.output
   @query.filterable()
   public _max: THREE.Vector3;
+
+  @type.files({accepted: 'image/*,application/pdf'})
+  @io.all
+  public documents: Array<any> = [];
+
   
 }

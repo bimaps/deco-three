@@ -26,5 +26,6 @@ export declare class ThreeObjectModel extends Model {
     visible: boolean;
     _min: THREE.Vector3;
     _max: THREE.Vector3;
+    documents: Array<any>;
 }
 //# sourceMappingURL=object.model.d.ts.map
