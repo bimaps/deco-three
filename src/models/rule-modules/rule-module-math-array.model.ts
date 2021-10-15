@@ -1,10 +1,11 @@
 import { AppModel, io, model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleBaseModel } from './rule-module-base.model';
-
-import { RuleModuleType, RuleModuleTypeOptions } from '../checkers';
+import { RuleModuleType } from '../checkers';
 import { RuleModel } from '../rule.model';
+import { ruleModule } from './rule-module.decorator';
 
 /** Handles Math.js operation on IFC data */
+@ruleModule('math-array')
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
 export class RuleModuleMathArrayModel extends RuleModuleBaseModel {
   /** @inheritDoc */
@@ -20,7 +21,7 @@ export class RuleModuleMathArrayModel extends RuleModuleBaseModel {
   public appId: ObjectId;
 
   /** @inheritDoc */
-  @type.select({ options: RuleModuleTypeOptions })
+  @type.string
   @io.all
   @validate.required
   public moduleType: RuleModuleType = 'math-array';
@@ -51,6 +52,10 @@ export class RuleModuleMathArrayModel extends RuleModuleBaseModel {
   @type.string
   @io.all
   public outputSummary: string;
+
+  public static get key() {
+    return 'math-array';
+  }
 
   /** @inheritDoc */
   public async process(flow: RuleModel): Promise<void> {
