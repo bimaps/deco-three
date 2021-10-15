@@ -1,4 +1,4 @@
-import { modelsByType, RuleModel, RuleModuleIORef, RuleModuleIOType, RuleModuleIOTypeValue, RuleModuleType } from '../checkers/checker-internals';
+import { modelsByType, RuleModel, RuleModuleType } from '../checkers/checker-internals';
 import { InstanceFromDocumentOptions, model, Model, ObjectId } from '@bim/deco-api';
 import { Request, Response } from 'express';
 
