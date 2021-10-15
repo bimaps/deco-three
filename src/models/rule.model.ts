@@ -5,7 +5,6 @@ import { ThreeGeometryModel } from './geometry.model';
 import { ThreeMaterialModel } from './material.model';
 import { ThreeObjectModel } from './object.model';
 import {
-  RuleModuleBaseModel,
   RuleModuleIORef,
   RuleModuleIOType,
   RuleModuleIOTypeValue,
@@ -18,6 +17,7 @@ import { AppModel, io, model, Model, mongo, ObjectId, Parser, query, Query, type
 import * as THREE from 'three';
 import moment from 'moment';
 import resolvePath from 'object-resolve-path';
+import { RuleModuleBaseModel } from './rule-modules';
 
 let debug = require('debug')('app:models:three:checkers:flow');
 

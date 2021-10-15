@@ -1,6 +1,7 @@
-import { modelsByType, RuleModel, RuleModuleType } from '../checkers/checker-internals';
+import { modelsByType, RuleModuleType } from '../checkers/checker-internals';
 import { InstanceFromDocumentOptions, model, Model, ObjectId } from '@bim/deco-api';
 import { Request, Response } from 'express';
+import { RuleModel } from '../rule.model';
 
 let debug = require('debug')('app:models:three:checker:module-base');
 

@@ -1,5 +1,4 @@
-import { RuleModuleMathArrayModel } from '../rule-modules/rule-module-math-array.model';
-import { RuleModuleBaseModel } from '../rule-modules/rule-module-base.model';
+import { RuleModuleBaseModel, RuleModuleMathArrayModel } from '../rule-modules';
 
 export * from './checker-interfaces';
 

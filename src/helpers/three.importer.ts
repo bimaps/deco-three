@@ -1,4 +1,3 @@
-import { RuleModel, RuleModuleBaseModel } from './../models/checkers/checker-internals';
 import { ThreeCheckerReportModel } from './../models/checker-report.model';
 import { ThreeStyleModel } from './../models/style.model';
 import { ThreeThemeModel } from './../models/theme.model';
@@ -17,6 +16,7 @@ import { MTLLoader, OBJLoader } from 'three-obj-mtl-loader';
 import moment from 'moment';
 import { ThreeObjectModel } from '../models/object.model';
 import fs from 'fs';
+import { RuleModel, RuleModuleBaseModel } from '../models';
 
 let debug = require('debug')('app:helpers:three:importer');
 

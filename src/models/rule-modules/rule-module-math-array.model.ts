@@ -1,7 +1,8 @@
 import { AppModel, io, model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleBaseModel } from './rule-module-base.model';
 
-import { RuleModel, RuleModuleType, RuleModuleTypeOptions } from '../checkers';
+import { RuleModuleType, RuleModuleTypeOptions } from '../checkers';
+import { RuleModel } from '../rule.model';
 
 /** Handles Math.js operation on IFC data */
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)

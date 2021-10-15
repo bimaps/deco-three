@@ -1,9 +1,10 @@
 import { PdfChecker } from '../helpers/pdf.checker';
 import { ThreeCheckerReportModel } from './../models/checker-report.model';
-import { modelsByType, ReportOutput, RuleModel, RuleModuleBaseModel, RuleOutput } from './../models/checkers/checker-internals';
+import { modelsByType, ReportOutput, RuleOutput } from './../models/checkers/checker-internals';
 import { ThreeCoreControllerMiddleware } from './three.core.controller';
 import { NextFunction, Request, Response, Router } from 'express';
 import { AppMiddleware, CacheLastModified, ControllerMiddleware, Model, ObjectId, PolicyController, PolicyFactory } from '@bim/deco-api';
+import { RuleModel, RuleModuleBaseModel } from '../models';
 
 let debug = require('debug')('app:controller:three:geometry');
 
