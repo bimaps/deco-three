@@ -147,7 +147,7 @@ __decorate([
     deco_api_1.query.filterable()
 ], ThreeObjectModel.prototype, "_max", void 0);
 __decorate([
-    deco_api_1.type.files({ accepted: 'image/*,application/pdf' }),
+    deco_api_1.type.files({ accepted: ['image/*', 'application/pdf'] }),
     deco_api_1.io.all
 ], ThreeObjectModel.prototype, "documents", void 0);
 ThreeObjectModel = __decorate([

@@ -137,7 +137,7 @@ export class ThreeObjectModel extends Model {
   @query.filterable()
   public _max: THREE.Vector3;
 
-  @type.files({accepted: 'image/*,application/pdf'})
+  @type.files({accepted: ['image/*', 'application/pdf']})
   @io.all
   public documents: Array<any> = [];
 
