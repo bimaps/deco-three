@@ -47,15 +47,18 @@ export class RuleModel extends Model implements ThreeFlow {
   @io.all
   public modulesIds: Array<ObjectId> = [];
 
+  @type.any
   @io.output
   public _lastModule?: RuleModuleBaseModel;
 
   /** Projection of the module ids */
+  @type.any
   @io.output
   public _modules: Array<RuleModuleBaseModel> = [];
 
   public scene: THREE.Scene;
 
+  @type.any
   @io.output
   public outputs: {
     name: string;

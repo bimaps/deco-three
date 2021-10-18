@@ -73,12 +73,16 @@ export class ThreeThemeModel extends Model {
   public applicationRoleIds?: ObjectId[];
 
   /** Read-only properties, to be used by front-end applications */
+  @type.any
   @io.output
   public _themeGroup?: ThemeGroupModel;
+  @type.any
   @io.output
   public _preApproverGroup?: ThemeGroupModel;
+  @type.any
   @io.output
   public _topicGroup?: ThemeGroupModel;
+  @type.any
   @io.output
   public _applicationRoles?: ApplicationRole[];
 }
