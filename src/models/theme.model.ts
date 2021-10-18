@@ -15,7 +15,8 @@ export class RuleAssociation {
   public styleAssociations: Array<{
     property: string;
     value: string;
-    style: ThreeStyleModel;
+    styleId: ObjectId;
+    _style: ThreeStyleModel;
   }>;
 }
 
