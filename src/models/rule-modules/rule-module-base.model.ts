@@ -2,6 +2,7 @@ import { modelsByType, RuleModuleType } from '../checkers/checker-internals';
 import { InstanceFromDocumentOptions, model, Model, ObjectId } from '@bim/deco-api';
 import { Request, Response } from 'express';
 import { RuleModel } from '../rule.model';
+import { RuleModuleSelector } from './rule-module-selector';
 
 let debug = require('debug')('app:models:three:checker:module-base');
 
@@ -18,8 +19,11 @@ export class RuleModuleBaseModel extends Model {
   public name: string = '';
   /** The description of the module instance */
   public description: string = '';
-  /** The selector determining on which element the module is being executed */
-  public selector?: any; // TODO Math array selector
+  /**
+   * The selector determining on which element the module is being executed.
+   * (Undefined means the module should be process on the whole input data)
+   * */
+  public selector?: RuleModuleSelector;
   /** The output namespace the results will be plugged to */
   public prefix: string;
   /** Status */
