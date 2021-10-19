@@ -5,6 +5,16 @@ import { RuleModel } from '../rule.model';
 import { ruleModule } from './rule-module.decorator';
 import { RuleModuleSelector } from './rule-module-selector';
 
+class ColumnFormula {
+  @io.all
+  @type.string
+  public column: string;
+
+  @io.all
+  @type.string
+  public formula: string;
+}
+
 /** Handles Math.js operation on IFC data */
 @ruleModule('math-array')
 @model(RULE_MODULE_MONGO_COLLECTION_NAME)
@@ -53,6 +63,22 @@ export class RuleModuleMathArrayModel extends RuleModuleBaseModel {
   @type.string
   @io.all
   public outputSummary: string;
+
+  @type.model({ model: RuleModuleMathArrayModel })
+  @io.all
+  public parentModuleId: ObjectId;
+
+  @type.object
+  @io.all
+  public _parentModule: RuleModuleMathArrayModel;
+
+  @type.array
+  @io.all
+  public columnFormulas: ColumnFormula[];
+
+  public static get key() {
+    return 'math-array';
+  }
 
   /** @inheritDoc */
   public async process(flow: RuleModel): Promise<void> {
