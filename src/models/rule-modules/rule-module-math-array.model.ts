@@ -64,6 +64,10 @@ export class RuleModuleMathArrayModel extends RuleModuleBaseModel {
   @io.all
   public outputSummary: string;
 
+  @type.boolean
+  @io.all
+  public childModule: boolean;
+
   @type.model({ model: RuleModuleMathArrayModel })
   @io.all
   public parentModuleId: ObjectId;
