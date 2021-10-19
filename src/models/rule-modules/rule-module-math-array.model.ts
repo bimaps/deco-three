@@ -76,10 +76,6 @@ export class RuleModuleMathArrayModel extends RuleModuleBaseModel {
   @io.all
   public columnFormulas: ColumnFormula[];
 
-  public static get key() {
-    return 'math-array';
-  }
-
   /** @inheritDoc */
   public async process(flow: RuleModel): Promise<void> {
     super.process(flow);
