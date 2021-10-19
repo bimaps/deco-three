@@ -3,6 +3,7 @@ import { RULE_MODULE_MONGO_COLLECTION_NAME, RuleModuleBaseModel } from './rule-m
 import { RuleModuleType } from '../checkers';
 import { RuleModel } from '../rule.model';
 import { ruleModule } from './rule-module.decorator';
+import { RuleModuleSelector } from './rule-module-selector';
 
 /** Handles Math.js operation on IFC data */
 @ruleModule('math-array')
@@ -38,9 +39,9 @@ export class RuleModuleMathArrayModel extends RuleModuleBaseModel {
   public description: string = '';
 
   /** @inheritDoc */
-  @type.any // TODO Math array selector
+  @type.any
   @io.all
-  public selector?: string;
+  public selector?: RuleModuleSelector;
 
   /** @inheritDoc */
   @type.string
