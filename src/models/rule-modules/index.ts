@@ -2,5 +2,5 @@
 import './rule-module-math-array.model';
 
 // Barreling
-export { RuleModuleBaseModel } from './rule-module-base.model';
-export { RuleModuleMathArrayModel } from './rule-module-math-array.model';
+export * from './rule-module-base.model';
+export * from './rule-module-math-array.model';

@@ -5,14 +5,9 @@ import { RuleModel } from '../rule.model';
 import { ruleModule } from './rule-module.decorator';
 import { RuleModuleSelector } from './rule-module-selector';
 
-class ColumnFormula {
-  @io.all
-  @type.string
-  public column: string;
-
-  @io.all
-  @type.string
-  public formula: string;
+export interface ColumnFormula {
+  column: string;
+  formula: string;
 }
 
 /** Handles Math.js operation on IFC data */
@@ -68,13 +63,13 @@ export class RuleModuleMathArrayModel extends RuleModuleBaseModel {
   @io.all
   public childModule: boolean;
 
-  @type.model({ model: RuleModuleMathArrayModel })
+  @type.models({ model: RuleModuleMathArrayModel })
   @io.all
-  public parentModuleId: ObjectId;
+  public parentModuleIds: ObjectId[];
 
-  @type.object
-  @io.all
-  public _parentModule: RuleModuleMathArrayModel;
+  @type.array({ type: 'any' })
+  @io.output
+  public _parentModules: RuleModuleMathArrayModel[];
 
   @type.array
   @io.all
