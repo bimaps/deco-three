@@ -1,6 +1,6 @@
 {
   "name": "@bim/deco-three",
-  "version": "3.0.0-7",
+  "version": "3.0.0",
   "description": "Three module for deco-api project.",
   "main": "build/index.js",
   "scripts": {
