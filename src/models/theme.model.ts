@@ -9,7 +9,7 @@ let debug = require('debug')('app:models:three:theme');
 /**
  * Rule associations hold the link between a theme and its associated rules and styles.
  */
-interface RuleAssociation {
+export interface RuleAssociation {
   ruleId: ObjectId;
   _rule: RuleModel;
   styleAssociations: Array<{
