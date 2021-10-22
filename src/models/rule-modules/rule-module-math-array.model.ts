@@ -7,7 +7,9 @@ import { RuleModuleSelector } from './rule-module-selector';
 
 export interface ColumnFormula {
   column: string;
+  isProperty: boolean;
   formula: string;
+  property: string;
 }
 
 /** Handles Math.js operation on IFC data */
