@@ -31,6 +31,10 @@ export class ThreeStyleModel extends Model {
   @io.all
   public description: string;
 
+  @type.select({ options: ['visibility', 'colour', 'label', 'icon', 'geometry'] })
+  @io.all
+  public type: string;
+
   @type.boolean
   @io.all
   public display?: boolean;
