@@ -43,6 +43,30 @@ export class RuleModel extends Model implements ThreeFlow {
   @io.all
   public description: string = '';
 
+  /** The rule related pieces of information */
+  @type.object
+  @io.all
+  public ruleInfo: {
+    /** Public policy / Office */
+    office?: string;
+    /** Thematic of the law  */
+    theme?: string;
+    /** Whether the law is public or internal */
+    isPublic?: boolean;
+    /** The law */
+    relatedLaw?: string;
+    /** The form the rule is linked to */
+    form?: string;
+    /** for articles */
+    articles?: string;
+    /** The origin of the form (Cantonal/Federal) */
+    origin?: ObjectId;
+    /** error/warning/info level */
+    type?: ObjectId;
+    /** Contact data */
+    contact?: string;
+  } = {};
+
   @type.models({ model: RuleModuleBaseModel })
   @io.all
   public modulesIds: Array<ObjectId> = [];
