@@ -1,4 +1,3 @@
-import { ThreeSiteModel } from './site.model';
 import { AppModel, io, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 
 let debug = require('debug')('app:models:three:style');
@@ -34,6 +33,10 @@ export class ThreeStyleModel extends Model {
   @type.select({ options: ['visibility', 'colour', 'label', 'icon', 'geometry'] })
   @io.all
   public type: string;
+
+  @type.string
+  @io.output
+  public _type: string;
 
   @type.boolean
   @io.all
