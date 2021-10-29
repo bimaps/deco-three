@@ -5,12 +5,11 @@ import { ThreeStoreyModel } from './../models/storey.model';
 import { ThreeBuildingModel } from './../models/building.model';
 import { IfcHelper, ThreeImporterHelper, ThreeJsonData } from './../helpers';
 import { ThreeSiteModel } from './../models/site.model';
-import { NextFunction, Request, Response } from 'express';
-import { ActionsService, Operation, PolicyController, Query } from '@bim/deco-api';
+import { Request, Response, NextFunction } from 'express';
+import { PolicyController, Query, Operation, ActionsService } from '@bim/deco-api';
 import resolvePath from 'object-resolve-path';
 import { ThreeReportAction } from './actions/three.report.action';
 import { ThreeSendReportAction } from './actions/three.send-report.action';
-
 let debug = require('debug')('app:models:three:controller:core');
 
 export class ThreeCoreControllerMiddleware extends PolicyController {
@@ -52,10 +51,7 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
     let importer = new ThreeImporterHelper();
     let saveLights = req.query.saveLights ? true : false;
     importer
-      .start(res.locals.element, json, {
-        importId: importId,
-        saveLights: saveLights,
-      })
+      .start(res.locals.element, json, { importId: importId, saveLights: saveLights })
       .then((response) => {
         res.send(response);
       })
@@ -101,10 +97,7 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
             let json: ThreeJsonData = result.toJSON();
             let importId: string | undefined = typeof req.query.importId === 'string' ? req.query.importId : undefined;
             let saveLights = req.query.saveLights ? true : false;
-            return importer.start(site, json, {
-              importId: importId,
-              saveLights: saveLights,
-            });
+            return importer.start(site, json, { importId: importId, saveLights: saveLights });
           } else {
             debug('Unexpected result');
             debug('result', result);
@@ -114,6 +107,81 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
         .then(() => {
           // now we can add the metadata from the IFC
           return IfcHelper.parseIfcMetadata(_ifcPath, site, importer.importId);
+        })
+        .then(() => {
+          Operation.completeCurrentOperation(res, 'completed', 'Successfully imported').catch((error) => {
+            debug('Error while setting the operation completed');
+            debug(' - Error: ', error.message);
+          });
+          if (req.query.reportId && req.query.email) {
+            ActionsService.runActions(res, [[ThreeReportAction, ThreeSendReportAction, ThreeDeleteSiteAction]], {
+              siteId: site._id,
+              reportId: req.query.reportId,
+              ifcFilename: req.file.originalname,
+              email: req.query.email,
+            });
+          }
+        })
+        .catch((error) => {
+          Operation.completeCurrentOperation(res, 'errored', error.message).catch((error) => {
+            debug('Error while setting the operation completed');
+            debug(' - Error: ', error.message);
+          });
+        });
+    } else {
+      return next(new Error('IFC file not found'));
+    }
+  }
+
+  public importIFCWithMicroService(req: Request, res: Response, next: NextFunction) {
+    if (!res.locals.element) return next(new Error('Import IFC requires to first fetch a site in res.locals.element'));
+    let rightInstance = res.locals.element instanceof ThreeSiteModel;
+    if (!rightInstance) return next(new Error('res.locals.element is not a ThreeSiteModel instance'));
+    if (!res.locals.app) return next(new Error('Missing res.locals.app'));
+
+    const site: ThreeSiteModel = res.locals.element;
+
+    let _ifcPath: string;
+    let _jsonPath: string | undefined;
+    const importer = new ThreeImporterHelper();
+
+    if (req.file && req.file.path) {
+      next(); // pass to the next middleware => will send the currentOperation back to client
+
+      IfcHelper.convertWithMicroservice(req.file.path, ['obj', 'json'])
+        .then(({ ifcPath, objPath, mtlPath, jsonPath }) => {
+          _ifcPath = ifcPath;
+          _jsonPath = jsonPath;
+          return importer
+            .loadMTL(mtlPath as string)
+            .then(() => {
+              return importer.loadOBJ(objPath as string);
+            })
+            .then((obj) => {
+              return importer.rotate90X(obj);
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+          if (error && error.message) throw error;
+          else throw new Error('Unexpected error while converting ifc to obj');
+        })
+        .then((result) => {
+          if (!result) throw new Error('No result when converting and loading IFC in obj/mtl');
+          if (typeof result !== 'boolean' && result.type) {
+            let json: ThreeJsonData = result.toJSON();
+            let importId: string | undefined = typeof req.query.importId === 'string' ? req.query.importId : undefined;
+            let saveLights = req.query.saveLights ? true : false;
+            return importer.start(site, json, { importId: importId, saveLights: saveLights });
+          } else {
+            debug('Unexpected result');
+            debug('result', result);
+            throw new Error('Unexpected result from ifcConvert');
+          }
+        })
+        .then(() => {
+          // now we can add the metadata from the IFC
+          return IfcHelper.parseIfcMetadata(_jsonPath as string, site, importer.importId);
         })
         .then(() => {
           Operation.completeCurrentOperation(res, 'completed', 'Successfully imported').catch((error) => {
@@ -194,18 +262,8 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
       new Promise(async (resolve, reject) => {
         try {
           const buildings = await ThreeBuildingModel.getAll(new Query({ siteId: site._id }));
-          const storeys = await ThreeStoreyModel.getAll(
-            new Query({
-              siteId: site._id,
-              buildingId: { $in: buildings.map((i) => i._id) },
-            }),
-          );
-          const spaces = await ThreeSpaceModel.getAll(
-            new Query({
-              siteId: site._id,
-              buildingId: { $in: buildings.map((i) => i._id) },
-            }),
-          );
+          const storeys = await ThreeStoreyModel.getAll(new Query({ siteId: site._id, buildingId: { $in: buildings.map((i) => i._id) } }));
+          const spaces = await ThreeSpaceModel.getAll(new Query({ siteId: site._id, buildingId: { $in: buildings.map((i) => i._id) } }));
           const output = await site.output();
           const buildingsOutput = await ThreeBuildingModel.outputList(buildings);
           const storeysOutput = await ThreeStoreyModel.outputList(storeys);
@@ -236,18 +294,8 @@ export class ThreeCoreControllerMiddleware extends PolicyController {
         try {
           const objects = await ThreeObjectModel.getAll(new Query({ siteId: site._id }));
           const buildings = await ThreeBuildingModel.getAll(new Query({ siteId: site._id }));
-          const storeys = await ThreeStoreyModel.getAll(
-            new Query({
-              siteId: site._id,
-              buildingId: { $in: buildings.map((i) => i._id) },
-            }),
-          );
-          const spaces = await ThreeSpaceModel.getAll(
-            new Query({
-              siteId: site._id,
-              buildingId: { $in: buildings.map((i) => i._id) },
-            }),
-          );
+          const storeys = await ThreeStoreyModel.getAll(new Query({ siteId: site._id, buildingId: { $in: buildings.map((i) => i._id) } }));
+          const spaces = await ThreeSpaceModel.getAll(new Query({ siteId: site._id, buildingId: { $in: buildings.map((i) => i._id) } }));
 
           const allObjects: Array<any> = (objects as Array<any>)
             .concat(...buildings)
