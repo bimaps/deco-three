@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "tsc": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -30,8 +30,14 @@
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
+    "@bim/deco-api": "^1.2.2",
     "@types/form-data": "^2.5.0",
+    "@types/jest": "^27.0.2",
     "@types/node-fetch": "^2.5.12",
+    "jest": "^27.3.1",
+    "mongodb-memory-server": "^6.9.6",
+    "prettier": "^2.4.1",
+    "ts-jest": "^27.0.7",
     "typedoc": "^0.20.34",
     "typescript": "^3.9.0"
   },
@@ -40,5 +46,19 @@
     "ifc2json-wrapper": "^1.0.0",
     "three": "^0.110.0",
     "three-obj-mtl-loader": "^1.0.3"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(t|j)sx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }
