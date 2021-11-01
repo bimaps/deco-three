@@ -30,7 +30,6 @@
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "@bim/deco-api": "^1.2.2",
     "@types/form-data": "^2.5.0",
     "@types/jest": "^27.0.2",
     "@types/node-fetch": "^2.5.12",
