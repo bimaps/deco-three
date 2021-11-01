@@ -1,28 +1,28 @@
 import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, AppModel, mongo } from 'deco-api';
+import { AppModel, io, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
 import * as THREE from 'three';
+
 let debug = require('debug')('app:models:three:geometry');
 
 @model('three_geometry')
 export class ThreeGeometryModel extends Model {
-
   @type.id
   public _id: ObjectId;
 
-  @type.model({model: AppModel})
+  @type.model({ model: AppModel })
   @io.input
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
 
-  @type.model({model: ThreeSiteModel})
+  @type.model({ model: ThreeSiteModel })
   @io.output
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public siteId: ObjectId;
 
   @type.string
@@ -43,21 +43,25 @@ export class ThreeGeometryModel extends Model {
   @io.all
   public type: string;
 
-  @type.array({type: 'object', options: {
-    keys: {
-      x: {type: 'float', required: true},
-      y: {type: 'float', required: true},
-      z: {type: 'float', required: true}
-    }
-  }, allowOtherKeys: true})
+  @type.array({
+    type: 'object',
+    options: {
+      keys: {
+        x: { type: 'float', required: true },
+        y: { type: 'float', required: true },
+        z: { type: 'float', required: true },
+      },
+    },
+    allowOtherKeys: true,
+  })
   @io.all
   public vertices: Array<THREE.Vector3>;
 
-  @type.array({type: 'any'})
+  @type.array({ type: 'any' })
   @io.all
   public colors: Array<any>;
 
-  @type.array({type: 'any'})
+  @type.array({ type: 'any' })
   @io.all
   public faces: Array<THREE.Face3>;
 
@@ -84,7 +88,7 @@ export class ThreeGeometryModel extends Model {
   @type.any
   @io.all
   public lineDistances: any;
-  
+
   @type.any
   @io.all
   public boundingBox: THREE.Box3;
@@ -99,32 +103,32 @@ export class ThreeGeometryModel extends Model {
 
   @type.any
   @io.all
-	public attributes: {
-		[name: string]: THREE.BufferAttribute | THREE.InterleavedBufferAttribute;
+  public attributes: {
+    [name: string]: THREE.BufferAttribute | THREE.InterleavedBufferAttribute;
   };
-  
+
   @type.any
   @io.all
   public morphAttributes: {
-		[name: string]: ( THREE.BufferAttribute | THREE.InterleavedBufferAttribute )[];
+    [name: string]: (THREE.BufferAttribute | THREE.InterleavedBufferAttribute)[];
   };
-  
+
   @type.any
   @io.all
   public groups: { start: number; count: number; materialIndex?: number }[];
-  
+
   @type.any
   @io.all
   public drawRange: { start: number; count: number };
-  
-  @type.object({allowOtherKeys: true})
+
+  @type.object({ allowOtherKeys: true })
   @io.all
-  public userData: {[key: string]: any};
-  
+  public userData: { [key: string]: any };
+
   @type.boolean
   @io.all
   public isBufferGeometry: boolean;
-  
+
   @type.any
   @io.all
   public data: any;
@@ -160,7 +164,7 @@ export class ThreeGeometryModel extends Model {
   @type.float
   @io.all
   public radiusBottom: number;
-  
+
   @type.float
   @io.all
   public width: number;
@@ -184,15 +188,15 @@ export class ThreeGeometryModel extends Model {
   @type.float
   @io.all
   public tubularSegments: number;
-  
+
   @type.float
   @io.all
   public radiusSegments: number;
-  
+
   @type.float
   @io.all
   public widthSegments: number;
-  
+
   @type.float
   @io.all
   public heightSegments: number;
@@ -208,5 +212,4 @@ export class ThreeGeometryModel extends Model {
   @type.float
   @io.all
   public thetaLength: number;
-
 }

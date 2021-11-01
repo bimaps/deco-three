@@ -7,7 +7,6 @@ let STRADDLE = 'straddle';
 let ON = 'on';
 
 export class ThreeUtils {
-
   public static bboxFromObject(object: THREE.Object3D): THREE.Box3 {
     let bbox = new THREE.BoxHelper(object);
     bbox.geometry.computeBoundingBox();
@@ -16,7 +15,7 @@ export class ThreeUtils {
 
   public static bboxFromObjects(objects: Array<THREE.Object3D>): THREE.Box3 | null {
     if (!objects || !objects.length) return null;
-    let bbox: THREE.Box3 | null = null;
+    let bbox: THREE.Box3 | null = null;
     for (let obj of objects) {
       if (bbox === null) {
         bbox = new THREE.Box3();
@@ -27,13 +26,13 @@ export class ThreeUtils {
     }
     return bbox;
   }
-  
+
   public static isBbox000(bbox: THREE.Box3): boolean {
     return bbox.min.x === 0 && bbox.min.y === 0 && bbox.min.z === 0 && bbox.max.x === 0 && bbox.max.y === 0 && bbox.max.z === 0;
   }
 
   public static centroidFromBbox(bbox: THREE.Box3): THREE.Vector3 {
-    let centroid = new THREE.Vector3(0.5 * ( bbox.max.x + bbox.min.x ), 0.5 * ( bbox.max.y + bbox.min.y ), 0.5 * ( bbox.max.z + bbox.min.z ));
+    let centroid = new THREE.Vector3(0.5 * (bbox.max.x + bbox.min.x), 0.5 * (bbox.max.y + bbox.min.y), 0.5 * (bbox.max.z + bbox.min.z));
     return centroid;
   }
 
@@ -54,38 +53,38 @@ export class ThreeUtils {
   public static edgesFromObject(object: THREE.Mesh): THREE.Line3[] {
     const edges: THREE.Line3[] = [];
     const edgesGeom = new THREE.EdgesGeometry(object.geometry);
-    const vertices: THREE.Vector3[] = []
+    const vertices: THREE.Vector3[] = [];
     const arr = edgesGeom.attributes.position.array;
     for (let k = 0; k < arr.length; k += 3) {
-      vertices.push(new THREE.Vector3(arr[k], arr[k+1], arr[k+2]));
-    };
+      vertices.push(new THREE.Vector3(arr[k], arr[k + 1], arr[k + 2]));
+    }
     for (let k = 0; k < vertices.length; k += 2) {
       const start = vertices[k];
-      const end = vertices[k+1];
+      const end = vertices[k + 1];
       edges.push(new THREE.Line3(start, end));
     }
     return edges;
   }
 
   static PlaneHelper(plane: THREE.Plane, size = 10000) {
-    let geom = new THREE.PlaneGeometry( size, size, 10, 10 );
+    let geom = new THREE.PlaneGeometry(size, size, 10, 10);
     let material = new THREE.MeshBasicMaterial({
       color: '#BBBBBB',
       side: THREE.DoubleSide,
       wireframe: false,
       opacity: 0.5,
-      transparent: true
+      transparent: true,
     });
-    let obj = new THREE.Mesh( geom, material );
+    let obj = new THREE.Mesh(geom, material);
     obj.lookAt(plane.normal);
     let axis = new THREE.Vector3(0, 0, 1);
     obj.translateOnAxis(axis, plane.constant * -1);
 
     return obj;
-  };
+  }
 
   static geometryFromBuffer(bufferGeometry: THREE.BufferGeometry) {
-    return new THREE.Geometry().fromBufferGeometry( bufferGeometry );
+    return new THREE.Geometry().fromBufferGeometry(bufferGeometry);
   }
 
   // based on https://github.com/tdhooper/threejs-slice-geometry
@@ -95,7 +94,7 @@ export class ThreeUtils {
     let sliced = new THREE.Geometry();
     let points;
     let position;
-    geometry.faces.forEach(function(face, faceIndex) {
+    geometry.faces.forEach(function (face, faceIndex) {
       points = ThreeUtils.facePoints(geometry, face, faceIndex);
       position = ThreeUtils.facePosition(plane, points);
       if (position == DIRECTION || position == ON) {
@@ -135,16 +134,8 @@ export class ThreeUtils {
     }
 
     if (slicePoints.length > 3) {
-      ThreeUtils.addFace(geom, [
-        slicePoints[0],
-        slicePoints[1],
-        slicePoints[2]
-      ]);
-      ThreeUtils.addFace(geom, [
-        slicePoints[2],
-        slicePoints[3],
-        slicePoints[0]
-      ]);
+      ThreeUtils.addFace(geom, [slicePoints[0], slicePoints[1], slicePoints[2]]);
+      ThreeUtils.addFace(geom, [slicePoints[2], slicePoints[3], slicePoints[0]]);
     } else {
       ThreeUtils.addFace(geom, slicePoints);
     }
@@ -154,7 +145,7 @@ export class ThreeUtils {
     let existingIndex;
     let vertexIndices: Array<any> = [];
     let indexOffset = geom.vertices.length;
-    let exists : any;
+    let exists: any;
     let normals: Array<any> = [];
     let uvs: Array<any> = [];
 
@@ -173,15 +164,10 @@ export class ThreeUtils {
       if (point.uv) {
         uvs.push(point.uv);
       }
-      return ! exists;
+      return !exists;
     });
 
-    let face = new THREE.Face3(
-      vertexIndices[0],
-      vertexIndices[1],
-      vertexIndices[2],
-      normals
-    );
+    let face = new THREE.Face3(vertexIndices[0], vertexIndices[1], vertexIndices[2], normals);
     geom.faces.push(face);
     if (uvs.length) {
       geom.faceVertexUvs[0].push(uvs);
@@ -190,11 +176,11 @@ export class ThreeUtils {
 
   static facePoints(geom: THREE.Geometry, face: THREE.Face3, faceIndex: number) {
     let uvs = geom.faceVertexUvs[0];
-    return ['a', 'b', 'c'].map(function(key, i) {
+    return ['a', 'b', 'c'].map(function (key, i) {
       return {
         vertex: geom.vertices[(face as any)[key]],
         normal: face.vertexNormals[i],
-        uv: uvs[faceIndex] ? uvs[faceIndex][i] : undefined
+        uv: uvs[faceIndex] ? uvs[faceIndex][i] : undefined,
       };
     });
   }
@@ -208,7 +194,7 @@ export class ThreeUtils {
       return {
         vertex: intersection,
         normal: p1.normal.clone().lerp(p2.normal, alpha).normalize(),
-        uv: p1.uv && p2.uv ? p1.uv.clone().lerp(p2.uv, alpha) : null
+        uv: p1.uv && p2.uv ? p1.uv.clone().lerp(p2.uv, alpha) : null,
       };
     }
     return null;
@@ -259,7 +245,7 @@ export class ThreeUtils {
   */
   static objectToPolygon(object: THREE.Mesh, plane: THREE.Plane, scene = null) {
     let intersectingLines = ThreeUtils.intersectingLines(object, plane);
-    
+
     if (scene) ThreeUtils.intersectingGeometry(object, plane, scene);
 
     // remove all lines that are "duplicates"
@@ -292,7 +278,7 @@ export class ThreeUtils {
     let currentPolygon: any = null;
     let currentKey = null;
     let nbLines = Object.keys(linesByKey).length;
-    while (Object.keys(linesByKey).length || k > nbLines + 20) {
+    while (Object.keys(linesByKey).length || k > nbLines + 20) {
       k++;
       if (!currentKey) {
         // take the first key
@@ -303,7 +289,7 @@ export class ThreeUtils {
       // get the line with the currentKey and remove it from the "bank"
       let line = linesByKey[currentKey];
       delete linesByKey[currentKey];
-      
+
       // get the start of line coordinate as polygon point
       let point = [line.start.x, line.start.y, line.start.z];
       currentPolygon.push(point);
@@ -339,13 +325,13 @@ export class ThreeUtils {
         if (!found) {
           throw new Error('Cannot compute the polygon, could not find the next line after');
         }
-      }    
+      }
     }
     return polygons;
   }
 
   /**
-   * 
+   *
    * Input: an array of polygons where each element is a ring
    * Output: coordinates of MultiPolygon, compatible with GeoJSON
    */
@@ -406,7 +392,7 @@ export class ThreeUtils {
           throw new Error('No geometry found in the object or its children');
         } else {
           throw new Error('The object has several geometries, this use case is not allowed');
-        } 
+        }
       } else {
         throw new Error('Object must have a geometry');
       }
@@ -416,13 +402,13 @@ export class ThreeUtils {
       throw new Error('Cannot use intersectingLines with an object containing a BufferGeometry');
     }
 
-    let a = new THREE.Vector3;
-    let b = new THREE.Vector3;
-    let c = new THREE.Vector3;
+    let a = new THREE.Vector3();
+    let b = new THREE.Vector3();
+    let c = new THREE.Vector3();
 
-    let planePointA = new THREE.Vector3;
-    let planePointB = new THREE.Vector3;
-    let planePointC = new THREE.Vector3;
+    let planePointA = new THREE.Vector3();
+    let planePointB = new THREE.Vector3();
+    let planePointC = new THREE.Vector3();
 
     let lineAB = new THREE.Line3();
     let lineBC = new THREE.Line3();
@@ -458,17 +444,17 @@ export class ThreeUtils {
         intersectingLines.push(lineBC.clone());
         intersectingLines.push(lineCA.clone());
         return;
-      } else if (distanceA === 0 && distanceB === 0 || distanceA === 0 && distanceC === 0 || distanceB === 0 && distanceC === 0) {
+      } else if ((distanceA === 0 && distanceB === 0) || (distanceA === 0 && distanceC === 0) || (distanceB === 0 && distanceC === 0)) {
         // partial coplanar
         return;
       }
       // not coplanar at all
 
-      let intersectAB = new THREE.Vector3;
+      let intersectAB = new THREE.Vector3();
       intersectAB = plane.intersectLine(lineAB, intersectAB);
-      let intersectBC = new THREE.Vector3;
+      let intersectBC = new THREE.Vector3();
       intersectBC = plane.intersectLine(lineBC, intersectBC);
-      let intersectCA = new THREE.Vector3;
+      let intersectCA = new THREE.Vector3();
       intersectCA = plane.intersectLine(lineCA, intersectCA);
 
       // TODO: FIX SCENERIO WHEN FACE IS COPLANAR WITH THE PLAN
@@ -482,7 +468,7 @@ export class ThreeUtils {
     return intersectingLines;
   }
 
-  static intersectingGeometry(object: THREE.Mesh, plane: THREE.Plane, scene: any) {    
+  static intersectingGeometry(object: THREE.Mesh, plane: THREE.Plane, scene: any) {
     if (!object.geometry) {
       if (object.children && object.children.length) {
         let objectsWithGeometry = [];
@@ -495,7 +481,7 @@ export class ThreeUtils {
           throw new Error('No geometry found in the object or its children');
         } else {
           throw new Error('The object has several geometries, this use case is not allowed');
-        } 
+        }
       } else {
         throw new Error('Object must have a geometry');
       }
@@ -512,16 +498,15 @@ export class ThreeUtils {
     if (scene) {
       let pointsMaterial = new THREE.PointsMaterial({
         size: 5,
-        color: "blue",
-        sizeAttenuation: false
+        color: 'blue',
+        sizeAttenuation: false,
       });
       let pointsObject = new THREE.Points(pointsOfIntersection, pointsMaterial);
       scene.add(pointsObject);
-      
-      let lineMaterial = new THREE.LineBasicMaterial( { color: 0xff0000 } );
-      let lineObject = new THREE.LineSegments( pointsOfIntersection, lineMaterial );
-      scene.add( lineObject );
-      
+
+      let lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+      let lineObject = new THREE.LineSegments(pointsOfIntersection, lineMaterial);
+      scene.add(lineObject);
     }
 
     return pointsOfIntersection;
@@ -534,35 +519,41 @@ export class ThreeUtils {
 
     let length = arr.length;
 
-    let x = function(i: any) { return arr[i % length][0]; };
-    let y = function(i: any) { return arr[i % length][1]; };
+    let x = function (i: any) {
+      return arr[i % length][0];
+    };
+    let y = function (i: any) {
+      return arr[i % length][1];
+    };
 
-    for ( let i = 0; i < arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
       let twoSA = x(i) * y(i + 1) - x(i + 1) * y(i);
       twoTimesSignedArea += twoSA;
       cxTimes6SignedArea += (x(i) + x(i + 1)) * twoSA;
       cyTimes6SignedArea += (y(i) + y(i + 1)) * twoSA;
     }
     let sixSignedArea = 3 * twoTimesSignedArea;
-    return [ cxTimes6SignedArea / sixSignedArea, cyTimes6SignedArea / sixSignedArea];
+    return [cxTimes6SignedArea / sixSignedArea, cyTimes6SignedArea / sixSignedArea];
   }
 
   static isPointInsidePolygon(point: any, polygon: any) {
     // ray-casting algorithm based on
     // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-    
-    let x = point[0], y = point[1];
-    
+
+    let x = point[0],
+      y = point[1];
+
     let inside = false;
     for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-        let xi = polygon[i][0], yi = polygon[i][1];
-        let xj = polygon[j][0], yj = polygon[j][1];
-        
-        let intersect = ((yi > y) != (yj > y))
-            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-        if (intersect) inside = !inside;
+      let xi = polygon[i][0],
+        yi = polygon[i][1];
+      let xj = polygon[j][0],
+        yj = polygon[j][1];
+
+      let intersect = yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+      if (intersect) inside = !inside;
     }
-    
+
     return inside;
   }
 }

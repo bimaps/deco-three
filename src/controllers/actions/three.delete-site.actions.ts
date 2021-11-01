@@ -1,9 +1,9 @@
 import { ThreeSiteModel } from './../../models/site.model';
-import { Response } from 'express';
+import { Response } from 'express';
+
 let debug = require('debug')('app:actions:three:send-report');
 
 export class ThreeDeleteSiteAction {
-
   public static async run(res: Response) {
     debug('run');
     if (!res.locals.actions?.variables?.siteId) {
@@ -29,19 +29,23 @@ export class ThreeDeleteSiteAction {
       'three_style',
       'checker_report',
       'checker_module',
-      'checker_flow']
-    let query = {siteId: siteId};
+      'checker_flow',
+    ];
+    let query = { siteId: siteId };
     for (let collectionName of collectionNames) {
-      deletePromises.push(ThreeSiteModel.deco.db.collection(collectionName).deleteMany(query).then((result) => {
-        return {
-          model: collectionName,
-          nbDeleted: result.deletedCount
-        };
-      }));
+      deletePromises.push(
+        ThreeSiteModel.deco.db
+          .collection(collectionName)
+          .deleteMany(query)
+          .then((result) => {
+            return {
+              model: collectionName,
+              nbDeleted: result.deletedCount,
+            };
+          }),
+      );
     }
     const deleteResult = await Promise.all(deletePromises);
     debug(deleteResult);
-    
   }
-
 }
