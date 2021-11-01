@@ -61,7 +61,7 @@ router.post(
   }),
   diskUpload.single('ifc'),
   Operation.startMiddelware,
-  mdController.importIFC,
+  mdController.importIFCWithMicroService,
   Operation.sendCurrentOperation,
 );
 
