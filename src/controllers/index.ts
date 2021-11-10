@@ -9,3 +9,4 @@ export * from './three.object.controller';
 export * from './three.site.controller';
 export * from './three.style.controller';
 export * from './three.theme.controller';
+export * from './three-module.controller';

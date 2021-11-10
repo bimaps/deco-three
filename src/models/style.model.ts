@@ -1,5 +1,5 @@
-import { ThreeSiteModel } from './site.model';
-import { model, Model, type, io, query, validate, ObjectId, mongo, AppModel } from 'deco-api';
+import { AppModel, io, model, Model, mongo, ObjectId, query, type, validate } from '@bim/deco-api';
+
 let debug = require('debug')('app:models:three:style');
 
 export interface ThreePos {
@@ -10,30 +10,33 @@ export interface ThreePos {
 
 @model('three_style')
 export class ThreeStyleModel extends Model {
-
   @type.id
   public _id: ObjectId;
 
-  @type.model({model: AppModel})
+  @type.model({ model: AppModel })
   @io.input
   @io.toDocument
   @query.filterable()
   @validate.required
-  @mongo.index({type: 'single'})
+  @mongo.index({ type: 'single' })
   public appId: ObjectId;
-
-  @type.model({model: ThreeSiteModel})
-  @io.input
-  @io.toDocument
-  @query.filterable()
-  @validate.required
-  @mongo.index({type: 'single'})
-  public siteId: ObjectId;
 
   @type.string
   @io.all
   @validate.required
   public name: string;
+
+  @type.string
+  @io.all
+  public description: string;
+
+  @type.select({ options: ['visibility', 'colour', 'label', 'icon', 'geometry'] })
+  @io.all
+  public type: string;
+
+  @type.string
+  @io.output
+  public _type: string;
 
   @type.boolean
   @io.all
@@ -43,11 +46,11 @@ export class ThreeStyleModel extends Model {
   @io.all
   public color?: string;
 
-  @type.select({options: ['original', 'basic', 'phong', 'texture']})
+  @type.select({ options: ['original', 'basic', 'phong', 'texture'] })
   @io.all
   public material?: 'original' | 'basic' | 'phong' | 'texture';
 
-  @type.file({accept: ['image/*']})
+  @type.file({ accept: ['image/*'] })
   @io.all
   public image?: any;
 
@@ -83,15 +86,18 @@ export class ThreeStyleModel extends Model {
   @io.all
   public labelScale?: number = 1;
 
-  @type.select({options: ['auto', 'bbox', 'polylabel']})
+  @type.select({ options: ['auto', 'bbox', 'polylabel'] })
   @io.all
   public labelCentroidMethod?: 'auto' | 'bbox' | 'polylabel' = 'auto';
 
-  @type.object({keys: {
-    x: {type: 'float'},
-    y: {type: 'float'},
-    z: {type: 'float'},
-  }, allowOtherKeys: true})
+  @type.object({
+    keys: {
+      x: { type: 'float' },
+      y: { type: 'float' },
+      z: { type: 'float' },
+    },
+    allowOtherKeys: true,
+  })
   @io.all
   public labelPosition?: ThreePos;
 
@@ -123,15 +129,18 @@ export class ThreeStyleModel extends Model {
   @io.all
   public iconScale?: number;
 
-  @type.select({options: ['auto', 'bbox', 'polylabel']})
+  @type.select({ options: ['auto', 'bbox', 'polylabel'] })
   @io.all
   public iconCentroidMethod?: 'auto' | 'bbox' | 'polylabel' = 'auto';
 
-  @type.object({keys: {
-    x: {type: 'float'},
-    y: {type: 'float'},
-    z: {type: 'float'},
-  }, allowOtherKeys: true})
+  @type.object({
+    keys: {
+      x: { type: 'float' },
+      y: { type: 'float' },
+      z: { type: 'float' },
+    },
+    allowOtherKeys: true,
+  })
   @io.all
   public iconPosition?: ThreePos;
 
@@ -143,32 +152,36 @@ export class ThreeStyleModel extends Model {
   @io.all
   public replaceGeometry?: boolean;
 
-  @type.select({options: ['cone', 'sphere', 'cube', 'cylinder']})
+  @type.select({ options: ['cone', 'sphere', 'cube', 'cylinder'] })
   @io.all
-  public geometryShape: 'cone' | 'sphere' | 'cube' | 'cylinder'
+  public geometryShape: 'cone' | 'sphere' | 'cube' | 'cylinder';
 
   @type.float
   @io.all
   public geometryScale?: number;
 
-  @type.object({keys: {
-    x: {type: 'float'},
-    y: {type: 'float'},
-    z: {type: 'float'},
-  }, allowOtherKeys: true})
+  @type.object({
+    keys: {
+      x: { type: 'float' },
+      y: { type: 'float' },
+      z: { type: 'float' },
+    },
+    allowOtherKeys: true,
+  })
   @io.all
   public geometryPosition?: ThreePos;
 
-  @type.object({keys: {
-    x: {type: 'float'},
-    y: {type: 'float'},
-    z: {type: 'float'},
-  }})
+  @type.object({
+    keys: {
+      x: { type: 'float' },
+      y: { type: 'float' },
+      z: { type: 'float' },
+    },
+  })
   @io.all
   public geometryRotation?: ThreePos;
 
   @type.boolean
   @io.all
   public edgesDisplay?: boolean;
-  
 }

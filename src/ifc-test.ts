@@ -9,7 +9,6 @@ var ifcConvert = require('ifc-convert');
 let src = path.join(__dirname, '../_ifc_sources/0912106-02windows_placement_inside_wall_all_1.ifc');
 let dest = path.join(__dirname, '../ignored/0912106-02windows_placement_inside_wall_all_1.obj');
 
-
 try {
   fs.accessSync(dest, fs.constants.R_OK);
   // no error, the file exists => we cannot go on
@@ -21,23 +20,22 @@ try {
   // if error, the file do not exist, we can go on
 }
 
-
 try {
   fs.accessSync(src, fs.constants.R_OK | fs.constants.W_OK);
   console.log('Start conversion ...');
   ifcConvert(src, dest)
-  .then(function() {
+    .then(function () {
       //Now you have a Collada file;)
       console.log('SUCCESS');
       console.log('File converted');
       console.log('------');
-  }).catch((error: Error) => {
-    console.log('ERROR');
-    console.log('Error with ifcConvert:');
-    console.error(error);
-    console.log('------');
-  });
+    })
+    .catch((error: Error) => {
+      console.log('ERROR');
+      console.log('Error with ifcConvert:');
+      console.error(error);
+      console.log('------');
+    });
 } catch (error) {
   console.log('Source file not found or not accessible');
 }
-

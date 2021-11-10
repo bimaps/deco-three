@@ -1,11 +1,11 @@
-import { AppModel, NotificationEmailService } from 'deco-api';
-import { Response } from 'express';
+import { AppModel, NotificationEmailService } from '@bim/deco-api';
+import { Response } from 'express';
 import { Attachment } from 'nodemailer/lib/mailer';
 import path from 'path';
+
 let debug = require('debug')('app:actions:three:send-report');
 
 export class ThreeSendReportAction {
-
   public static async run(res: Response) {
     debug('run');
     if (!res.locals.actions?.variables?.email) {
@@ -19,7 +19,6 @@ export class ThreeSendReportAction {
     }
     const app = res.locals.app;
     if (app instanceof AppModel) {
-
     } else {
       throw new Error('Three Report Action: Missing app');
     }
@@ -34,14 +33,18 @@ export class ThreeSendReportAction {
 
     const emailService = NotificationEmailService.serviceForApp(res.locals.app);
     const emailsRoot = path.join(__dirname, '../../../emails');
-    const emailResult = await emailService.send(res.locals.actions.variables.email, 'send-report', {
-      operationId: res.locals.currentOperation?.id,
-      app: res.locals.app,
-      ifcFilename: res.locals.actions?.variables?.ifcFilename,
-    }, {rootPath: emailsRoot}, [attachedFile]);
+    const emailResult = await emailService.send(
+      res.locals.actions.variables.email,
+      'send-report',
+      {
+        operationId: res.locals.currentOperation?.id,
+        app: res.locals.app,
+        ifcFilename: res.locals.actions?.variables?.ifcFilename,
+      },
+      { rootPath: emailsRoot },
+      [attachedFile],
+    );
 
     debug('emailResult', emailResult);
-    
   }
-
 }

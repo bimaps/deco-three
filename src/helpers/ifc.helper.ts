@@ -7,7 +7,7 @@ import fs from 'fs';
 import mv from 'mv';
 import ifcConvert from 'ifc-convert';
 import { ifc2json } from 'ifc2json-wrapper';
-import { ObjectId, Metadata, Query } from 'deco-api'; 
+import { ObjectId, Metadata, Query } from '@bim/deco-api';
 import * as THREE from 'three';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
@@ -74,7 +74,7 @@ export class IfcHelper {
     if (formats.includes('obj')) {
       formatsToParse.push('mtl');
     }
-    
+
     for (const format of formatsToParse) {
       debug('convertWithMicroservice fetching file for format', format);
       const fileId = completedOperation.formats[format];
@@ -142,27 +142,31 @@ export class IfcHelper {
         if (error) return reject(error);
         resolve();
       });
-    }).then(() => {
-      return ifcConvert(src, dest, {args: ['--use-element-guids', '--site-local-placement']});
-    }).then(() => {
-      try {
-        fs.accessSync(src, fs.constants.R_OK);
-      } catch (error) {
-        debug('Obj file not found');
-        throw error;
-      }
-      try {
-        fs.accessSync(mtlDest, fs.constants.R_OK);
-      } catch (error) {
-        debug('Mtl file not found');
-        throw error;
-      }
-      return {
-        ifcPath: src,
-        objPath: dest,
-        mtlPath: mtlDest
-      };
-    });
+    })
+      .then(() => {
+        return ifcConvert(src, dest, {
+          args: ['--use-element-guids', '--site-local-placement'],
+        });
+      })
+      .then(() => {
+        try {
+          fs.accessSync(src, fs.constants.R_OK);
+        } catch (error) {
+          debug('Obj file not found');
+          throw error;
+        }
+        try {
+          fs.accessSync(mtlDest, fs.constants.R_OK);
+        } catch (error) {
+          debug('Mtl file not found');
+          throw error;
+        }
+        return {
+          ifcPath: src,
+          objPath: dest,
+          mtlPath: mtlDest,
+        };
+      });
   }
 
   // public static parseIfcMetadata(filepath: string, importId: string) {
@@ -181,7 +185,7 @@ export class IfcHelper {
       let destinationpath = '';
       const options = {
         stdout: '', // ifc2json will store in this property the result of stdout
-        stderr: '' // ifc2json will store in this property the result of stderr
+        stderr: '', // ifc2json will store in this property the result of stderr
       };
       try {
         destinationpath = await ifc2json(filepath, options);
@@ -192,12 +196,12 @@ export class IfcHelper {
         throw error;
       }
       console.log('ifc2json stdout:', options.stdout);
-      jsonstring = fs.readFileSync(destinationpath, {encoding: 'utf-8'});
+      jsonstring = fs.readFileSync(destinationpath, { encoding: 'utf-8' });
     }
 
     debug('jsonstring 0...200', jsonstring.substr(0, 200));
-    
-    let json: Array<UserDataFromIfc>
+
+    let json: Array<UserDataFromIfc>;
     try {
       json = JSON.parse(jsonstring);
     } catch (error) {
@@ -221,7 +225,7 @@ export class IfcHelper {
           site.location = locationValues;
         }
         if (data.userData && data.userData.refDirection) {
-          const refDirectionValues = data.userData.refDirection.split(',').map((v: string) => parseFloat(v)); 
+          const refDirectionValues = data.userData.refDirection.split(',').map((v: string) => parseFloat(v));
           site.refDirection = refDirectionValues;
         }
         if (data.userData && data.userData.axis) {
@@ -277,8 +281,11 @@ export class IfcHelper {
         continue;
       }
       if (data.userData && data.userData.type === 'IfcBuilding') {
-        const existingBuilding = await ThreeBuildingModel.getOneWithQuery({ifcBuildingId: data.id, siteId: site._id});
-        const building = existingBuilding ? existingBuilding : new ThreeBuildingModel;
+        const existingBuilding = await ThreeBuildingModel.getOneWithQuery({
+          ifcBuildingId: data.id,
+          siteId: site._id,
+        });
+        const building = existingBuilding ? existingBuilding : new ThreeBuildingModel();
         if (!existingBuilding) {
           building.siteId = site._id;
           building.appId = site.appId;
@@ -293,7 +300,7 @@ export class IfcHelper {
           building.location = locationValues;
         }
         if (data.userData && data.userData.refDirection) {
-          const refDirectionValues = data.userData.refDirection.split(',').map((v: string) => parseFloat(v)); 
+          const refDirectionValues = data.userData.refDirection.split(',').map((v: string) => parseFloat(v));
           building.refDirection = refDirectionValues;
         }
         if (data.userData && data.userData.axis) {
@@ -311,8 +318,11 @@ export class IfcHelper {
         continue;
       }
       if (data.userData && data.userData.type === 'IfcBuildingStorey') {
-        const existingStorey = await ThreeStoreyModel.getOneWithQuery({ifcStoreyId: data.id, siteId: site._id});
-        const storey = existingStorey ? existingStorey : new ThreeStoreyModel;
+        const existingStorey = await ThreeStoreyModel.getOneWithQuery({
+          ifcStoreyId: data.id,
+          siteId: site._id,
+        });
+        const storey = existingStorey ? existingStorey : new ThreeStoreyModel();
         if (!existingStorey) {
           storey.siteId = site._id;
           storey.appId = site.appId;
@@ -328,7 +338,7 @@ export class IfcHelper {
           storey.location = locationValues;
         }
         if (data.userData && data.userData.refDirection) {
-          const refDirectionValues = data.userData.refDirection.split(',').map((v: string) => parseFloat(v)); 
+          const refDirectionValues = data.userData.refDirection.split(',').map((v: string) => parseFloat(v));
           storey.refDirection = refDirectionValues;
         }
         if (data.userData && data.userData.axis) {
@@ -346,8 +356,11 @@ export class IfcHelper {
         continue;
       }
       if (data.userData && data.userData.type === 'IfcSpace') {
-        const existingSpace = await ThreeSpaceModel.getOneWithQuery({ifcSpaceId: data.id, siteId: site._id});
-        const space = existingSpace ? existingSpace : new ThreeSpaceModel;
+        const existingSpace = await ThreeSpaceModel.getOneWithQuery({
+          ifcSpaceId: data.id,
+          siteId: site._id,
+        });
+        const space = existingSpace ? existingSpace : new ThreeSpaceModel();
         if (!existingSpace) {
           space.siteId = site._id;
           space.appId = site.appId;
@@ -373,7 +386,7 @@ export class IfcHelper {
             space.location = locationValues;
           }
           if (data.boundary.properties && data.boundary.properties.refDirection) {
-            const refDirectionValues = data.boundary.properties.refDirection.split(',').map((v: string) => parseFloat(v)); 
+            const refDirectionValues = data.boundary.properties.refDirection.split(',').map((v: string) => parseFloat(v));
             space.refDirection = refDirectionValues;
           }
           if (data.boundary.properties && data.boundary.properties.axis) {
@@ -386,22 +399,32 @@ export class IfcHelper {
             const refDirectionValues = data.boundary.properties.refDirection
               ? data.boundary.properties.refDirection.split(',').map((v: string) => parseFloat(v))
               : [1, 0, 0];
-            const axisValues = data.boundary.properties.axis
-              ? data.boundary.properties.axis.split(',').map((v: string) => parseFloat(v))
-              : [0, 0, 1];
+            const axisValues = data.boundary.properties.axis ? data.boundary.properties.axis.split(',').map((v: string) => parseFloat(v)) : [0, 0, 1];
             const location: THREE.Vector3 = new THREE.Vector3(locationValues[0], locationValues[1], locationValues[2]);
             const refDirection: THREE.Vector3 = new THREE.Vector3(refDirectionValues[0], refDirectionValues[1], refDirectionValues[2]); // vect1
-            const axis: THREE.Vector3 = new THREE.Vector3(axisValues[0], axisValues[1], axisValues[2]);  // vect3
+            const axis: THREE.Vector3 = new THREE.Vector3(axisValues[0], axisValues[1], axisValues[2]); // vect3
 
             const vect1 = refDirection;
             const vect3 = axis;
 
             const vect2 = axis.cross(refDirection);
             const matrix = new THREE.Matrix4().set(
-              vect1.x, vect2.x, vect3.x, location.x,
-              vect1.y, vect2.y, vect3.y, location.y,
-              vect1.z, vect2.z, vect3.z, location.z,
-              0, 0, 0, 1
+              vect1.x,
+              vect2.x,
+              vect3.x,
+              location.x,
+              vect1.y,
+              vect2.y,
+              vect3.y,
+              location.y,
+              vect1.z,
+              vect2.z,
+              vect3.z,
+              location.z,
+              0,
+              0,
+              0,
+              1,
             );
             if (data.boundary.geometry.type === 'Polygon') {
               for (let ring of data.boundary.geometry.coordinates) {
@@ -419,7 +442,19 @@ export class IfcHelper {
         }
         IfcHelper.psetInMetadata(data.userData, space);
         if (existingSpace) {
-          await space.update(['name', 'ifcBuildingId', 'buildingId', 'storeyIds', 'importId', 'userData', 'metadata', 'location', 'refDirection', 'boundary', 'axis']);
+          await space.update([
+            'name',
+            'ifcBuildingId',
+            'buildingId',
+            'storeyIds',
+            'importId',
+            'userData',
+            'metadata',
+            'location',
+            'refDirection',
+            'boundary',
+            'axis',
+          ]);
           ifc2objectId[data.id] = space._id;
         } else {
           const newSpace = await space.insert();
@@ -431,7 +466,7 @@ export class IfcHelper {
     }
   }
 
-  private static psetInMetadata(userData: {pset: {[key: string]: any}}, object: {metadata: Array<Metadata>}) {
+  private static psetInMetadata(userData: { pset: { [key: string]: any } }, object: { metadata: Array<Metadata> }) {
     if (!Array.isArray(object.metadata)) {
       object.metadata = [];
     }
@@ -441,13 +476,21 @@ export class IfcHelper {
       if (index !== -1) {
         object.metadata[index].value = userData.pset[key];
       } else {
-        object.metadata.push({key: key, value: userData.pset[key]});
+        object.metadata.push({ key: key, value: userData.pset[key] });
       }
     }
   }
 
-  private static applyUserDataFromIfc(data: UserDataFromIfc, importId: string, ifc2objectId: {[key: string]: ObjectId }, keepOriginalUserData: boolean = true): Promise<any> {
-    return ThreeObjectModel.getOneWithQuery({name: data.id, importId: importId}).then((object) => {
+  private static applyUserDataFromIfc(
+    data: UserDataFromIfc,
+    importId: string,
+    ifc2objectId: { [key: string]: ObjectId },
+    keepOriginalUserData: boolean = true,
+  ): Promise<any> {
+    return ThreeObjectModel.getOneWithQuery({
+      name: data.id,
+      importId: importId,
+    }).then((object) => {
       if (!object) return;
       object.name = data.userData.name || object.name;
       if (keepOriginalUserData) {
@@ -473,10 +516,7 @@ export class IfcHelper {
       if (object.userData.spaceId && ifc2objectId[object.userData.spaceId]) {
         object.spaceId = ifc2objectId[object.userData.spaceId];
       }
-      return object.update(['name', 'userData', 'buildingId', 'storeys', 'spaceId']).then((obj) => {
-      });
+      return object.update(['name', 'userData', 'buildingId', 'storeys', 'spaceId']).then((obj) => {});
     });
   }
-
-
 }

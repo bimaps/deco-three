@@ -1,15 +1,19 @@
 {
-  "name": "deco-three",
-  "version": "2.0.4",
+  "name": "@bim/deco-three",
+  "version": "3.1.0",
   "description": "Three module for deco-api project.",
   "main": "build/index.js",
   "scripts": {
-    "tsc": "tsc",
+    "build": "tsc",
+    "format": "prettier --write \"./src/**/*.{ts,json}\"",
     "test": "jest --detectOpenHandles --forceExit"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bimaps/deco-three"
+    "url": "git@argon.ceti.etat-ge.ch:DEVELOPPEUR-GDE/clients/bim/deco-three.git"
+  },
+  "publishConfig": {
+    "registry": "https://npmnexus.prod.etat-ge.ch/ctinexus/content/repositories/npm_release/"
   },
   "keywords": [
     "ThreeJS",
@@ -23,14 +27,12 @@
     "@types/mathjs": "^6.0.11",
     "@types/mkdirp": "^0.5.2",
     "@types/mv": "^2.1.0",
-    "deco-api": "^1.1.0",
     "form-data": "^2.3.3",
     "mathjs": "^9.2.0",
     "mv": "^2.1.1",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "@bim/deco-api": "^1.2.2",
     "@types/form-data": "^2.5.0",
     "@types/jest": "^27.0.2",
     "@types/node-fetch": "^2.5.12",
@@ -42,6 +44,7 @@
     "typescript": "^3.9.0"
   },
   "peerDependencies": {
+    "@bim/deco-api": "^1.2.2",
     "ifc-convert": "^1.2.0",
     "ifc2json-wrapper": "^1.0.0",
     "three": "^0.110.0",
