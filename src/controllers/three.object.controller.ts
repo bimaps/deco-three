@@ -15,7 +15,7 @@ router.get(
   AppMiddleware.fetchWithPublicKey,
   mdController.registerPolicyMountingPoint(['three.object.get']),
   mdController.prepareQueryFromReq(),
-  mdController.getAll(null, {enableLastModifiedCaching: true})
+  mdController.getAll(null, {enableLastModifiedCaching: true, addCountInKey: '__count'})
 );
 
 router.get(
