@@ -36,12 +36,12 @@ export class ThreeMaterialModel extends Model {
 
   @type.string
   @io.all
-  @query.filterable('text')
+  @query.filterable({type: 'categories', ObjectId: false})
   public uuid: string;
 
   @type.string
   @io.all
-  @query.filterable('text')
+  @query.filterable({type: 'auto'})
   public name: string;
 
   @type.string

@@ -36,7 +36,7 @@ export class ThreeGeometryModel extends Model {
 
   @type.string
   @io.all
-  @query.filterable('text')
+  @query.filterable({type: 'categories', ObjectId: false})
   public uuid: string;
 
   @type.string
