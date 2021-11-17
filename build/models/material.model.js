@@ -58,12 +58,12 @@ __decorate([
 __decorate([
     deco_api_1.type.string,
     deco_api_1.io.all,
-    deco_api_1.query.filterable('text')
+    deco_api_1.query.filterable({ type: 'categories', ObjectId: false })
 ], ThreeMaterialModel.prototype, "uuid", void 0);
 __decorate([
     deco_api_1.type.string,
     deco_api_1.io.all,
-    deco_api_1.query.filterable('text')
+    deco_api_1.query.filterable({ type: 'auto' })
 ], ThreeMaterialModel.prototype, "name", void 0);
 __decorate([
     deco_api_1.type.string,

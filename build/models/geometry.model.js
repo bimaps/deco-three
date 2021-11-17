@@ -43,7 +43,7 @@ __decorate([
 __decorate([
     deco_api_1.type.string,
     deco_api_1.io.all,
-    deco_api_1.query.filterable('text')
+    deco_api_1.query.filterable({ type: 'categories', ObjectId: false })
 ], ThreeGeometryModel.prototype, "uuid", void 0);
 __decorate([
     deco_api_1.type.string,
